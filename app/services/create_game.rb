@@ -3,7 +3,7 @@ class CreateGame
 
   TERRITORY_COUNT = 6
   TERRITORY_EDGES = [[0,1],[0,2],[1,2],[2,4],[2,3],[4,5],[3,5]]
-  INITAL_UNITS = 10
+  INITIAL_UNITS = 10
 
   def initialize; end
 
@@ -37,13 +37,16 @@ class CreateGame
   end
 
   def assign_players_to_territories
-    @territories.shuffle.group_by.with_index { |_, index| @players[index % @players.size] }.each do |player, territories|
-      event = player.events.create!(type: :reinforce)
-      territories.each do |territory|
-        event.changes.create!(territory: territory, territory_owner: player, units_difference: INITIAL_UNITS)
-      end
+    player_territories = @territories.shuffle.group_by.with_index do |_, index|
+      @players[index % @players.size]
     end
 
+    player_territories.each do |player, territories|
+      event = player.events.create!(event_type: :reinforce)
+      territories.each do |territory|
+        event.actions.create!(territory: territory, territory_owner: player, units_difference: INITIAL_UNITS)
+      end
+    end
   end
 
   def assign_units_to_players
