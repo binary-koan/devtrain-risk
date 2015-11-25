@@ -3,14 +3,11 @@ class GamesController < ApplicationController
   end
 
   def create
-    create_game = CreateGame.new
-    game = create_game.call
-    if game
-      redirect_to game
-    else
-      flash.alert = create_game.errors
-      redirect_to :back
-    end
+    game = CreateGame.new.call
+    redirect_to game
+  rescue CreateGame::Error => e
+    flash.alert = e.message
+    redirect_to :back
   end
 
   def show
