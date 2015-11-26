@@ -34,4 +34,10 @@ class GameState
       players: players
     }.to_json
   end
+
+  def find_number_of_units(territory)
+    Action.where(territory: territory).inject(0) do |total, action|
+      total + action.units_difference
+    end
+  end
 end
