@@ -30,7 +30,7 @@ class GameState
   def to_json
     {
       territories: territories,
-      territory_link: territory_links,
+      territory_links: territory_links,
       players: players
     }.to_json
   end
