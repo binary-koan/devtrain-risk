@@ -1,4 +1,6 @@
 class GamesController < ApplicationController
+  before_action :assign_game, only: [:show, :territory_info]
+
   def new
   end
 
@@ -11,18 +13,23 @@ class GamesController < ApplicationController
   end
 
   def show
-    @game = Game.find(params[:id])
     @state = GameState.new(@game)
   end
 
   def territory_info
-    game = Game.find(params[:id])
-    state = GameState.new(game)
+    state = GameState.new(@game)
+    serializer = GameStateJson.new(state)
 
     render json: {
-      territories: state.territories,
-      territory_links: state.territory_links,
-      players: state.players
+      territories: serializer.territories,
+      territory_links: serializer.territory_links,
+      players: serializer.players
     }
+  end
+
+  private
+
+  def assign_game
+    @game = Game.find(params[:id])
   end
 end
