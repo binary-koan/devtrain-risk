@@ -12,5 +12,6 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
+    @state = GameState.new(@game)
   end
 end

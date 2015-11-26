@@ -1,1 +1,6 @@
 <h1>Game <%= @game.id %></h1>
+
+<%# TODO JSON! %>
+<script type="text/javascript">
+var GAME_STATE = <%= @state.to_json.html_safe %>
+</script>
