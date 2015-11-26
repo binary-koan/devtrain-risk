@@ -16,9 +16,6 @@ class CreateGame
       assign_units_to_players
       @game
     end
-  #TODO error handling
-  #rescue ActiveRecord::ActiveRecordError => e
-    #raise Error, e.message
   end
 
   def create_game

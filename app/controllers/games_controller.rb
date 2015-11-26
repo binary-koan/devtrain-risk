@@ -5,7 +5,7 @@ class GamesController < ApplicationController
   def create
     game = CreateGame.new.call
     redirect_to game
-  rescue CreateGame::Error => e
+  rescue ActiveRecord::ActiveRecordError => e
     flash.alert = e.message
     redirect_to :back
   end
