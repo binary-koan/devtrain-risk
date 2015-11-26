@@ -24,7 +24,8 @@ ActiveRecord::Schema.define(version: 20151125035336) do
 
   create_table "events", force: :cascade do |t|
     t.integer  "event_type", null: false
-    t.integer  "player_id"
+    t.integer  "player_id",  null: false
+    t.integer  "game_id",    null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
