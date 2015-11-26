@@ -14,4 +14,15 @@ class GamesController < ApplicationController
     @game = Game.find(params[:id])
     @state = GameState.new(@game)
   end
+
+  def territory_info
+    game = Game.find(params[:id])
+    state = GameState.new(game)
+
+    render json: {
+      territories: state.territories,
+      territory_links: state.territory_links,
+      players: state.players
+    }
+  end
 end

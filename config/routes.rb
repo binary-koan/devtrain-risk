@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   root 'games#new'
-  resources :games, only: [:create, :show]
+  resources :games, only: [:create, :show] do
+    get :territory_info, on: :member
+  end
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
