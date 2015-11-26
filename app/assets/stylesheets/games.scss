@@ -1,3 +1,20 @@
+.player-display {
+  .player-icon {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
+
+    &.player-0 {
+      background-color: red;
+    }
+
+    &.player-1 {
+      background-color: blue;
+    }
+  }
+}
+
 svg.map-display {
   .link {
     stroke: #000;
@@ -5,8 +22,25 @@ svg.map-display {
   }
 
   .node {
+    cursor: pointer;
+  }
+
+  .node circle {
     fill: #ccc;
     stroke: #000;
     stroke-width: 1.5px;
+  }
+
+  .node text {
+    fill: #000;
+    font-size: 12px;
+  }
+
+  .player-0 circle {
+    fill: red;
+  }
+
+  .player-1 circle {
+    fill: blue;
   }
 }

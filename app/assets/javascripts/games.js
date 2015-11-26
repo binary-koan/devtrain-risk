@@ -4,17 +4,17 @@ jQuery(function($) {
     return;
   }
 
-  var width = 960,
-      height = 500;
+  var width = 450,
+      height = 350;
 
   var force = d3.layout.force()
       .size([width, height])
-      .charge(-400)
-      .linkDistance(40)
+      .charge(-1000)
+      .linkDistance(100)
       .on("tick", tick);
-  //
-  // var drag = force.drag()
-  //     .on("dragstart", dragstart);
+
+  var drag = force.drag()
+      .on("dragstart", dragstart);
 
   var svg = d3.select("body").append("svg")
       .attr("class", "map-display")
@@ -38,9 +38,6 @@ jQuery(function($) {
     return { source: idMappings[link.from.toString()], target: idMappings[link.to.toString()] };
   });
 
-  console.log(nodes);
-  console.log(links);
-
   var graph = {
     nodes: nodes,
     links: links
@@ -55,13 +52,21 @@ jQuery(function($) {
     .enter().append("line")
       .attr("class", "link");
 
+  var playerIds = Object.keys(GAME_STATE.players);
   node = node.data(graph.nodes)
-    .enter().append("circle")
-      .attr("class", "node")
-      .attr("r", 12);
-      // .on("dblclick", dblclick)
-      // .call(drag);
+    .enter().append("g")
+      .attr("class", function(d) { return "node player-" + playerIds.indexOf(d.owner.toString()); })
+      .on("dblclick", dblclick)
+      .call(drag);
 // });
+
+  node.append("circle")
+    .attr("r", 25);
+
+  node.append("text")
+    .attr("text-anchor", "middle")
+    .attr("dy", "4px")
+    .text(function(d) { return d.units });
 
   function tick() {
     link.attr("x1", function(d) { return d.source.x; })
@@ -69,15 +74,14 @@ jQuery(function($) {
       .attr("x2", function(d) { return d.target.x; })
       .attr("y2", function(d) { return d.target.y; });
 
-    node.attr("cx", function(d) { return d.x; })
-      .attr("cy", function(d) { return d.y; });
+    node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
   }
-  //
-  // function dblclick(d) {
-  //   d3.select(this).classed("fixed", d.fixed = false);
-  // }
-  //
-  // function dragstart(d) {
-  //   d3.select(this).classed("fixed", d.fixed = true);
-  // }
+
+  function dblclick(d) {
+    d3.select(this).classed("fixed", d.fixed = false);
+  }
+
+  function dragstart(d) {
+    d3.select(this).classed("fixed", d.fixed = true);
+  }
 });
