@@ -22,4 +22,11 @@ RSpec.describe Event, type: :model do
       expect(event).not_to be_valid
     end
   end
+
+  describe "#game" do
+    it "is required" do
+      event.game = nil
+      expect(event).not_to be_valid
+    end
+  end
 end
