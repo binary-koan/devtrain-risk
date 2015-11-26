@@ -1,10 +1,11 @@
 class PerformAttack
-  include ActiveModel::Errors
+  attr_reader :errors
 
   def initialize(territory_from, territory_to, game_state)
     @territory_from = territory_from
-    @territory_to = territory_to
-    @game_state = game_state
+    @territory_to   = territory_to
+    @game_state     = game_state
+    @errors         = []
   end
 
   def call
@@ -14,8 +15,8 @@ class PerformAttack
       errors.add "Cannt attack your own territory."
     else
       perform_attack(number_of_attackers, number_of_defenders)
-    #update_territories
     end
+    errors.none?
   end
 
   private
@@ -26,7 +27,8 @@ class PerformAttack
 
   def different_players_territory
     from_owner = Action.where(territory: @from_territory).last.territory_owner
-    to_owner = Action.where(territory: @territory_to).last.territory_owner
+    to_owner   = Action.where(territory: @territory_to).last.territory_owner
+
     from_owner != to_owner
   end
 
@@ -34,6 +36,10 @@ class PerformAttack
     if number_of_attackers < 1
       errors.add "Cannot attack with only one unit."
     else
+      attack_event = Event.new(event_type: :attack,
+                               game: game_state.game,
+                               player: territory_from.territory_owner)
+
       attacker_rolls = number_of_attackers.roll_dice
       defender_rolls = number_of_defenders.roll_dice
 
@@ -43,15 +49,33 @@ class PerformAttack
         total + 1 if defender_rolls[index] >= attacker_rolls[index]
       end
 
-      defenders_lost = defender_rolls - successful_defends
+      defenders_lost = defender_rolls.length - successful_defends
+      attackers_lost = successful_defends # derp
 
-      # killed all units, take territory
+        # killed all units, take territory
+      remaining_defenders = @game_state.find_number_of_units(territory_to)
+
       if successful_defends == 0
-
+        if remaining_defenders <= attacker_rolls.length
+          attack_event.actions.new(territory: territory_to,
+                                   territory_owner: territory_to.territory_owner,
+                                   units_difference: -defenders_lost)
+          attack_event.actions.new(territory: territory_to,
+                                   territory_owner: territory_from.territory_owner,
+                                   units_difference: attacker_rolls.length)
+         end
       elsif defenders_lost > 0
-        # remove defenders
-      elsif successful_defends
-        # remove some attackers
+        attack_event.actions.new(territory: territory_to,
+                                 territory_owner: territory_to.territory_owner,
+                                 units_difference: -defenders_lost)
+      elsif attackers_lost > 0
+        attack_event.actions.new(territory: territory_from,
+                                 territory_owner: territory_from.territory_owner,
+                                 units_difference: -attackers_lost)
+      end
+
+      unless attack_event.save
+        errors.add "Failed to save event."
       end
     end
   end

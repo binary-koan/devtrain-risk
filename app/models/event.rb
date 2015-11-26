@@ -3,7 +3,7 @@ class Event < ActiveRecord::Base
 
   belongs_to :game
   belongs_to :player
-  has_many :actions
+  has_many :actions, autosave: true
 
   validates :event_type, presence: true
   validates :game, presence: true

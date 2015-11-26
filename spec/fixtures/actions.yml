@@ -1,0 +1,23 @@
+reinforce_top_left:
+  event: reinforce_top_left
+  territory: territory_top_left
+  territory_owner: player1
+  units_difference: 10
+
+reinforce_top_right:
+  event: reinforce_top_right
+  territory: territory_top_right
+  territory_owner: player1
+  units_difference: 10
+
+reinforce_bottom_right:
+  event: reinforce_bottom_right
+  territory: territory_bottom_right
+  territory_owner: player2
+  units_difference: 10
+
+  reinforce_bottom_left:
+    event: reinforce_bottom_left
+    territory: territory_bottom_left
+    territory_owner: player2
+    units_difference: 10

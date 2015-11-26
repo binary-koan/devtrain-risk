@@ -1,0 +1,11 @@
+territory_top_left:
+  game: game
+
+territory_top_right:
+  game: game
+
+territory_bottom_right:
+  game: game
+
+territory_bottom_left:
+  game: game
