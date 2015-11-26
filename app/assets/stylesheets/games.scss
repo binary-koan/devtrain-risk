@@ -6,11 +6,11 @@
     border-radius: 16px;
 
     &.player-0 {
-      background-color: red;
+      background-color: nth($player-colors, 1);
     }
 
     &.player-1 {
-      background-color: blue;
+      background-color: nth($player-colors, 2);
     }
   }
 }
@@ -32,15 +32,15 @@ svg.map-display {
   }
 
   .node text {
-    fill: #000;
+    fill: #fff;
     font-size: 12px;
   }
 
   .player-0 circle {
-    fill: red;
+    fill: nth($player-colors, 1);
   }
 
   .player-1 circle {
-    fill: blue;
+    fill: nth($player-colors, 2);
   }
 }
