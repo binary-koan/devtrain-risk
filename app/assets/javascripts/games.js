@@ -1,79 +1,114 @@
 jQuery(function($) {
-  var gameDisplay = $('#game-display');
-  if (!gameDisplay.length) {
+  var container = $('#game-display');
+  if (!container) {
     return;
   }
 
-  var BASE_WIDTH = 450;
-  var BASE_HEIGHT = 350;
+  var svg = d3.select(container.get(0)).append("svg");
 
-  var svg = d3.select(gameDisplay.get(0)).append("svg")
-    .attr("class", "map-display")
-    .attr("width", BASE_WIDTH)
-    .attr("height", BASE_HEIGHT);
+  var display = {
+    BASE_WIDTH: 450,
+    BASE_HEIGHT: 350,
 
-  var links = svg.selectAll(".link");
-  var nodes = svg.selectAll(".node");
+    links: svg.selectAll(".link"),
+    nodes: svg.selectAll(".node"),
 
-  var forceLayout = d3.layout.force()
-      .size([BASE_WIDTH, BASE_HEIGHT])
-      .charge(-1000)
-      .linkDistance(100)
-      .on("tick", onForceTick);
+    layout: d3.layout.force(),
+  };
 
-  var dragEvent = forceLayout.drag()
-      .on("dragstart", onDragstart);
+  var state = {};
 
-  function setupLinks(graphLinks) {
-    links = links.data(graphLinks)
-      .enter().append("line")
-        .attr("class", "link");
-  }
+  var setup = {
+    base: function() {
+      svg.attr("class", "map-display")
+        .attr("width", display.BASE_WIDTH)
+        .attr("height", display.BASE_HEIGHT);
 
-  function setupNodes(graphNodes, playerIds) {
-    nodes = nodes.data(graphNodes)
-      .enter().append("g")
-        .attr("class", function(d) { return "node player-" + d.owner })
-        .on("dblclick", onDblclick)
-        .call(dragEvent);
+      display.layout.size([display.BASE_WIDTH, display.BASE_HEIGHT])
+        .charge(-1000)
+        .linkDistance(100);
+    },
 
-    nodes.append("circle")
-      .attr("r", 25);
+    layout: function() {
+      display.layout.nodes(state.territories).links(state.territoryLinks).start();
+    },
 
-    nodes.append("text")
-      .attr("text-anchor", "middle")
-      .attr("dy", "4px")
-      .text(function(d) { return d.units });
-  }
+    links: function() {
+      display.links = display.links.data(state.territoryLinks)
+        .enter().append("line")
+          .attr("class", "link");
+    },
 
-  d3.json(window.location.href + "/territory_info.json", function(error, info) {
+    nodes: function() {
+      display.nodes = display.nodes.data(state.territories)
+        .enter().append("g");
+
+      display.nodes.append("circle")
+        .attr("r", 25);
+
+      display.nodes.append("text")
+        .attr("text-anchor", "middle")
+        .attr("dy", "4px");
+
+      update.nodes();
+    },
+
+    events: function() {
+      function updateGraph() {
+        display.links.attr("x1", function(d) { return d.source.x; })
+          .attr("y1", function(d) { return d.source.y; })
+          .attr("x2", function(d) { return d.target.x; })
+          .attr("y2", function(d) { return d.target.y; });
+
+        display.nodes.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+      }
+
+      function setFixedOff(d) {
+        d3.select(this).classed("fixed", d.fixed = false);
+      }
+
+      function setFixedOn(d) {
+        d3.select(this).classed("fixed", d.fixed = true);
+      }
+
+      var dragEvent = display.layout.drag().on("dragstart", setFixedOn);
+
+      display.layout.on("tick", updateGraph).on("end", function() {
+        display.nodes.each(setFixedOn);
+      });
+
+      display.nodes.on("dblclick", setFixedOff).call(dragEvent);
+    }
+  };
+
+  var update = {
+    nodes: function() {
+      display.nodes.attr("class", function(d) { return "node player-" + d.owner })
+      display.nodes.select("text").text(function(d) { return d.units });
+    }
+  };
+
+  d3.json(window.location.href + "/territory_info.json", function(error, response) {
     if (error) {
       throw error;
     }
 
-    forceLayout
-      .nodes(info.territories)
-      .links(info.territory_links)
-      .start();
+    state = response;
 
-    setupLinks(info.territory_links);
-    setupNodes(info.territories);
+    setup.base();
+    setup.layout();
+    setup.links();
+    setup.nodes();
+    setup.events();
   });
 
-  function onForceTick() {
-    links.attr("x1", function(d) { return d.source.x; })
-      .attr("y1", function(d) { return d.source.y; })
-      .attr("x2", function(d) { return d.target.x; })
-      .attr("y2", function(d) { return d.target.y; });
-
-    nodes.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
-  }
-
-  function onDblclick(d) {
-    d3.select(this).classed("fixed", d.fixed = false);
-  }
-
-  function onDragstart(d) {
-    d3.select(this).classed("fixed", d.fixed = true);
-  }
+  setTimeout(function() {
+    // Pretend a request has come in with:
+    var response = [{ index: 0, units: -2, owner: 0 }, { index: 1, units: 2, owner: 1 }];
+    response.forEach(function(change) {
+      state.territories[change.index].units += change.units;
+      state.territories[change.index].owner = change.owner;
+    });
+    update.nodes();
+  }, 5000);
 });

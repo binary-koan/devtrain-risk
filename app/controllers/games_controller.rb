@@ -22,7 +22,7 @@ class GamesController < ApplicationController
 
     render json: {
       territories: serializer.territories,
-      territory_links: serializer.territory_links,
+      territoryLinks: serializer.territory_links,
       players: serializer.players
     }
   end
