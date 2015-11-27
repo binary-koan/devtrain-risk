@@ -22,7 +22,8 @@ class PerformAttack
   private
 
   def valid_link
-    !TerritoryLink.where(from_territory: @territory_from, to_territory: @territory_to).none?
+    # !TerritoryLink.where(from_territory: @territory_from, to_territory: @territory_to).none?
+    @territory_from.connected_territories.include? @territory_to
   end
 
   def different_players_territory

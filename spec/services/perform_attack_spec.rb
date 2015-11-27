@@ -51,5 +51,22 @@ RSpec.describe PerformAttack do
         expect(service.errors[0]).to be :own_territory
       end
     end
+
+    context "attacking an enemie's territory" do
+      let(:service) do
+        PerformAttack.new(
+          territory_from: territories(:territory_top_left),
+          territory_to:   territories(:territory_bottom_left),
+          game_state:     game_state
+        )
+      end
+
+      # let(:result) { service.call }
+
+      it "indicates that it is a valid move" do
+        service.call
+        puts service.errors
+      end
+    end
   end
 end
