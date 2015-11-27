@@ -9,11 +9,13 @@ gem 'sqlite3'
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
+gem 'sprockets-es6', require: 'sprockets/es6'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 
 source 'https://rails-assets.org' do
   gem 'rails-assets-d3', '~> 3.5'
+  gem 'rails-assets-underscore'
 end
 
 # Use jquery as the JavaScript library
