@@ -1,0 +1,15 @@
+territory_link_top:
+  from_territory: territory_top_left
+  to_territory:  territory_top_right
+
+territory_link_right_side:
+  from_territory: territory_top_right
+  to_territory: territory_bottom_right
+
+territory_link_bottom:
+  from_territory: territory_bottom_right
+  to_territory: territory_bottom_left
+
+territory_link_left_side:
+  from_territory: territory_bottom_left
+  to_territory: territory_top_left
