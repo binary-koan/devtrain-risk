@@ -17,18 +17,18 @@ class PerformAttack
       perform_attack(number_of_attackers, number_of_defenders)
     end
     errors.none?
+    #return event
   end
 
   private
 
   def valid_link
-    # !TerritoryLink.where(from_territory: @territory_from, to_territory: @territory_to).none?
     @territory_from.connected_territories.include? @territory_to
   end
 
   def different_players_territory
-    from_owner = Action.where(territory: @territory_from).last.territory_owner
-    to_owner   = Action.where(territory: @territory_to).last.territory_owner
+    from_owner = @game_state.territory_owner(@territory_from)
+    to_owner   = @game_state.territory_owner(@territory_to)
 
     from_owner != to_owner
   end
@@ -37,41 +37,49 @@ class PerformAttack
     if number_of_attackers < 1
       errors << :cannot_attack_with_one_unit
     else
-      attack_event = Event.new(event_type: :attack,
-                               game: game_state.game,
-                               player: territory_from.territory_owner)
+      attack_event = Event.new(
+        event_type: :attack,
+        game: @game_state.game,
+        player: @game_state.territory_owner(@territory_from)
+      )
 
-      attacker_rolls = number_of_attackers.roll_dice
-      defender_rolls = number_of_defenders.roll_dice
+      attacker_rolls = roll_dice(number_of_attackers)
+      defender_rolls = roll_dice(number_of_defenders)
 
       attacker_rolls = attacker_rolls.first(defender_rolls.length)
 
-      successful_defends = defender_rolls.inject(0).with_index do |total, index, roll|
-        total + 1 if defender_rolls[index] >= attacker_rolls[index]
+      successful_defends = 0
+
+      byebug
+
+      defender_rolls.each.with_index do |roll, index|
+        successful_defends += 1 if defender_rolls[index] >= attacker_rolls[index]
       end
+
+      byebug
 
       defenders_lost = defender_rolls.length - successful_defends
       attackers_lost = successful_defends # derp
 
         # killed all units, take territory
-      remaining_defenders = @game_state.find_number_of_units(territory_to)
+      remaining_defenders = @game_state.units_on_territory(@territory_to)
 
       if successful_defends == 0
         if remaining_defenders <= attacker_rolls.length
-          attack_event.actions.new(territory: territory_to,
-                                   territory_owner: territory_to.territory_owner,
+          attack_event.actions.new(territory: @territory_to,
+                                   territory_owner: @game_state.territory_owner(@territory_to),
                                    units_difference: -defenders_lost)
-          attack_event.actions.new(territory: territory_to,
-                                   territory_owner: territory_from.territory_owner,
+          attack_event.actions.new(territory: @territory_to,
+                                   territory_owner: @game_state.territory_owner(@territory_from),
                                    units_difference: attacker_rolls.length)
          end
       elsif defenders_lost > 0
-        attack_event.actions.new(territory: territory_to,
-                                 territory_owner: territory_to.territory_owner,
+        attack_event.actions.new(territory: @territory_to,
+                                 territory_owner: @game_state.territory_owner(@territory_to),
                                  units_difference: -defenders_lost)
       elsif attackers_lost > 0
-        attack_event.actions.new(territory: territory_from,
-                                 territory_owner: territory_from.territory_owner,
+        attack_event.actions.new(territory: @territory_from,
+                                 territory_owner: @game_state.territory_owner(@territory_from),
                                  units_difference: -attackers_lost)
       end
 
@@ -82,14 +90,24 @@ class PerformAttack
   end
 
   def number_of_attackers
-    @game_state.find_number_of_units(territory_from) - 1
+    units = @game_state.units_on_territory(@territory_from) - 1
+    if units > 3
+      3
+    else
+      units
+    end
   end
 
   def number_of_defenders
-    @game_state.find_number_of_units(territory_to)
+    units = @game_state.units_on_territory(@territory_to)
+    if units > 2
+      2
+    else
+      units
+    end
   end
 
-  def roll_dice
-    times.map { rand(1..6) }.sort
+  def roll_dice(rolls)
+    rolls.times.map { rand(1..6) }.sort.reverse
   end
 end

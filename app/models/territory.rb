@@ -4,9 +4,9 @@ class Territory < ActiveRecord::Base
   validates :game, presence: true
 
   def connected_territories
-    links_to = TerritoryLink.where(from_territory: self).pluck(:to_territory)
-    links_from = TerritoryLink.where(to_territory: self).pluck(:from_territory)
+    links_to = TerritoryLink.where(from_territory: self).pluck(:to_territory_id)
+    links_from = TerritoryLink.where(to_territory: self).pluck(:from_territory_id)
 
-    links_to + links_from
+    Territory.find(links_to + links_from)
   end
 end
