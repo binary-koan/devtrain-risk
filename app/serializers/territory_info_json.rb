@@ -1,4 +1,4 @@
-class GameStateJson
+class TerritoryInfoJson
   def initialize(game_state)
     @game_state = game_state
     @game = game_state.game
@@ -22,10 +22,6 @@ class GameStateJson
     TerritoryLink.where(from_territory: @game.territories).map do |link|
       { source: indexes[link.from_territory.id], target: indexes[link.to_territory.id] }
     end
-  end
-
-  def players
-    @game.players.select("id, name").to_a.map(&:serializable_hash)
   end
 
   private

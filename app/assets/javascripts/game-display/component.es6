@@ -49,6 +49,7 @@ GameDisplay.component.actionManager = ({ applyActions }) => {
   function _doRequest(data) {
     //TODO error handling
     $.post(window.location.href + "/event.json", data).done(response => {
+      //TODO error handling
       applyActions(response.actions);
     });
   }

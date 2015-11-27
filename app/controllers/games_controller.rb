@@ -18,12 +18,11 @@ class GamesController < ApplicationController
 
   def territory_info
     state = GameState.new(@game)
-    serializer = GameStateJson.new(state)
+    serializer = TerritoryInfoJson.new(state)
 
     render json: {
       territories: serializer.territories,
-      territoryLinks: serializer.territory_links,
-      players: serializer.players
+      territoryLinks: serializer.territory_links
     }
   end
 
