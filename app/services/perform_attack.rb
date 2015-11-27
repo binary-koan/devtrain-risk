@@ -9,6 +9,8 @@ class PerformAttack
   end
 
   def call
+    @attack_event = nil # ask about this
+
     if !valid_link
       errors << :no_link
     elsif !different_players_territory
@@ -16,8 +18,7 @@ class PerformAttack
     else
       perform_attack(number_of_attackers, number_of_defenders)
     end
-    errors.none?
-    #return event
+    @attack_event
   end
 
   private
@@ -34,15 +35,15 @@ class PerformAttack
   end
 
   def perform_attack(number_of_attackers, number_of_defenders)
+
     if number_of_attackers < 1
       errors << :cannot_attack_with_one_unit
     else
-      attack_event = Event.new(
+      @attack_event = Event.new(
         event_type: :attack,
         game: @game_state.game,
         player: @game_state.territory_owner(@territory_from)
       )
-
       attacker_rolls = roll_dice(number_of_attackers)
       defender_rolls = roll_dice(number_of_defenders)
 
@@ -50,13 +51,9 @@ class PerformAttack
 
       successful_defends = 0
 
-      byebug
-
       defender_rolls.each.with_index do |roll, index|
         successful_defends += 1 if defender_rolls[index] >= attacker_rolls[index]
       end
-
-      byebug
 
       defenders_lost = defender_rolls.length - successful_defends
       attackers_lost = successful_defends # derp
@@ -66,24 +63,32 @@ class PerformAttack
 
       if successful_defends == 0
         if remaining_defenders <= attacker_rolls.length
-          attack_event.actions.new(territory: @territory_to,
-                                   territory_owner: @game_state.territory_owner(@territory_to),
-                                   units_difference: -defenders_lost)
-          attack_event.actions.new(territory: @territory_to,
-                                   territory_owner: @game_state.territory_owner(@territory_from),
-                                   units_difference: attacker_rolls.length)
+          @attack_event.actions.new(
+            territory:        @territory_to,
+            territory_owner:  @game_state.territory_owner(@territory_to),
+            units_difference: -defenders_lost
+          )
+          @attack_event.actions.new(
+            territory:        @territory_to,
+            territory_owner:  @game_state.territory_owner(@territory_from),
+            units_difference: attacker_rolls.length
+          )
          end
       elsif defenders_lost > 0
-        attack_event.actions.new(territory: @territory_to,
-                                 territory_owner: @game_state.territory_owner(@territory_to),
-                                 units_difference: -defenders_lost)
+        @attack_event.actions.new(
+          territory:        @territory_to,
+          territory_owner:  @game_state.territory_owner(@territory_to),
+          units_difference: -defenders_lost
+        )
       elsif attackers_lost > 0
-        attack_event.actions.new(territory: @territory_from,
-                                 territory_owner: @game_state.territory_owner(@territory_from),
-                                 units_difference: -attackers_lost)
+        @attack_event.actions.new(
+          territory:        @territory_from,
+          territory_owner:  @game_state.territory_owner(@territory_from),
+          units_difference: -attackers_lost
+        )
       end
 
-      unless attack_event.save
+      unless @attack_event.save
         errors << :failed_save
       end
     end
