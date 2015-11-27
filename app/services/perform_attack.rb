@@ -1,7 +1,7 @@
 class PerformAttack
   attr_reader :errors
 
-  def initialize(territory_from, territory_to, game_state)
+  def initialize(territory_from:, territory_to:, game_state:)
     @territory_from = territory_from
     @territory_to   = territory_to
     @game_state     = game_state
@@ -10,9 +10,9 @@ class PerformAttack
 
   def call
     if !valid_link
-      errors.add "No link between these territories."
+      errors << :no_link
     elsif !different_players_territory
-      errors.add "Cannt attack your own territory."
+      errors << :own_territory
     else
       perform_attack(number_of_attackers, number_of_defenders)
     end
@@ -26,7 +26,7 @@ class PerformAttack
   end
 
   def different_players_territory
-    from_owner = Action.where(territory: @from_territory).last.territory_owner
+    from_owner = Action.where(territory: @territory_from).last.territory_owner
     to_owner   = Action.where(territory: @territory_to).last.territory_owner
 
     from_owner != to_owner
@@ -34,7 +34,7 @@ class PerformAttack
 
   def perform_attack(number_of_attackers, number_of_defenders)
     if number_of_attackers < 1
-      errors.add "Cannot attack with only one unit."
+      errors << :cannot_attack_with_one_unit
     else
       attack_event = Event.new(event_type: :attack,
                                game: game_state.game,
@@ -75,7 +75,7 @@ class PerformAttack
       end
 
       unless attack_event.save
-        errors.add "Failed to save event."
+        errors << :failed_save
       end
     end
   end
