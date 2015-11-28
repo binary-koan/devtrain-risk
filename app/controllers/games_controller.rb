@@ -27,27 +27,46 @@ class GamesController < ApplicationController
   end
 
   def event
-    #TODO
-    # service = PerformAttack.new
-    # event = service.call
-    # if event
-    #   #TODO serializer
-    #   render json: { actions: event.actions.select("territory_id, territory_owner_id, units_difference") }
-    # else
-    #   render json: { errors: service.errors }
-    # end
+    event = handle_event
 
-    render json: {
-      actions: [
-        { territoryIndex: 0, units: -2, ownerIndex: 0 },
-        { territoryIndex: 1, units: 2, ownerIndex: 1 }
-      ]
-    }
+    if event
+      #TODO serializer
+      json = event.actions.map do |action|
+        {
+          territoryIndex: @game.territories.find_index(action.territory),
+          ownerIndex: @game.players.find_index(action.territory_owner),
+          units: action.units_difference
+        }
+      end
+      render json: { actions: json }
+    else
+      render json: { errors: service.errors }
+    end
   end
 
   private
 
   def assign_game
     @game = Game.find(params[:id])
+  end
+
+  def handle_event
+    case params[:type]
+    when "attack"
+      perform_attack
+    end
+  end
+
+  def perform_attack
+    service = PerformAttack.new(attack_params)
+    service.call
+  end
+
+  def attack_params
+    {
+      territory_from: Territory.find(params[:from].to_i),
+      territory_to: Territory.find(params[:to].to_i),
+      game_state: GameState.new(@game)
+    }
   end
 end
