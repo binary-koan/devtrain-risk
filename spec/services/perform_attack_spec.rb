@@ -80,8 +80,7 @@ RSpec.describe PerformAttack do
         context "the attacker only has one unit left" do
           before do
             allow(service).to receive(:rand).and_return 6
-            service.call
-            service.call
+            2.times { service.call }
           end
 
           subject { service.call }
@@ -92,6 +91,18 @@ RSpec.describe PerformAttack do
 
           it "returns a cannot attack with one unit error" do
             expect(service.errors[0]).to be :cannot_attack_with_one_unit
+          end
+        end
+
+        context "the defender has two or fewer units" do
+          pending "Implement this"
+        end
+
+        context "the defender loses units" do
+          pending "implment this"
+
+          context "the defender has lost all their units" do
+            pending "implment this"
           end
         end
 
