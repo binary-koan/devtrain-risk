@@ -48,7 +48,7 @@ RSpec.describe PerformAttack do
         expect(service.errors[0]).to be :own_territory
       end
     end
-
+    
     context "attacking an enemie's territory" do
       context "when the territory isn't a neighbour" do
         let(:service) { create_attack(:territory_top_left, :territory_bottom_right) }
@@ -75,8 +75,26 @@ RSpec.describe PerformAttack do
 
         it "has no errors" do
           expect(service.errors).to be_none
-
         end
+
+        context "the attacker only has one unit left" do
+          before do
+            allow(service).to receive(:rand).and_return 6
+            service.call
+            service.call
+          end
+
+          subject { service.call }
+
+          it { is_expected.to be nil }
+
+          before { service.call }
+
+          it "returns a cannot attack with one unit error" do
+            expect(service.errors[0]).to be :cannot_attack_with_one_unit
+          end
+        end
+
       end
     end
   end

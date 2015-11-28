@@ -35,7 +35,6 @@ class PerformAttack
   end
 
   def perform_attack(number_of_attackers, number_of_defenders)
-
     if number_of_attackers < 1
       errors << :cannot_attack_with_one_unit
     else
