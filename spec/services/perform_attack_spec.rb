@@ -50,6 +50,20 @@ RSpec.describe PerformAttack do
     end
 
     context "attacking an enemie's territory" do
+      context "when the territory isn't a neighbour" do
+        let(:service) { create_attack(:territory_top_left, :territory_bottom_right) }
+
+        subject { service.call }
+
+        it { is_expected.to be nil }
+
+        before { service.call }
+
+        it "returns a no link error" do
+          expect(service.errors[0]).to be :no_link
+        end
+      end
+
       context "the territory is a neighbour" do
         let(:service) { create_attack(:territory_top_left, :territory_bottom_left) }
 
@@ -62,22 +76,6 @@ RSpec.describe PerformAttack do
         it "has no errors" do
           expect(service.errors).to be_none
 
-        end
-      end
-
-      # expect(service).to receive(:rand).and_return 6,5,4,3,2
-
-      context "when the territory isn't a neighbour" do
-        let(:service) { create_attack(:territory_top_left, :territory_bottom_right) }
-
-        subject { service.call }
-
-        it { is_expected.to be nil }
-
-        before { service.call }
-
-        it "returns a no link error" do
-          expect(service.errors[0]).to be :no_link
         end
       end
     end
