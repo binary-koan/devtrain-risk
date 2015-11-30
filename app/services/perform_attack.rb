@@ -51,10 +51,6 @@ class PerformAttack
       end
 
       create_attack_actions(attacker_rolls, defender_rolls, successful_defends)
-
-      unless @attack_event.save
-        errors << :failed_save
-      end
     end
   end
 
@@ -71,42 +67,6 @@ class PerformAttack
       remove_defenders(defenders_lost) if defenders_lost > 0
       remove_attackers(attackers_lost) if attackers_lost > 0
     end
-  end
-
-  def remove_attackers(attackers_lost)
-    create_attack_action(
-      @territory_from,
-      @game_state.territory_owner(@territory_from),
-      -attackers_lost
-    )
-  end
-
-  def remove_defenders(defenders_lost)
-    create_attack_action(
-      @territory_to,
-      @game_state.territory_owner(@territory_to),
-      -defenders_lost
-    )
-  end
-
-  def take_over_territory(defenders_lost, attacker_rolls)
-    remove_defenders(defenders_lost)
-
-    puts "taking over"
-
-    create_attack_action(
-      @territory_to,
-      @game_state.territory_owner(@territory_from),
-      attacker_rolls.length
-    )
-  end
-
-  def create_attack_event
-    @attack_event = Event.create!(
-      event_type: :attack,
-      game: @game_state.game,
-      player: @game_state.territory_owner(@territory_from)
-    )
   end
 
   def number_of_attackers
@@ -131,7 +91,49 @@ class PerformAttack
     rolls.times.map { rand(1..6) }.sort.reverse
   end
 
-  def create_attack_action(territory, territory_owner, units_difference)
+  def take_over_territory(defenders_lost, attacker_rolls)
+    remove_defenders(defenders_lost)
+
+    #TODO this final action should be a reinforce not an attack
+
+    create_action(
+      @territory_to,
+      @game_state.territory_owner(@territory_from),
+      attacker_rolls.length
+    )
+
+    create_action(
+      @territory_from,
+      @game_state.territory_owner(@territory_from),
+      -attacker_rolls.length
+    )
+  end
+
+  def remove_attackers(attackers_lost)
+    create_action(
+      @territory_from,
+      @game_state.territory_owner(@territory_from),
+      -attackers_lost
+    )
+  end
+
+  def remove_defenders(defenders_lost)
+    create_action(
+      @territory_to,
+      @game_state.territory_owner(@territory_to),
+      -defenders_lost
+    )
+  end
+
+  def create_attack_event
+    @attack_event = Event.create!(
+      event_type: :attack,
+      game: @game_state.game,
+      player: @game_state.territory_owner(@territory_from)
+    )
+  end
+
+  def create_action(territory, territory_owner, units_difference)
     @attack_event.actions.create!(
       territory:        territory,
       territory_owner:  territory_owner,

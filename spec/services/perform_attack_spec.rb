@@ -19,7 +19,6 @@ RSpec.describe PerformAttack do
 
     context "attacking and defending the same territory" do
       let(:service) { create_attack(:territory_top_left, :territory_top_left) }
-
       let(:result) { service.call }
 
       it "indicates that it is not a valid move" do
@@ -35,7 +34,6 @@ RSpec.describe PerformAttack do
 
     context "attacking players own territory" do
       let(:service) { create_attack(:territory_top_left, :territory_top_right) }
-
       let(:result) { service.call }
 
       it "indicates that it is not a valid move" do
@@ -66,7 +64,6 @@ RSpec.describe PerformAttack do
 
       context "the territory is a neighbour" do
         let(:service) { create_attack(:territory_top_left, :territory_bottom_left) }
-
         subject { service.call }
 
         it { is_expected.to_not be nil }
@@ -74,6 +71,19 @@ RSpec.describe PerformAttack do
         it "has no errors" do
           service.call
           expect(service.errors).to be_none
+        end
+
+        context "the attackers and defenders rolls match" do
+          before do
+            allow(service).to receive(:rand).and_return 6
+          end
+
+          it "removes 2 attackers" do
+            action = service.call.actions[0]
+            units_lost = action.units_difference
+
+            expect(units_lost).to eq -2
+          end
         end
 
         context "the attacker only has one unit left" do
@@ -93,18 +103,38 @@ RSpec.describe PerformAttack do
           end
         end
 
-        context "the defender only has one unit" do
-          pending "implment this"
-        end
-
         context "the defender loses units" do
-          pending "implment this"
+          before do
+            expect(service).to receive(:rand).and_return 1, 1, 6, 6, 6
+          end
 
-          context "the defender has lost all their units" do
-            pending "implment this"
+          it "loses 2 defenders" do
+            action = service.call.actions[0]
+            units_lost = action.units_difference
+
+            expect(units_lost).to eq -2
           end
         end
 
+        context "the defender has lost all their units" do
+          before do
+            expect(service).to receive(:rand).and_return 1, 1, 6, 6, 6, 1, 1, 6, 6, 6
+            2.times { service.call }
+          end
+
+          it "loses the territory to the attacker" do
+            expect(service).to receive(:rand).and_return 1, 6, 6, 6
+            event = service.call
+
+            remove_defenders = event.actions[0]
+            reinforce_territory = event.actions[1]
+            remove_from_attacking_territory = event.actions[2]
+
+            expect(remove_defenders.units_difference).to eq -1
+            expect(reinforce_territory.units_difference).to eq 1
+            expect(remove_from_attacking_territory.units_difference).to eq -1
+          end
+        end
       end
     end
   end
