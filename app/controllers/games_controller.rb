@@ -1,5 +1,5 @@
 class GamesController < ApplicationController
-  before_action :assign_game, only: [:show, :territory_info, :event]
+  before_action :assign_game, only: [:show, :state, :event]
 
   def new
   end
@@ -16,14 +16,11 @@ class GamesController < ApplicationController
     @state = GameState.new(@game)
   end
 
-  def territory_info
+  def state
     state = GameState.new(@game)
-    serializer = TerritoryInfoJson.new(state)
+    serializer = GameStateJson.new(state)
 
-    render json: {
-      territories: serializer.territories,
-      territoryLinks: serializer.territory_links
-    }
+    render json: { state: serializer.json }
   end
 
   def event
@@ -39,17 +36,9 @@ class GamesController < ApplicationController
 
   def handle_event
     service = PerformAttack.new(attack_params)
-    event = service.call
 
-    if event
-      actions = event.actions.map do |action|
-        {
-          territoryIndex: @game.territories.find_index(action.territory),
-          ownerIndex: @game.players.find_index(action.territory_owner),
-          units: action.units_difference
-        }
-      end
-      { actions: actions }
+    if service.call
+      { errors: false }
     else
       { errors: service.errors }
     end

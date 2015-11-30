@@ -6,36 +6,21 @@ GameDisplay.component = (container) => {
 
   let { performAction } = GameDisplay.component.actionManager({ applyActions });
 
-  function _patchState(actions) {
-    console.log(actions);
-    actions.forEach(action => {
-      state.territories[action.territoryIndex].units += action.units;
-      state.territories[action.territoryIndex].owner = action.ownerIndex;
+  function _updateState(callback) {
+    $.get(window.location.href + "/state.json").done((response) => {
+      state = response.state;
+      callback(response);
     });
   }
 
   function applyActions(actions) {
-    _patchState(actions);
-    view.update(state);
+    _updateState(_.partial(view.update, state));
   }
 
   function start() {
     //TODO error handling
-    $.get(window.location.href + "/territory_info.json").done((response) => {
-      state = response;
-      view = GameDisplay.view({ container, state, performAction });
-    });
+    _updateState(() => view = GameDisplay.view({ container, state, performAction }));
   }
-
-  // setTimeout(function() {
-  //   // Pretend a request has come in with:
-  //   var response = [{ index: 0, units: -2, owner: 0 }, { index: 1, units: 2, owner: 1 }];
-  //   response.forEach(function(change) {
-  //     state.territories[change.index].units += change.units;
-  //     state.territories[change.index].owner = change.owner;
-  //   });
-  //   view.update();
-  // }, 5000);
 
   return { start };
 };
@@ -48,10 +33,7 @@ GameDisplay.component.actionManager = ({ applyActions }) => {
 
   function _doRequest(data) {
     //TODO error handling
-    $.post(window.location.href + "/event.json", data).done(response => {
-      //TODO error handling
-      applyActions(response.actions);
-    });
+    $.post(window.location.href + "/event.json", data).done(applyActions);
   }
 
   function _finishAction(node) {

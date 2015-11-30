@@ -17,7 +17,8 @@ GameDisplay.view = ({ container, state, performAction }) => {
     nodes.select("text").text(function(d) { return d.units });
   }
 
-  function update() {
+  function update(newState) {
+    state = newState;
     _updateNodeContent();
   }
 

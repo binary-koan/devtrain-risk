@@ -1,8 +1,19 @@
-class TerritoryInfoJson
+class GameStateJson
   def initialize(game_state)
     @game_state = game_state
     @game = game_state.game
   end
+
+  def json
+    {
+      territories: territories,
+      territoryLinks: territory_links,
+      players: @game.players.select("id, name"),
+      currentPlayer: @game.players.find_index(@game_state.current_player)
+    }
+  end
+
+  private
 
   def territories
     indexes = ids_to_indexes(@game.players)
@@ -23,8 +34,6 @@ class TerritoryInfoJson
       { source: indexes[link.from_territory.id], target: indexes[link.to_territory.id] }
     end
   end
-
-  private
 
   def ids_to_indexes(model)
     Hash[model.pluck(:id).each.with_index.to_a]
