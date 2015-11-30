@@ -23,17 +23,21 @@ svg.map-display {
 
   .node {
     cursor: pointer;
-  }
 
-  .node circle {
-    fill: #ccc;
-    stroke: #000;
-    stroke-width: 1.5px;
-  }
+    circle {
+      fill: #ccc;
+      stroke: #000;
+      stroke-width: 1.5px;
+    }
 
-  .node text {
-    fill: #fff;
-    font-size: 12px;
+    text {
+      fill: #fff;
+      font-size: 12px;
+    }
+
+    &.active circle {
+      stroke: yellow;
+    }
   }
 
   .player-0 circle {

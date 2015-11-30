@@ -13,8 +13,8 @@ GameDisplay.boardView = ({ $container, state, onActionPerformed }) => {
   GameDisplay.boardView.enableDragging({ layout, nodes });
 
   function _updateNodeContent() {
-    nodes.attr("class", function(d) { return "node player-" + d.owner })
-    nodes.select("text").text(function(d) { return d.units });
+    nodes.attr("class", d => `node player-${d.owner}`)
+    nodes.select("text").text(d => d.units);
   }
 
   function update(newState) {
@@ -51,15 +51,18 @@ GameDisplay.boardView = ({ $container, state, onActionPerformed }) => {
   // Events
 
   layout.on("tick", () => {
-    links.attr("x1", function(d) { return d.source.x; })
-      .attr("y1", function(d) { return d.source.y; })
-      .attr("x2", function(d) { return d.target.x; })
-      .attr("y2", function(d) { return d.target.y; });
+    links.attr("x1", d => d.source.x)
+      .attr("y1", d => d.source.y)
+      .attr("x2", d => d.target.x)
+      .attr("y2", d => d.target.y);
 
-    nodes.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+    nodes.attr("transform", d => `translate(${d.x},${d.y})`);
   });
 
-  nodes.on("click", onActionPerformed);
+  nodes.on("click", function(d) {
+    d3.select(this).classed("active", true);
+    onActionPerformed(d);
+  });
 
   return { update };
 };

@@ -50,14 +50,13 @@ GameDisplay.component.actionManager = ({ onActionSucceeded }) => {
 
   function _finishAction(node) {
     if (node.id !== activeNodeId) {
-      console.log("doing json");
       _doRequest({ type: "attack", from: activeNodeId, to: node.id });
     }
 
     currentState = ACTION_STATE.NONE;
   }
 
-  function performAction(node) {
+  function onActionPerformed(node) {
     if (currentState === ACTION_STATE.STARTED) {
       _finishAction(node);
     }
@@ -67,5 +66,5 @@ GameDisplay.component.actionManager = ({ onActionSucceeded }) => {
     }
   }
 
-  return { performAction };
+  return { onActionPerformed };
 }
