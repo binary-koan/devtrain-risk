@@ -18,7 +18,6 @@ GameDisplay.playerView = ({ $container, state, onTurnEnded }) => {
   let $endTurnButton = $("<button>").text("End turn").appendTo($container);
 
   function update(newState) {
-    console.log(newState);
     state = newState;
 
     $container.find(".current-player").text(state.players[state.currentPlayer].name + "'s turn");
