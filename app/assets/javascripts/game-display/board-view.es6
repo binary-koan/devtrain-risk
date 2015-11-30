@@ -1,16 +1,16 @@
 window.GameDisplay = window.GameDisplay || {};
 
-GameDisplay.view = ({ container, state, performAction }) => {
+GameDisplay.boardView = ({ $container, state, performAction }) => {
   const BASE_WIDTH = 450;
   const BASE_HEIGHT = 350;
 
-  const svg = d3.select(container).append("svg");
+  const svg = d3.select($container.get(0)).append("svg");
   const links = svg.selectAll(".link").data(state.territoryLinks).enter().append("line");
   const nodes = svg.selectAll(".node").data(state.territories).enter().append("g");
 
   const layout = d3.layout.force();
 
-  GameDisplay.view.enableDragging({ layout, nodes });
+  GameDisplay.boardView.enableDragging({ layout, nodes });
 
   function _updateNodeContent() {
     nodes.attr("class", function(d) { return "node player-" + d.owner })
@@ -64,7 +64,7 @@ GameDisplay.view = ({ container, state, performAction }) => {
   return { update };
 };
 
-GameDisplay.view.enableDragging = ({ layout, nodes }) => {
+GameDisplay.boardView.enableDragging = ({ layout, nodes }) => {
   const drag = layout.drag();
 
   function _setFixedOn(d) {
@@ -77,5 +77,4 @@ GameDisplay.view.enableDragging = ({ layout, nodes }) => {
 
   drag.on("dragstart", _setFixedOn);
   nodes.on("dblclick", _setFixedOff).call(drag);
-  layout.on("end", _.once(() => nodes.each(_setFixedOn)));
 };

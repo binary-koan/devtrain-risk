@@ -1,6 +1,6 @@
 jQuery(function($) {
-  var container = document.querySelector("#game-display");
-  if (container) {
-    GameDisplay.component(container).start();
+  var $container = $("#game-display");
+  if ($container.length) {
+    GameDisplay.component($container).start();
   }
 });
