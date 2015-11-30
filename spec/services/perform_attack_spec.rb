@@ -1,4 +1,4 @@
-require "spec_helper"
+require "rails_helper"
 require_relative "../../app/concepts/game_state"
 require_relative "../../app/services/perform_attack"
 
@@ -48,7 +48,7 @@ RSpec.describe PerformAttack do
         expect(service.errors[0]).to be :own_territory
       end
     end
-    
+
     context "attacking an enemie's territory" do
       context "when the territory isn't a neighbour" do
         let(:service) { create_attack(:territory_top_left, :territory_bottom_right) }
