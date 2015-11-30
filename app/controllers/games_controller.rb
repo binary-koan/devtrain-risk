@@ -27,21 +27,8 @@ class GamesController < ApplicationController
   end
 
   def event
-    event = handle_event
-
-    if event
-      #TODO serializer
-      json = event.actions.map do |action|
-        {
-          territoryIndex: @game.territories.find_index(action.territory),
-          ownerIndex: @game.players.find_index(action.territory_owner),
-          units: action.units_difference
-        }
-      end
-      render json: { actions: json }
-    else
-      render json: { errors: service.errors }
-    end
+    json = handle_event
+    render json: json
   end
 
   private
@@ -51,15 +38,21 @@ class GamesController < ApplicationController
   end
 
   def handle_event
-    case params[:type]
-    when "attack"
-      perform_attack
-    end
-  end
-
-  def perform_attack
     service = PerformAttack.new(attack_params)
-    service.call
+    event = service.call
+
+    if event
+      actions = event.actions.map do |action|
+        {
+          territoryIndex: @game.territories.find_index(action.territory),
+          ownerIndex: @game.players.find_index(action.territory_owner),
+          units: action.units_difference
+        }
+      end
+      { actions: actions }
+    else
+      { errors: service.errors }
+    end
   end
 
   def attack_params
