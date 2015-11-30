@@ -38,15 +38,11 @@ class PerformAttack
     if number_of_attackers < 1
       errors << :cannot_attack_with_one_unit
     else
-      @attack_event = Event.new(
-        event_type: :attack,
-        game: @game_state.game,
-        player: @game_state.territory_owner(@territory_from)
-      )
-      attacker_rolls = roll_dice(number_of_attackers)
-      defender_rolls = roll_dice(number_of_defenders)
+      @attack_event = create_attack_event
 
-      attacker_rolls = attacker_rolls.first(defender_rolls.length)
+      defender_rolls = roll_dice(number_of_defenders)
+      attacker_rolls = roll_dice(number_of_attackers).first(defender_rolls.length)
+      defender_rolls = defender_rolls.first(attacker_rolls.length)
 
       successful_defends = 0
 
@@ -54,43 +50,63 @@ class PerformAttack
         successful_defends += 1 if defender_rolls[index] >= attacker_rolls[index]
       end
 
-      defenders_lost = defender_rolls.length - successful_defends
-      attackers_lost = successful_defends # derp
-
-        # killed all units, take territory
-      remaining_defenders = @game_state.units_on_territory(@territory_to)
-
-      if successful_defends == 0
-        if remaining_defenders <= attacker_rolls.length
-          @attack_event.actions.new(
-            territory:        @territory_to,
-            territory_owner:  @game_state.territory_owner(@territory_to),
-            units_difference: -defenders_lost
-          )
-          @attack_event.actions.new(
-            territory:        @territory_to,
-            territory_owner:  @game_state.territory_owner(@territory_from),
-            units_difference: attacker_rolls.length
-          )
-         end
-      elsif defenders_lost > 0
-        @attack_event.actions.new(
-          territory:        @territory_to,
-          territory_owner:  @game_state.territory_owner(@territory_to),
-          units_difference: -defenders_lost
-        )
-      elsif attackers_lost > 0
-        @attack_event.actions.new(
-          territory:        @territory_from,
-          territory_owner:  @game_state.territory_owner(@territory_from),
-          units_difference: -attackers_lost
-        )
-      end
+      create_attack_actions(attacker_rolls, defender_rolls, successful_defends)
 
       unless @attack_event.save
         errors << :failed_save
       end
     end
+  end
+
+  def create_attack_actions(attacker_rolls, defender_rolls, successful_defends)
+    defenders_lost = defender_rolls.length - successful_defends
+    attackers_lost = successful_defends # derp
+
+    # killed all units, take territory
+    remaining_defenders = @game_state.units_on_territory(@territory_to)
+
+    if successful_defends == 0 && remaining_defenders <= attacker_rolls.length
+      take_over_territory(defenders_lost, attacker_rolls)
+    else
+      remove_defenders(defenders_lost) if defenders_lost > 0
+      remove_attackers(attackers_lost) if attackers_lost > 0
+    end
+  end
+
+  def remove_attackers(attackers_lost)
+    create_attack_action(
+      @territory_from,
+      @game_state.territory_owner(@territory_from),
+      -attackers_lost
+    )
+  end
+
+  def remove_defenders(defenders_lost)
+    create_attack_action(
+      @territory_to,
+      @game_state.territory_owner(@territory_to),
+      -defenders_lost
+    )
+  end
+
+  def take_over_territory(defenders_lost, attacker_rolls)
+    remove_defenders(defenders_lost)
+
+    puts "taking over"
+
+    create_attack_action(
+      @territory_to,
+      @game_state.territory_owner(@territory_from),
+      attacker_rolls.length
+    )
+  end
+
+  def create_attack_event
+    @attack_event = Event.create!(
+      event_type: :attack,
+      game: @game_state.game,
+      player: @game_state.territory_owner(@territory_from)
+    )
   end
 
   def number_of_attackers
@@ -113,5 +129,13 @@ class PerformAttack
 
   def roll_dice(rolls)
     rolls.times.map { rand(1..6) }.sort.reverse
+  end
+
+  def create_attack_action(territory, territory_owner, units_difference)
+    @attack_event.actions.create!(
+      territory:        territory,
+      territory_owner:  territory_owner,
+      units_difference: units_difference
+    )
   end
 end

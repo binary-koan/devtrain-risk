@@ -71,9 +71,8 @@ RSpec.describe PerformAttack do
 
         it { is_expected.to_not be nil }
 
-        before { service.call }
-
         it "has no errors" do
+          service.call
           expect(service.errors).to be_none
         end
 
@@ -94,8 +93,8 @@ RSpec.describe PerformAttack do
           end
         end
 
-        context "the defender has two or fewer units" do
-          pending "Implement this"
+        context "the defender only has one unit" do
+          pending "implment this"
         end
 
         context "the defender loses units" do
