@@ -4,7 +4,7 @@ RSpec.describe Event, type: :model do
   let(:event) { create(:event) }
 
   describe "#event_type" do
-    %i{reinforce attack fortify end_turn}.each do |type|
+    %i{reinforce attack fortify start_turn}.each do |type|
       it "can be #{type}" do
         event.event_type = type
         expect(event).to be_valid

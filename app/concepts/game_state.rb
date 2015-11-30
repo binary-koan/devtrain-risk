@@ -5,6 +5,10 @@ class GameState
     @game = game
   end
 
+  def current_player
+    @game.events.start_turn.last.player
+  end
+
   def owned_territories(player)
     game.territories.select do |territory|
       territory_owner(territory) == player

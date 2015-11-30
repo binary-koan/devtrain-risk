@@ -37,5 +37,10 @@ RSpec.describe CreateGame do
         expect(game_state.units_on_territory(territory)).to eq 10
       end
     end
+
+    it "creates a start turn event for the initial player" do
+      expect(game.events.last.event_type).to eq "start_turn"
+      expect(game_state.current_player).to eq game.players.first
+    end
   end
 end

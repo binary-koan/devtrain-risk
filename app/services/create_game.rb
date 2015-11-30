@@ -13,7 +13,7 @@ class CreateGame
       create_territories
       create_players
       assign_players_to_territories
-      assign_units_to_players
+      start_game
       @game
     end
   end
@@ -48,7 +48,7 @@ class CreateGame
     end
   end
 
-  def assign_units_to_players
-
+  def start_game
+    @game.events.create!(player: @game.players.first, event_type: :start_turn)
   end
 end

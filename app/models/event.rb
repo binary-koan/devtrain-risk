@@ -1,5 +1,5 @@
 class Event < ActiveRecord::Base
-  enum event_type: %i{reinforce attack fortify end_turn}
+  enum event_type: %i{reinforce attack fortify start_turn}
 
   belongs_to :game
   belongs_to :player
