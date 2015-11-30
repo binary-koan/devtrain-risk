@@ -11,9 +11,11 @@ class PerformAttack
   def call
     @attack_event = nil # ask about this
 
-    if !valid_link
+    if !valid_link?
       errors << :no_link
-    elsif !different_players_territory
+    elsif !current_players_territory?
+      errors << :wrong_player
+    elsif !attacking_different_player?
       errors << :own_territory
     else
       perform_attack(number_of_attackers, number_of_defenders)
@@ -23,11 +25,15 @@ class PerformAttack
 
   private
 
-  def valid_link
-    @territory_from.connected_territories.include? @territory_to
+  def valid_link?
+    @territory_from.connected_territories.include?(@territory_to)
   end
 
-  def different_players_territory
+  def current_players_territory?
+    @game_state.territory_owner(@territory_from) == @game_state.current_player
+  end
+
+  def attacking_different_player?
     from_owner = @game_state.territory_owner(@territory_from)
     to_owner   = @game_state.territory_owner(@territory_to)
 

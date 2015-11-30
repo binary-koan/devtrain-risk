@@ -13,7 +13,7 @@ GameDisplay.boardView = ({ $container, state, onActionPerformed }) => {
   GameDisplay.boardView.enableDragging({ layout, nodes });
 
   function _updateNodeContent() {
-    nodes.data(state.territories);
+    nodes.data(nodes.data().map((d, i) => _.extend(d, state.territories[i])));
     nodes.attr("class", d => `node player-${d.owner}`)
     nodes.select("text").text(d => d.units);
   }
