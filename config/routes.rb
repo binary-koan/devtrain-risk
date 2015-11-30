@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   resources :games, only: [:create, :show] do
     get :state, on: :member
     post :event, on: :member
+    post :end_turn, on: :member
   end
 
   # The priority is based upon order of creation: first created -> highest priority.

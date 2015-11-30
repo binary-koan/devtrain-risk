@@ -4,7 +4,7 @@ GameDisplay.component = ($container) => {
   let boardView, playerView;
   let state;
 
-  let { performAction } = GameDisplay.component.actionManager({ onActionSucceeded });
+  let { onActionPerformed } = GameDisplay.component.actionManager({ onActionSucceeded: updateAll });
 
   function _updateState(callback) {
     $.get(window.location.href + "/state.json").done((response) => {
@@ -13,20 +13,24 @@ GameDisplay.component = ($container) => {
     });
   }
 
-  function onActionSucceeded() {
+  function updateAll() {
     _updateState(() => {
       boardView.update(state);
       playerView.update(state);
     });
   }
 
+  function onTurnEnded() {
+    $.post(location.href + "/end_turn.json").done(updateAll);
+  }
+
   function start() {
     //TODO error handling
     _updateState(() => {
       let boardContainer = $("<div>").appendTo($container);
-      boardView = GameDisplay.boardView({ $container: boardContainer, state, performAction });
+      boardView = GameDisplay.boardView({ $container: boardContainer, state, onActionPerformed });
       let playerContainer = $("<div>").appendTo($container);
-      playerView = GameDisplay.playerView({ $container: playerContainer, state });
+      playerView = GameDisplay.playerView({ $container: playerContainer, state, onTurnEnded });
     });
   }
 

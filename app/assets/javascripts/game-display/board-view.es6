@@ -1,6 +1,6 @@
 window.GameDisplay = window.GameDisplay || {};
 
-GameDisplay.boardView = ({ $container, state, performAction }) => {
+GameDisplay.boardView = ({ $container, state, onActionPerformed }) => {
   const BASE_WIDTH = 450;
   const BASE_HEIGHT = 350;
 
@@ -59,7 +59,7 @@ GameDisplay.boardView = ({ $container, state, performAction }) => {
     nodes.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
   });
 
-  nodes.on("click", performAction);
+  nodes.on("click", onActionPerformed);
 
   return { update };
 };

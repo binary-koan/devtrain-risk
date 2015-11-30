@@ -1,5 +1,5 @@
 class GamesController < ApplicationController
-  before_action :assign_game, only: [:show, :state, :event]
+  before_action :assign_game, except: [:new, :create]
 
   def new
   end
@@ -26,6 +26,11 @@ class GamesController < ApplicationController
   def event
     json = handle_event
     render json: json
+  end
+
+  def end_turn
+    EndTurn.new(@game).call
+    render json: { errors: false }
   end
 
   private
