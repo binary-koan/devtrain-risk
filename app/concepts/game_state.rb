@@ -5,6 +5,12 @@ class GameState
     @game = game
   end
 
+  def player_won?(player)
+    # TODO refactor
+    owned_territories_count = owned_territories(player).size
+    player if game.territories.count == owned_territories_count && owned_territories_count > 1
+  end
+
   def current_player
     @game.events.where(event_type: "start_turn").last.player
   end

@@ -9,7 +9,8 @@ class GameStateJson
       territories: territories,
       territoryLinks: territory_links,
       players: @game.players.select("id, name"),
-      currentPlayer: @game.players.find_index(@game_state.current_player)
+      currentPlayer: @game.players.find_index(@game_state.current_player),
+      winningPlayer: @game_state.player_won?(@game_state.current_player)
     }
   end
 
