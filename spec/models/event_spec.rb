@@ -12,7 +12,8 @@ RSpec.describe Event, type: :model do
     end
 
     it "cannot be an invalid type" do
-      expect { event.event_type = :nothing }.to raise_error ArgumentError
+      event.event_type = "nothing"
+      expect(event).not_to be_valid
     end
   end
 

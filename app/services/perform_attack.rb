@@ -133,7 +133,7 @@ class PerformAttack
 
   def create_attack_event
     @attack_event = Event.create!(
-      event_type: :attack,
+      event_type: "attack",
       game: @game_state.game,
       player: @game_state.territory_owner(@territory_from)
     )

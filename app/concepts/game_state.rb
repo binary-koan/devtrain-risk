@@ -6,7 +6,7 @@ class GameState
   end
 
   def current_player
-    @game.events.start_turn.last.player
+    @game.events.where(event_type: "start_turn").last.player
   end
 
   def owned_territories(player)

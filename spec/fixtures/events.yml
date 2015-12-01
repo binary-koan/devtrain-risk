@@ -17,3 +17,8 @@ reinforce_bottom_left:
   event_type: reinforce
   game: game
   player: player2
+
+start_game:
+  event_type: start_turn
+  game: game
+  player: player1

@@ -41,7 +41,7 @@ class CreateGame
     end
 
     player_territories.each do |player, territories|
-      event = player.events.create!(game: player.game, event_type: :reinforce)
+      event = player.events.create!(game: player.game, event_type: "reinforce")
       territories.each do |territory|
         event.actions.create!(territory: territory, territory_owner: player, units_difference: INITIAL_UNITS)
       end
@@ -49,6 +49,6 @@ class CreateGame
   end
 
   def start_game
-    @game.events.create!(player: @game.players.first, event_type: :start_turn)
+    @game.events.create!(player: @game.players.first, event_type: "start_turn")
   end
 end
