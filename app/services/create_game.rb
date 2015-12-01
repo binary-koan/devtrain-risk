@@ -14,8 +14,9 @@ class CreateGame
       create_players
       assign_players_to_territories
       start_game
-      @game
     end
+
+    @game
   end
 
   def create_game
