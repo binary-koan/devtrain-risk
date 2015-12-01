@@ -75,10 +75,19 @@ RSpec.describe GameState do
   end
 
   describe "#territory_owner" do
-    it "is the inverse of #owned_territories" do
-      player = game.players.first
-      owned_territories = game_state.owned_territories(player)
-      expect(owned_territories).to be_all { |t| game_state.territory_owner(t) == player }
+    before do
+      create(:reinforce_event, player: player1, game: game, territory: mars)
+      create(:reinforce_event, player: player2, game: game, territory: jupiter)
+    end
+
+    it "is the inverse of #owned_territories for player 1" do
+      owned_territories = game_state.owned_territories(player1)
+      expect(owned_territories).to be_all { |t| game_state.territory_owner(t) == player1 }
+    end
+
+    it "is the inverse of #owned_territories for player 2" do
+      owned_territories = game_state.owned_territories(player2)
+      expect(owned_territories).to be_all { |t| game_state.territory_owner(t) == player2 }
     end
   end
 end
