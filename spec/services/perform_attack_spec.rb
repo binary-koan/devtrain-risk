@@ -17,6 +17,21 @@ RSpec.describe PerformAttack do
     fixtures :games, :players, :territories, :territory_links, :events, :actions
     let(:game_state) { GameState.new(games(:game)) }
 
+    context "attacking from territory that is not current players" do
+      let(:service) { create_attack(:territory_bottom_left, :territory_top_left) }
+      let(:result) { service.call }
+
+      it "indicates that it is not a vaid move" do
+        expect(result).to be nil
+      end
+
+       before { service.call }
+
+       it "returns a wrong player error" do
+         expect(service.errors[0]).to be :wrong_player
+       end
+    end
+
     context "attacking and defending the same territory" do
       let(:service) { create_attack(:territory_top_left, :territory_top_left) }
       let(:result) { service.call }
