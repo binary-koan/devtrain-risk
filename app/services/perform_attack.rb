@@ -1,5 +1,4 @@
 class PerformAttack
-
   MIN_UNITS_ON_TERRITORY = 1
   MAX_ATTACKING_UNITS = 3
   MAX_DEFENDING_UNITS = 2
@@ -14,8 +13,6 @@ class PerformAttack
   end
 
   def call
-    @attack_event = nil # ask about this
-
     if !valid_link?
       errors << :no_link
     elsif !current_players_territory?
@@ -53,34 +50,44 @@ class PerformAttack
     else
       @attack_event = create_attack_event
 
-      defender_rolls, attacker_rolls = units_roll_dice
+      paired_rolls = units_roll_dice
 
-      create_attack_actions(attacker_rolls, defender_rolls)
+      create_attack_actions(paired_rolls)
     end
   end
 
-  def create_attack_actions(attacker_rolls, defender_rolls)
-    defenders_lost, attackers_lost = attack_result(defender_rolls, attacker_rolls)
+  def create_attack_event
+    Event.create!(
+      event_type: "attack",
+      game: @game_state.game,
+      player: @game_state.territory_owner(@territory_from)
+    )
+  end
 
-    if territory_taken?(attackers_lost, attacker_rolls)
-      take_over_territory(defenders_lost, attacker_rolls)
+  def units_roll_dice
+    defender_rolls = roll_dice(number_of_defenders)
+    attacker_rolls = roll_dice(number_of_attackers)
+
+    defender_rolls.zip(attacker_rolls).reject do |(defender, attacker)|
+      defender.nil? || attacker.nil?
+    end
+  end
+
+  def create_attack_actions(paired_rolls)
+    defenders_lost, attackers_lost = attack_result(paired_rolls)
+
+    if territory_taken?(defenders_lost)
+      take_over_territory(defenders_lost, paired_rolls.length)
     else
       remove_units_from_territory(@territory_to, defenders_lost) if defenders_lost > 0
       remove_units_from_territory(@territory_from, attackers_lost) if attackers_lost > 0
     end
   end
 
-  def territory_taken?(attackers_lost, attacker_rolls)
+  def territory_taken?(defenders_lost)
     remaining_defenders = @game_state.units_on_territory(@territory_to)
 
-    attackers_lost == 0 && remaining_defenders <= attacker_rolls.length
-  end
-
-  def units_roll_dice
-    defender_rolls = roll_dice(number_of_defenders)
-    attacker_rolls = roll_dice(number_of_attackers).first(defender_rolls.length)
-    defender_rolls = defender_rolls.first(attacker_rolls.length)
-    [defender_rolls, attacker_rolls]
+    defenders_lost == remaining_defenders
   end
 
   def number_of_attackers
@@ -105,19 +112,19 @@ class PerformAttack
     rolls.times.map { rand(1..6) }.sort.reverse
   end
 
-  def attack_result(defender_rolls, attacker_rolls)
-    attackers_lost = 0
-    defender_rolls.each.with_index do |roll, index|
-      attackers_lost += 1 if defender_rolls[index] >= attacker_rolls[index]
-    end
-    defenders_lost = defender_rolls.length - attackers_lost
+  def attack_result(paired_rolls)
+    attackers_lost = paired_rolls.select do |(defender_roll, attacker_roll)|
+      defender_roll >= attacker_roll
+    end.length
+
+    defenders_lost = paired_rolls.length - attackers_lost
     [defenders_lost, attackers_lost]
   end
 
-  def take_over_territory(defenders_lost, attacker_rolls)
+  def take_over_territory(defenders_lost, attackers_count)
     remove_units_from_territory(@territory_to, defenders_lost)
-    add_units_to_territory(@territory_to, @territory_from, attacker_rolls.length)
-    remove_units_from_territory(@territory_from, attacker_rolls.length)
+    add_units_to_territory(@territory_to, @territory_from, attackers_count)
+    remove_units_from_territory(@territory_from, attackers_count)
   end
 
   def remove_units_from_territory(territory, units_lost)
@@ -133,14 +140,6 @@ class PerformAttack
       territory_to,
       find_owner(territory_from),
       units_added
-    )
-  end
-
-  def create_attack_event
-    Event.create!(
-      event_type: "attack",
-      game: @game_state.game,
-      player: @game_state.territory_owner(@territory_from)
     )
   end
 

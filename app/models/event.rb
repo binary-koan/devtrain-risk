@@ -4,7 +4,5 @@ class Event < ActiveRecord::Base
   has_many :actions
 
   validates :event_type, inclusion: { in: %w{reinforce attack fortify start_turn} }
-  validates :event_type, presence: true
-  validates :game, presence: true
-  validates :player, presence: true
+  validates :event_type, :game, :player, presence: true
 end
