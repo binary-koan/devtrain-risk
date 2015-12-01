@@ -23,6 +23,10 @@ GameDisplay.boardView = ({ $container, state, onActionPerformed }) => {
     _updateNodeContent();
   }
 
+  function clear() {
+    nodes.classed("active", false);
+  }
+
   // Layout
 
   layout.size([BASE_WIDTH, BASE_HEIGHT])
@@ -65,7 +69,7 @@ GameDisplay.boardView = ({ $container, state, onActionPerformed }) => {
     onActionPerformed(d);
   });
 
-  return { update };
+  return { update, clear };
 };
 
 GameDisplay.boardView.enableDragging = ({ layout, nodes }) => {

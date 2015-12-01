@@ -4,28 +4,34 @@ GameDisplay.component = ($container) => {
   let boardView, playerView;
   let state;
 
-  let { onActionPerformed } = GameDisplay.component.actionManager({ onActionSucceeded: updateAll });
+  let { onActionPerformed } = GameDisplay.component.actionManager({
+    onActionSucceeded: updateViews,
+    onActionFailed: clearViews
+  });
 
   function _updateState(callback) {
-    $.get(window.location.href + "/state.json").done((response) => {
+    AJAX.get(window.location.href + "/state.json").then((response) => {
       state = response.state;
       callback(response);
     });
   }
 
-  function updateAll() {
+  function updateViews() {
     _updateState(() => {
       boardView.update(state);
       playerView.update(state);
     });
   }
 
+  function clearViews() {
+    boardView.clear();
+  }
+
   function onTurnEnded() {
-    $.post(location.href + "/end_turn.json").done(updateAll);
+    AJAX.post(location.href + "/end_turn.json").then(updateViews);
   }
 
   function start() {
-    //TODO error handling
     _updateState(() => {
       let boardContainer = $("<div>").appendTo($container);
       boardView = GameDisplay.boardView({ $container: boardContainer, state, onActionPerformed });
@@ -37,15 +43,14 @@ GameDisplay.component = ($container) => {
   return { start };
 };
 
-GameDisplay.component.actionManager = ({ onActionSucceeded }) => {
+GameDisplay.component.actionManager = ({ onActionSucceeded, onActionFailed }) => {
   const ACTION_STATE = { NONE: 0, STARTED: 1 };
 
   let currentState = ACTION_STATE.NONE;
   let activeNodeId;
 
   function _doRequest(data) {
-    //TODO error handling
-    $.post(window.location.href + "/event.json", data).done(onActionSucceeded);
+    AJAX.post(window.location.href + "/event.json", data).then(onActionSucceeded, onActionFailed);
   }
 
   function _finishAction(node) {
