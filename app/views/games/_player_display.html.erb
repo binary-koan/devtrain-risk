@@ -1,0 +1,12 @@
+<div class="player-display">
+  <% @game.players.each do |player| %>
+    <div>
+      <span class="player-icon"
+        style="background-color: <%= @game_state.player_color(player) %>"></span>
+      <% if @game_state.current_player == player %>
+        *
+      <% end %>
+      <%= player.name %>
+    </div>
+  <% end %>
+</div>

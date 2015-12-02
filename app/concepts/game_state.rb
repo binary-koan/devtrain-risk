@@ -11,9 +11,12 @@ class GameState
     PLAYER_COLORS[game.players.find_index(player)]
   end
 
-  def player_won?(player)
-    owned_territories_count = owned_territories(player).size
-    player if game.territories.count == owned_territories_count && owned_territories_count > 1
+  def won?
+    winning_player != nil
+  end
+
+  def winning_player
+    game.players.detect { |player| owned_territories(player).size == game.territories.count }
   end
 
   def current_player

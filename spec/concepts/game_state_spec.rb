@@ -9,12 +9,11 @@ RSpec.describe GameState do
 
   subject(:game_state) { GameState.new(game) }
 
-  describe "#player_won" do
+  describe "#winning_player" do
+    subject { game_state.winning_player }
+
     context "with no territories owned" do
-      it "is nil for both players" do
-        expect(game_state.player_won?(player1)).to be nil
-        expect(game_state.player_won?(player2)).to be nil
-      end
+      it { is_expected.to be_nil }
     end
 
     context "each player owns one territory" do
@@ -23,10 +22,7 @@ RSpec.describe GameState do
         create(:reinforce_event, player: player2, game: game, territory: jupiter)
       end
 
-      it "is nil for both players" do
-        expect(game_state.player_won?(player1)).to be nil
-        expect(game_state.player_won?(player2)).to be nil
-      end
+      it { is_expected.to be_nil }
     end
 
     context "player 1 owns both territories" do
@@ -35,9 +31,7 @@ RSpec.describe GameState do
         create(:reinforce_event, player: player1, game: game, territory: jupiter)
       end
 
-      subject { game_state.player_won?(player1) }
-
-      it { is_expected.to be player1}
+      it { is_expected.to eq player1}
     end
 
     context "player 2 owns both territories" do
@@ -46,9 +40,7 @@ RSpec.describe GameState do
         create(:reinforce_event, player: player2, game: game, territory: jupiter)
       end
 
-      subject { game_state.player_won?(player2) }
-
-      it { is_expected.to be player2}
+      it { is_expected.to eq player2}
     end
   end
 
