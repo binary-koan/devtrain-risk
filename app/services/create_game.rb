@@ -9,21 +9,21 @@ class CreateGame
 
   def call
     ActiveRecord::Base.transaction do
-      create_game
-      create_territories
-      create_players
-      assign_players_to_territories
-      start_game
+      create_game!
+      create_territories!
+      create_players!
+      assign_players_to_territories!
+      start_game!
     end
 
     @game
   end
 
-  def create_game
+  def create_game!
     @game = Game.create!
   end
 
-  def create_territories
+  def create_territories!
     TERRITORY_COUNT.times { @game.territories.create! }
     @territories = @game.territories
     TERRITORY_EDGES.each do |edge|
@@ -32,11 +32,11 @@ class CreateGame
     end
   end
 
-  def create_players
+  def create_players!
     @players = [@game.players.create!(name: "Player 1"), @game.players.create!(name: "Player 2")]
   end
 
-  def assign_players_to_territories
+  def assign_players_to_territories!
     player_territories = @territories.shuffle.group_by.with_index do |_, index|
       @players[index % @players.size]
     end
