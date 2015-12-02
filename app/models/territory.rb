@@ -1,5 +1,6 @@
 class Territory < ActiveRecord::Base
   belongs_to :game
+  has_many :actions, dependent: :destroy
 
   validates :game, presence: true
 
