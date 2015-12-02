@@ -9,4 +9,16 @@ class Event < ActiveRecord::Base
   def self.reinforce(attrs={})
     new(attrs.merge(event_type: "reinforce"))
   end
+
+  def self.start_turn(attrs={})
+    new(attrs.merge(event_type: "start_turn"))
+  end
+
+  def self.attack(attrs={})
+    new(attrs.merge(event_type: "attack"))
+  end
+
+  def self.fortify(attrs={})
+    new(attrs.merge(event_type: "fortify"))
+  end
 end

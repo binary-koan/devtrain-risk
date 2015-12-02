@@ -42,11 +42,9 @@ class PerformReinforce
   end
 
   def create_reinforce_event
-    Event.create!(
-      event_type: "reinforce",
-      game: @game_state.game,
-      player: @current_player
-    )
+    Event.reinforce(game: @game_state.game, player: @current_player).tap do |event|
+      event.save!
+    end
   end
 
   def create_action(territory, territory_owner, units_difference)

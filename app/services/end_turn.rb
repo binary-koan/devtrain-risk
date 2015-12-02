@@ -9,7 +9,7 @@ class EndTurn
     next_player_index = @game.players.find_index(current_player) + 1
     next_player_index = 0 if next_player_index == @game.players.size
 
-    @game.events.create!(player: @game.players[next_player_index], event_type: "start_turn")
+    @game.events.start_turn(player: @game.players[next_player_index]).save!
 
     reinforcement_units = PerformReinforce.new(
                             game_state: @game_state,

@@ -30,7 +30,7 @@ RSpec.describe CreateGame do
       expect(game.territories).to be_all { |territory| territory.actions.size > 0 }
     end
 
-    it "makes sure that each player owns the same number of territories" do
+    context "makes sure that each player owns the same number of territories" do
       pending "how should this work?"
     end
 
