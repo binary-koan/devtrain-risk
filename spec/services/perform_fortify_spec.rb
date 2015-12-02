@@ -20,15 +20,17 @@ RSpec.describe PerformAttack do
 
   let(:service) do
     PerformFortify.new(
-      territory_from: territories(territory_from),
-      territory_to:   territories(territory_to),
-      game_state:     game_state
+      territory_from:   territories(territory_from),
+      territory_to:     territories(territory_to),
+      game_state:       game_state,
+      fortifying_units: fortifying_units
     )
   end
 
   describe "#call" do
     fixtures :games, :players, :territories, :territory_links, :events, :actions
     let(:game_state) { GameState.new(games(:game)) }
+    let(:fortifying_units) { 1 }
 
     context "fortifying from territory that is not current players" do
       let(:territory_from) { :territory_bottom_left }
@@ -89,6 +91,19 @@ RSpec.describe PerformAttack do
       it "adds units to the fortified territory" do
         expect(action.units_difference).to be PerformFortify::MINIMUM_FORTIFYING_UNITS
       end
+    end
+
+    context "fortifying less than the minimum number of units" do
+      let(:territory_from) { :territory_top_left }
+      let(:territory_to) { :territory_top_right }
+      let(:fortifying_units) { 0 }
+
+      before { service.call }
+
+      it "returns a minimum_number_of_units error" do
+        expect(service.errors).to contain_exactly :minimum_number_of_units
+      end
+
     end
 
     context "fortifying from territory with only one unit" do

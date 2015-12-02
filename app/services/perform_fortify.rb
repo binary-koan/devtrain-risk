@@ -3,14 +3,16 @@ class PerformFortify
 
   attr_reader :errors
 
-  def initialize(territory_to:, territory_from:, game_state:)
-    @territory_to   = territory_to
-    @territory_from = territory_from
-    @game_state     = game_state
-    @errors         = []
+  def initialize(territory_to:, territory_from:, game_state:, fortifying_units:)
+    @territory_to     = territory_to
+    @territory_from   = territory_from
+    @game_state       = game_state
+    @fortifying_units = fortifying_units
+    @errors           = []
   end
 
   def call
+    puts @fortifying_units
     if same_territory?
       errors << :same_territory
     elsif !valid_link?
@@ -19,6 +21,8 @@ class PerformFortify
       errors << :wrong_player
     elsif !fortifying_own_territory?
       errors << :fortifying_enemy_territory
+    elsif !minimum_number_of_units?
+      errors << :minimum_number_of_units
     else
       perform_fortify
     end
@@ -44,6 +48,10 @@ class PerformFortify
     find_owner(@territory_from) == find_owner(@territory_to)
   end
 
+  def minimum_number_of_units?
+    @fortifying_units >= MINIMUM_FORTIFYING_UNITS
+  end
+
   def find_owner(territory)
     @game_state.territory_owner(territory)
   end
@@ -53,8 +61,12 @@ class PerformFortify
       errors << :fortify_with_one_unit
     else
       @fortify_event = create_fortify_event
-
+      create_fortify_actions
     end
+  end
+
+  def create_fortify_actions
+
   end
 
   def number_of_units
@@ -66,5 +78,13 @@ class PerformFortify
       game: @game_state.game,
       player: @game_state.territory_owner(@territory_from)
     ).tap { |e| e.save!}
+  end
+
+  def create_action(territory, territory_owner, units_difference)
+    @attack_event.actions.create!(
+      territory:        territory,
+      territory_owner:  territory_owner,
+      units_difference: units_difference
+    )
   end
 end
