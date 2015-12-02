@@ -40,10 +40,11 @@ RSpec.describe PerformReinforce do
       before do
         create(:reinforce_event, player: player1, game: game, territory: mars)
         create(:reinforce_event, player: player2, game: game, territory: jupiter)
+        service.call
       end
 
       let(:player) { player1 }
-      let(:reinforce_event) { service.call }
+      let(:reinforce_event) { service.reinforce_event }
       let(:action) { reinforce_event.actions[0] }
       let(:reinforcement) { Reinforcement.new }
 
@@ -54,19 +55,26 @@ RSpec.describe PerformReinforce do
       it "adds units to the player's territory" do
         expect(action.territory_owner).to be player1
       end
+    end
 
-      context "player1 ends their turn" do
-        let(:player) { player2 }
-        let(:reinforce_event) { service.call }
-        let(:action) { reinforce_event.actions[0] }
+    context "player1 ends their turn" do
+      before do
+        create(:reinforce_event, player: player1, game: game, territory: mars)
+        create(:reinforce_event, player: player2, game: game, territory: jupiter)
+        service.call
+      end
 
-        it "adds units to the territory" do
-          expect(action.units_difference).to be reinforcement.all_units
-        end
+      let(:player) { player2 }
+      let(:reinforce_event) { service.reinforce_event }
+      let(:action) { reinforce_event.actions[0] }
+      let(:reinforcement) { Reinforcement.new }
 
-        it "adds units to the player's territory" do
-          expect(action.territory_owner).to be player2
-        end
+      it "adds units to the territory" do
+        expect(action.units_difference).to be reinforcement.all_units
+      end
+
+      it "adds units to the player's territory" do
+        expect(action.territory_owner).to be player2
       end
     end
   end

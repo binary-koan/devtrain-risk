@@ -1,5 +1,5 @@
 class PerformReinforce
-  attr_reader :errors
+  attr_reader :errors, :reinforce_event
 
   def initialize(game_state:, current_player:)
     @game_state     = game_state
@@ -15,7 +15,7 @@ class PerformReinforce
       reinforce_players_territories
     end
 
-    @reinforce_event
+    @reinforce_event != nil
   end
 
   private
