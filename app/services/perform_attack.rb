@@ -60,7 +60,7 @@ class PerformAttack
     Event.attack(
       game: @game_state.game,
       player: @game_state.territory_owner(@territory_from)
-    ).tap { |e| e.save!} 
+    ).tap { |e| e.save!}
   end
 
   def units_roll_dice
