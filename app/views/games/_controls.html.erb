@@ -1,32 +1,33 @@
 <div class="controls">
-  <%= form_tag event_game_path do %>
+  <%= form_for [@game, Event.attack] do |f| %>
     <div class="content">
-      <%= hidden_field_tag :type, "attack" %>
+      <%= f.hidden_field :event_type %>
       t <%= text_field_tag :from, "", autofocus: true %> =>
       t <%= text_field_tag :to %>
-      <%= submit_tag "Attack" %>
+      <%= f.submit "Attack" %>
     </div>
   <% end %>
 
-  <%= form_tag event_game_path do %>
+  <%= form_for [@game, Event.fortify] do |f| %>
     <div class="content">
-      <%= hidden_field_tag :type, "fortify" %>
+      <%= f.hidden_field :event_type %>
       t <%= text_field_tag :from, "", autofocus: true %> =>
       t <%= text_field_tag :to %>
-      <%= submit_tag "Fortify" %>
+      <%= f.submit "Fortify" %>
     </div>
   <% end %>
 
-  <%= form_tag event_game_path do %>
+  <%= form_for [@game, Event.reinforce] do |f| %>
     <div class="content">
-      <%= hidden_field_tag :type, "reinforce" %>
+      <%= f.hidden_field :event_type %>
       <%= text_field_tag :count, "", autofocus: true %> units =>
       t <%= text_field_tag :to %>
-      <%= submit_tag "Reinforce" %>
+      <%= f.submit "Reinforce" %>
     </div>
   <% end %>
 
-  <%= form_tag end_turn_game_path do %>
-    <%= submit_tag "End turn" %>
+  <%= form_for [@game, Event.start_turn] do |f| %>
+    <%= f.hidden_field :event_type %>
+    <%= f.submit "End turn" %>
   <% end %>
 </div>

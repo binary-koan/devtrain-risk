@@ -1,8 +1,7 @@
 Rails.application.routes.draw do
   root 'games#new'
   resources :games, only: [:create, :show] do
-    post :event, on: :member
-    post :end_turn, on: :member
+    resources :events, only: [:create]
   end
 
   # The priority is based upon order of creation: first created -> highest priority.
