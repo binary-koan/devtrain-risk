@@ -56,7 +56,7 @@ class CreateGame
     end
   end
 
-  def start_game
+  def start_game!
     @game.events.start_turn(player: @game.players.first).save!
   end
 end
