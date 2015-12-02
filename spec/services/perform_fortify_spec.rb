@@ -38,10 +38,9 @@ RSpec.describe PerformAttack do
       let(:territory_from) { :territory_bottom_left }
       let(:territory_to) { :territory_top_left }
 
-      before { service.call }
-
       it "returns a wrong player error" do
-         expect(service.errors).to contain_exactly :wrong_player
+        expect(service.call).to be false
+        expect(service.errors).to contain_exactly :wrong_player
       end
     end
 
@@ -49,9 +48,8 @@ RSpec.describe PerformAttack do
       let(:territory_from) { :territory_top_left }
       let(:territory_to) { :territory_bottom_right }
 
-      before { service.call }
-
       it "returns a no link error" do
+        expect(service.call).to be false
         expect(service.errors).to contain_exactly :no_link
       end
     end
@@ -60,9 +58,8 @@ RSpec.describe PerformAttack do
       let(:territory_from) { :territory_top_left }
       let(:territory_to) { :territory_bottom_left }
 
-      before { service.call }
-
       it "returns a fortifying_enemy_territory error" do
+        expect(service.call).to be false
         expect(service.errors).to contain_exactly :fortifying_enemy_territory
       end
     end
@@ -71,9 +68,8 @@ RSpec.describe PerformAttack do
       let(:territory_from) { :territory_top_left }
       let(:territory_to) { :territory_top_left }
 
-      before { service.call }
-
       it "returns a same_territory error" do
+        expect(service.call).to be false
         expect(service.errors).to contain_exactly :same_territory
       end
     end
@@ -83,9 +79,8 @@ RSpec.describe PerformAttack do
       let(:territory_to) { :territory_top_right }
       let(:fortifying_units) { 0 }
 
-      before { service.call }
-
       it "returns a minimum_number_of_units error" do
+        expect(service.call).to be false
         expect(service.errors).to contain_exactly :minimum_number_of_units
       end
     end
@@ -96,7 +91,7 @@ RSpec.describe PerformAttack do
 
       it "returns a fortify_with_one_unit error" do
         remove_units_from_territory(player1, territories(:territory_top_left), 4)
-        service.call
+        expect(service.call).to be false
         expect(service.errors).to contain_exactly :fortify_with_one_unit
       end
     end
@@ -106,13 +101,14 @@ RSpec.describe PerformAttack do
       let(:territory_to) { :territory_top_right }
       let(:fortifying_units) { 3 }
 
-      let(:fortify_event) { service.call }
-
       it "has no errors" do
+        expect(service.call).to be true
         expect(service.errors).to be_none
       end
 
-      let(:receiving_action) { fortify_event.actions[0] }
+      before { service.call }
+
+      let(:receiving_action) { service.fortify_event.actions[0] }
 
       it "adds units to the fortified territory" do
         expect(receiving_action.units_difference).to be 3
@@ -126,7 +122,7 @@ RSpec.describe PerformAttack do
         expect(receiving_action.territory_owner).to eq player1
       end
 
-      let(:sending_action) { fortify_event.actions[1] }
+      let(:sending_action) { service.fortify_event.actions[1] }
 
       it "removes units from the fortifying territory" do
         expect(sending_action.units_difference).to be -3
