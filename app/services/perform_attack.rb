@@ -79,8 +79,8 @@ class PerformAttack
     if territory_taken?(defenders_lost)
       take_over_territory(defenders_lost, paired_rolls.length)
     else
-      remove_units_from_territory(@territory_to, defenders_lost) if defenders_lost > 0
-      remove_units_from_territory(@territory_from, attackers_lost) if attackers_lost > 0
+      create_action(@territory_to, find_owner(@territory_to),  -defenders_lost) if defenders_lost > 0
+      create_action(@territory_from, find_owner(@territory_from), -attackers_lost) if attackers_lost > 0
     end
   end
 
@@ -122,25 +122,9 @@ class PerformAttack
   end
 
   def take_over_territory(defenders_lost, attackers_count)
-    remove_units_from_territory(@territory_to, defenders_lost)
-    add_units_to_territory(@territory_to, @territory_from, attackers_count)
-    remove_units_from_territory(@territory_from, attackers_count)
-  end
-
-  def remove_units_from_territory(territory, units_lost)
-    create_action(
-      territory,
-      find_owner(territory),
-      -units_lost
-    )
-  end
-
-  def add_units_to_territory(territory_to, territory_from, units_added)
-    create_action(
-      territory_to,
-      find_owner(territory_from),
-      units_added
-    )
+    create_action(@territory_to, find_owner(@territory_to), -defenders_lost)
+    create_action(@territory_to, find_owner(@territory_from), attackers_count)
+    create_action(@territory_from, find_owner(@territory_from), -attackers_count)
   end
 
   def create_action(territory, territory_owner, units_difference)
