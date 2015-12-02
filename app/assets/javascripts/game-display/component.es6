@@ -1,7 +1,6 @@
 window.GameDisplay = window.GameDisplay || {};
 
 GameDisplay.component = ($container) => {
-  let boardView, playerView;
   let state;
 
   let { onActionPerformed } = GameDisplay.component.actionManager({
@@ -9,9 +8,19 @@ GameDisplay.component = ($container) => {
     onActionFailed: clearViews
   });
 
+  let boardView = GameDisplay.boardView({
+    onActionPerformed,
+    $container: $("<div>").appendTo($container)
+  });
+  let playerView = GameDisplay.playerView({
+    onTurnEnded,
+    $container: $("<div>").appendTo($container)
+  });
+
   function _updateState(callback) {
     AJAX.get(window.location.href + "/state.json").then((response) => {
       state = response.state;
+      console.log(response);
       callback(response);
     });
   }
@@ -31,16 +40,7 @@ GameDisplay.component = ($container) => {
     AJAX.post(location.href + "/end_turn.json").then(updateViews);
   }
 
-  function start() {
-    _updateState(() => {
-      let boardContainer = $("<div>").appendTo($container);
-      boardView = GameDisplay.boardView({ $container: boardContainer, state, onActionPerformed });
-      let playerContainer = $("<div>").appendTo($container);
-      playerView = GameDisplay.playerView({ $container: playerContainer, state, onTurnEnded });
-    });
-  }
-
-  return { start };
+  return { start: updateViews };
 };
 
 GameDisplay.component.actionManager = ({ onActionSucceeded, onActionFailed }) => {

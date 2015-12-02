@@ -22,6 +22,8 @@ class GameStateJson
     @game.territories.map do |territory|
       {
         id: territory.id,
+        x: territory.x,
+        y: territory.y,
         units: @game_state.units_on_territory(territory),
         owner: indexes[@game_state.territory_owner(territory).id]
       }

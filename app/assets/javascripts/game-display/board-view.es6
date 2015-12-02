@@ -1,25 +1,58 @@
 window.GameDisplay = window.GameDisplay || {};
 
-GameDisplay.boardView = ({ $container, state, onActionPerformed }) => {
+GameDisplay.boardView = ({ $container, onActionPerformed }) => {
   const BASE_WIDTH = 450;
   const BASE_HEIGHT = 350;
 
+  let state;
+
   const svg = d3.select($container.get(0)).append("svg");
-  const links = svg.selectAll(".link").data(state.territoryLinks).enter().append("line");
-  const nodes = svg.selectAll(".node").data(state.territories).enter().append("g");
+  let links;
+  let nodes;
 
-  const layout = d3.layout.force();
+  function _initialize() {
+    links = svg.selectAll(".link").data(state.territoryLinks).enter().append("line");
+    nodes = svg.selectAll(".node").data(state.territories).enter().append("g");
 
-  GameDisplay.boardView.enableDragging({ layout, nodes });
+    links.attr("x1", d => state.territories[d.source].x + 50)
+      .attr("y1", d => state.territories[d.source].y + 50)
+      .attr("x2", d => state.territories[d.target].x + 50)
+      .attr("y2", d => state.territories[d.target].y + 50);
+
+    nodes.attr("transform", d => `translate(${d.x + 50},${d.y + 50})`);
+
+    links.attr("class", "link");
+
+    nodes.append("circle")
+      .attr("r", 25);
+
+    nodes.append("text")
+      .attr("text-anchor", "middle")
+      .attr("dy", "4px");
+
+    nodes.on("click", function(d) {
+      d3.select(this).classed("active", true);
+      onActionPerformed(d);
+    });
+
+    _updateNodeContent();
+  }
 
   function _updateNodeContent() {
-    nodes.data(nodes.data().map((d, i) => _.extend(d, state.territories[i])));
+    nodes.data(state.territories);
     nodes.attr("class", d => `node player-${d.owner}`)
     nodes.select("text").text(d => d.units);
   }
 
   function update(newState) {
-    state = newState;
+    if (!state) {
+      state = newState;
+      _initialize();
+    }
+    else {
+      state = newState;
+    }
+
     _updateNodeContent();
   }
 
@@ -27,62 +60,9 @@ GameDisplay.boardView = ({ $container, state, onActionPerformed }) => {
     nodes.classed("active", false);
   }
 
-  // Layout
-
-  layout.size([BASE_WIDTH, BASE_HEIGHT])
-    .charge(-1000)
-    .linkDistance(100)
-    .nodes(state.territories)
-    .links(state.territoryLinks)
-    .start();
-
   svg.attr("class", "map-display")
     .attr("width", BASE_WIDTH)
     .attr("height", BASE_HEIGHT);
 
-  // Elements
-
-  links.attr("class", "link");
-
-  nodes.append("circle")
-    .attr("r", 25);
-
-  nodes.append("text")
-    .attr("text-anchor", "middle")
-    .attr("dy", "4px");
-
-  _updateNodeContent();
-
-  // Events
-
-  layout.on("tick", () => {
-    links.attr("x1", d => d.source.x)
-      .attr("y1", d => d.source.y)
-      .attr("x2", d => d.target.x)
-      .attr("y2", d => d.target.y);
-
-    nodes.attr("transform", d => `translate(${d.x},${d.y})`);
-  });
-
-  nodes.on("click", function(d) {
-    d3.select(this).classed("active", true);
-    onActionPerformed(d);
-  });
-
   return { update, clear };
-};
-
-GameDisplay.boardView.enableDragging = ({ layout, nodes }) => {
-  const drag = layout.drag();
-
-  function _setFixedOn(d) {
-    d3.select(this).classed("fixed", d.fixed = true);
-  }
-
-  function _setFixedOff(d) {
-    d3.select(this).classed("fixed", d.fixed = false);
-  }
-
-  drag.on("dragstart", _setFixedOn);
-  nodes.on("dblclick", _setFixedOff).call(drag);
 };
