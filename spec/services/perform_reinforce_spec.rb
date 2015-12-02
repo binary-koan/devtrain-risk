@@ -45,9 +45,10 @@ RSpec.describe PerformReinforce do
       let(:player) { player1 }
       let(:reinforce_event) { service.call }
       let(:action) { reinforce_event.actions[0] }
+      let(:reinforcement) { Reinforcement.new }
 
       it "adds units to the territory" do
-        expect(action.units_difference).to be PerformReinforce::REINFORCEMENT_UNIT_COUNT
+        expect(action.units_difference).to be reinforcement.all_units
       end
 
       it "adds units to the player's territory" do
@@ -60,7 +61,7 @@ RSpec.describe PerformReinforce do
         let(:action) { reinforce_event.actions[0] }
 
         it "adds units to the territory" do
-          expect(action.units_difference).to be PerformReinforce::REINFORCEMENT_UNIT_COUNT
+          expect(action.units_difference).to be reinforcement.all_units
         end
 
         it "adds units to the player's territory" do

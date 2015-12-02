@@ -1,11 +1,10 @@
 class PerformReinforce
-  REINFORCEMENT_UNIT_COUNT = 3 #TODO refactor into separate object
-
   attr_reader :errors
 
   def initialize(game_state:, current_player:)
     @game_state     = game_state
     @current_player = current_player
+    @reinforcements = Reinforcement.new
     @errors         = []
   end
 
@@ -39,7 +38,7 @@ class PerformReinforce
   end
 
   def reinforce_territory(territory)
-    create_action(territory, @current_player, REINFORCEMENT_UNIT_COUNT)
+    create_action(territory, @current_player, @reinforcements.all_units)
   end
 
   def create_reinforce_event
