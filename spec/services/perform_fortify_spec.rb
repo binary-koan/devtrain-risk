@@ -31,6 +31,8 @@ RSpec.describe PerformAttack do
     fixtures :games, :players, :territories, :territory_links, :events, :actions
     let(:game_state) { GameState.new(games(:game)) }
     let(:fortifying_units) { 1 }
+    let(:player1) { players(:player1) }
+    let(:player2) { players(:player2) }
 
     context "fortifying from territory that is not current players" do
       let(:territory_from) { :territory_bottom_left }
@@ -76,23 +78,6 @@ RSpec.describe PerformAttack do
       end
     end
 
-    context "fortifying a valid territory" do
-      let(:territory_from) { :territory_top_left }
-      let(:territory_to) { :territory_top_right }
-
-      let(:fortify_event) { service.call }
-
-      it "has no errors" do
-        expect(service.errors).to be_none
-      end
-
-      let(:action) { fortify_event.actions[0] }
-
-      it "adds units to the fortified territory" do
-        expect(action.units_difference).to be PerformFortify::MINIMUM_FORTIFYING_UNITS
-      end
-    end
-
     context "fortifying less than the minimum number of units" do
       let(:territory_from) { :territory_top_left }
       let(:territory_to) { :territory_top_right }
@@ -103,7 +88,6 @@ RSpec.describe PerformAttack do
       it "returns a minimum_number_of_units error" do
         expect(service.errors).to contain_exactly :minimum_number_of_units
       end
-
     end
 
     context "fortifying from territory with only one unit" do
@@ -111,9 +95,49 @@ RSpec.describe PerformAttack do
       let(:territory_to) { :territory_top_right }
 
       it "returns a fortify_with_one_unit error" do
-        remove_units_from_territory(players(:player1), territories(:territory_top_left), 4)
+        remove_units_from_territory(player1, territories(:territory_top_left), 4)
         service.call
         expect(service.errors).to contain_exactly :fortify_with_one_unit
+      end
+    end
+
+    context "fortifying a valid territory" do
+      let(:territory_from) { :territory_top_left }
+      let(:territory_to) { :territory_top_right }
+      let(:fortifying_units) { 3 }
+
+      let(:fortify_event) { service.call }
+
+      it "has no errors" do
+        expect(service.errors).to be_none
+      end
+
+      let(:receiving_action) { fortify_event.actions[0] }
+
+      it "adds units to the fortified territory" do
+        expect(receiving_action.units_difference).to be 3
+      end
+
+      it "adds the units to the correct territory" do
+        expect(receiving_action.territory).to be territories(:territory_top_right)
+      end
+
+      it "doesn't change the ownership of the receiving territory" do
+        expect(receiving_action.territory_owner).to eq player1
+      end
+
+      let(:sending_action) { fortify_event.actions[1] }
+
+      it "removes units from the fortifying territory" do
+        expect(sending_action.units_difference).to be -3
+      end
+
+      it "removes the units from the correct territory" do
+        expect(sending_action.territory).to be territories(:territory_top_left)
+      end
+
+      it "doesn't change the ownership of the sending territory" do
+        expect(sending_action.territory_owner).to eq player1
       end
     end
   end

@@ -12,7 +12,6 @@ class PerformFortify
   end
 
   def call
-    puts @fortifying_units
     if same_territory?
       errors << :same_territory
     elsif !valid_link?
@@ -66,7 +65,9 @@ class PerformFortify
   end
 
   def create_fortify_actions
-
+    player = find_owner(@territory_from)
+    create_action(@territory_to, player, @fortifying_units)
+    create_action(@territory_from, player, -@fortifying_units)
   end
 
   def number_of_units
@@ -81,7 +82,7 @@ class PerformFortify
   end
 
   def create_action(territory, territory_owner, units_difference)
-    @attack_event.actions.create!(
+    @fortify_event.actions.create!(
       territory:        territory,
       territory_owner:  territory_owner,
       units_difference: units_difference
