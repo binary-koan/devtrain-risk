@@ -2,8 +2,8 @@
   <%= form_for [@game, Event.attack] do |f| %>
     <div class="content">
       <%= f.hidden_field :event_type %>
-      t <%= text_field_tag :from, "", autofocus: true %> =>
-      t <%= text_field_tag :to %>
+      Attack from <%= text_field_tag :from, "" %>
+      to <%= text_field_tag :to %>
       <%= f.submit "Attack" %>
     </div>
   <% end %>
@@ -11,8 +11,9 @@
   <%= form_for [@game, Event.fortify] do |f| %>
     <div class="content">
       <%= f.hidden_field :event_type %>
-      t <%= text_field_tag :from, "", autofocus: true %> =>
-      t <%= text_field_tag :to %>
+      Move <%= text_field_tag :units, "" %> units
+      from <%= text_field_tag :from, "" %>
+      to <%= text_field_tag :to %>
       <%= f.submit "Fortify" %>
     </div>
   <% end %>
@@ -20,8 +21,8 @@
   <%= form_for [@game, Event.reinforce] do |f| %>
     <div class="content">
       <%= f.hidden_field :event_type %>
-      <%= text_field_tag :count, "", autofocus: true %> units =>
-      t <%= text_field_tag :to %>
+      Add <%= text_field_tag :units, "" %> units
+      to <%= text_field_tag :to %>
       <%= f.submit "Reinforce" %>
     </div>
   <% end %>

@@ -8,7 +8,7 @@ class SubmitEvent
   end
 
   def call
-    case @params[:event_type]
+    case @params[:event][:event_type]
     when "attack"
       perform_attack
     when "fortify"
@@ -52,6 +52,6 @@ class SubmitEvent
   end
 
   def end_turn
-    EndTurn.new.call
+    EndTurn.new(@game).call
   end
 end
