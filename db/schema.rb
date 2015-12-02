@@ -44,6 +44,8 @@ ActiveRecord::Schema.define(version: 20151125035336) do
 
   create_table "territories", force: :cascade do |t|
     t.integer  "game_id",    null: false
+    t.integer  "x",          null: false
+    t.integer  "y",          null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

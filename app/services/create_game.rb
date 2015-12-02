@@ -2,6 +2,9 @@ class CreateGame
   class Error < StandardError; end
 
   TERRITORY_COUNT = 6
+  TERRITORY_POSITIONS = [
+    [0, 0], [0, 100], [100, 0], [100, 100], [200, 0], [200, 100]
+  ]
   TERRITORY_EDGES = [[0,1],[0,2],[1,2],[2,4],[2,3],[4,5],[3,5]]
   INITIAL_UNITS = 10
 
@@ -24,8 +27,12 @@ class CreateGame
   end
 
   def create_territories!
-    TERRITORY_COUNT.times { @game.territories.create! }
+    TERRITORY_COUNT.times do |i|
+      @game.territories.create!(x: TERRITORY_POSITIONS[i][0], y: TERRITORY_POSITIONS[i][1])
+    end
+
     @territories = @game.territories
+
     TERRITORY_EDGES.each do |edge|
       TerritoryLink.create!(from_territory: @game.territories[edge[0]],
                             to_territory: @game.territories[edge[1]])

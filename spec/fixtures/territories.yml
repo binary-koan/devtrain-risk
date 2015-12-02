@@ -1,11 +1,19 @@
 territory_top_left:
   game: game
+  x: 0
+  y: 0
 
 territory_top_right:
   game: game
+  x: 100
+  y: 0
 
 territory_bottom_right:
   game: game
+  x: 100
+  y: 100
 
 territory_bottom_left:
   game: game
+  x: 0
+  y: 100
