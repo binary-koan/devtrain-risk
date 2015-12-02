@@ -37,13 +37,19 @@
     <%= submit_tag "Attack" %>
   <% end %>
 
-  <!-- <%= form_tag end_turn_game_path do %>
-    <%= submit_tag "End turn" %>
+  <%= form_tag event_game_path do %>
+    <%= hidden_field_tag :type, "fortify" %>
+    t <%= text_field_tag :from, "", autofocus: true %> =>
+    t <%= text_field_tag :to %>
+    <%= submit_tag "Fortify" %>
   <% end %>
 
-  <%= form_tag end_turn_game_path do %>
-    <%= submit_tag "End turn" %>
-  <% end %> -->
+  <%= form_tag event_game_path do %>
+    <%= hidden_field_tag :type, "reinforce" %>
+    <%= text_field_tag :count, "", autofocus: true %> units =>
+    t <%= text_field_tag :to %>
+    <%= submit_tag "Reinforce" %>
+  <% end %>
 
   <%= form_tag end_turn_game_path do %>
     <%= submit_tag "End turn" %>
