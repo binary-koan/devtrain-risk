@@ -5,4 +5,8 @@ class Event < ActiveRecord::Base
 
   validates :event_type, inclusion: { in: %w{reinforce attack fortify start_turn} }
   validates :event_type, :game, :player, presence: true
+
+  def self.reinforce(attrs={})
+    new(attrs.merge(event_type: "reinforce"))
+  end
 end
