@@ -4,12 +4,12 @@ require_relative "../../app/services/perform_attack"
 
 
 RSpec.describe PerformAttack do
-  def remove_two_attackers
+  def remove_two_defenders
     expect(service).to receive(:rand).and_return 1, 1, 6, 6, 6
     service.call
   end
 
-  def remove_two_defenders
+  def remove_two_attackers
     allow(service).to receive(:rand).and_return 6
     service.call
   end
@@ -30,10 +30,9 @@ RSpec.describe PerformAttack do
       let(:territory_from) { :territory_bottom_left }
       let(:territory_to) { :territory_top_left }
 
-      before { service.call }
-
       it "returns a wrong player error" do
-         expect(service.errors).to contain_exactly :wrong_player
+        expect(service.call).to be false
+        expect(service.errors).to contain_exactly :wrong_player
       end
     end
 
@@ -41,9 +40,8 @@ RSpec.describe PerformAttack do
       let(:territory_from) { :territory_top_left }
       let(:territory_to) { :territory_top_left }
 
-      before { service.call }
-
       it "returns a no link error" do
+        expect(service.call).to be false
         expect(service.errors).to contain_exactly :no_link
       end
     end
@@ -52,9 +50,8 @@ RSpec.describe PerformAttack do
       let(:territory_from) { :territory_top_left }
       let(:territory_to) { :territory_top_right }
 
-      before { service.call }
-
       it "indicates that it is not a valid move" do
+        expect(service.call).to be false
         expect(service.errors).to contain_exactly :own_territory
       end
     end
@@ -64,10 +61,23 @@ RSpec.describe PerformAttack do
         let(:territory_from) { :territory_top_left }
         let(:territory_to) { :territory_bottom_right }
 
-        before { service.call }
-
         it "returns a no link error" do
+          expect(service.call).to be false
           expect(service.errors).to contain_exactly :no_link
+        end
+      end
+
+      context "the attacker only has one unit left" do
+        let(:territory_from) { :territory_top_left }
+        let(:territory_to) { :territory_bottom_left }
+
+        before do
+          2.times { remove_two_attackers }
+        end
+
+        it "returns a cannot attack with one unit error" do
+          expect(service.call).to be false
+          expect(service.errors).to contain_exactly :cannot_attack_with_one_unit
         end
       end
 
@@ -76,7 +86,7 @@ RSpec.describe PerformAttack do
         let(:territory_to) { :territory_bottom_left }
 
         it "has no errors" do
-          expect(service.call).to_not be nil
+          expect(service.call).to be true
           expect(service.errors).to be_none
         end
 
@@ -85,7 +95,9 @@ RSpec.describe PerformAttack do
             allow(service).to receive(:rand).and_return 6
           end
 
-          let(:action) { service.call.actions[0] }
+          before { service.call }
+
+          let(:action) { service.attack_event.actions[0] }
 
           it "removes 2 attackers" do
             units_lost = action.units_difference
@@ -103,24 +115,14 @@ RSpec.describe PerformAttack do
           end
         end
 
-        context "the attacker only has one unit left" do
-          before do
-            2.times { remove_two_defenders }
-          end
-
-          before { service.call }
-
-          it "returns a cannot attack with one unit error" do
-            expect(service.errors).to contain_exactly :cannot_attack_with_one_unit
-          end
-        end
-
         context "the defender loses units" do
           before do
             expect(service).to receive(:rand).and_return 1, 1, 6, 6, 6
           end
 
-          let(:action) { service.call.actions[0] }
+          before { service.call }
+
+          let(:action) { service.attack_event.actions[0] }
 
           it "loses 2 defenders" do
             units_lost = action.units_difference
@@ -140,12 +142,13 @@ RSpec.describe PerformAttack do
 
         context "the defender has lost all their units" do
           before do
-            2.times { remove_two_attackers }
+            2.times { remove_two_defenders }
           end
 
           let(:attack_event) do
             expect(service).to receive(:rand).and_return 1, 6, 6, 6
             service.call
+            service.attack_event
           end
 
           context "removing the defenders from defeated territory" do

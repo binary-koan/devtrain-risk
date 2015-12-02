@@ -3,7 +3,7 @@ class PerformAttack
   MAX_ATTACKING_UNITS = 3
   MAX_DEFENDING_UNITS = 2
 
-  attr_reader :errors
+  attr_reader :errors, :attack_event
 
   def initialize(territory_from:, territory_to:, game_state:)
     @territory_from = territory_from
@@ -23,7 +23,7 @@ class PerformAttack
       perform_attack
     end
 
-    @attack_event
+    @attack_event != nil
   end
 
   private
@@ -47,6 +47,7 @@ class PerformAttack
   def perform_attack
     if number_of_attackers < 1
       errors << :cannot_attack_with_one_unit
+      @attack_event = nil # for some reason this gets set to non nil here?
     else
       @attack_event = create_attack_event
 
