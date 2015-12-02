@@ -13,24 +13,17 @@ class GamesController < ApplicationController
   end
 
   def show
-    @state = GameState.new(@game)
-  end
-
-  def state
-    state = GameState.new(@game)
-    serializer = GameStateJson.new(state)
-
-    render json: { state: serializer.json }
+    @game_state = GameState.new(@game)
   end
 
   def event
-    json = handle_event
-    render json: json
+    handle_event
+    redirect_to @game
   end
 
   def end_turn
     EndTurn.new(@game).call
-    render json: { errors: false }
+    redirect_to @game
   end
 
   private
@@ -42,17 +35,15 @@ class GamesController < ApplicationController
   def handle_event
     service = PerformAttack.new(attack_params)
 
-    if service.call
-      { errors: false }
-    else
-      { errors: service.errors }
+    unless service.call
+      flash.alert = service.errors
     end
   end
 
   def attack_params
     {
-      territory_from: Territory.find(params[:from].to_i),
-      territory_to: Territory.find(params[:to].to_i),
+      territory_from: @game.territories[params[:from].to_i],
+      territory_to: @game.territories[params[:to].to_i],
       game_state: GameState.new(@game)
     }
   end

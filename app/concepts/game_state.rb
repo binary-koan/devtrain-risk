@@ -1,8 +1,14 @@
 class GameState
+  PLAYER_COLORS = %w{#4F2EC9 #63242E}
+
   attr_reader :game
 
   def initialize(game)
     @game = game
+  end
+
+  def player_color(player)
+    PLAYER_COLORS[game.players.find_index(player)]
   end
 
   def player_won?(player)
@@ -26,5 +32,11 @@ class GameState
 
   def units_on_territory(territory)
     Action.where(territory: territory).inject(0) { |total, action| total + action.units_difference }
+  end
+
+  def territory_links
+    TerritoryLink.where(from_territory: game.territories).map do |link|
+      [link.from_territory, link.to_territory]
+    end
   end
 end

@@ -5,13 +5,13 @@
     height: 32px;
     border-radius: 16px;
 
-    &.player-0 {
-      background-color: nth($player-colors, 1);
-    }
-
-    &.player-1 {
-      background-color: nth($player-colors, 2);
-    }
+    // &.player-0 {
+    //   background-color: nth($player-colors, 1);
+    // }
+    //
+    // &.player-1 {
+    //   background-color: nth($player-colors, 2);
+    // }
   }
 }
 
@@ -25,7 +25,6 @@ svg.map-display {
     cursor: pointer;
 
     circle {
-      fill: #ccc;
       stroke: #000;
       stroke-width: 1.5px;
     }
@@ -40,11 +39,11 @@ svg.map-display {
     }
   }
 
-  .player-0 circle {
-    fill: nth($player-colors, 1);
-  }
-
-  .player-1 circle {
-    fill: nth($player-colors, 2);
-  }
+  // .player-0 circle {
+  //   fill: nth($player-colors, 1);
+  // }
+  //
+  // .player-1 circle {
+  //   fill: nth($player-colors, 2);
+  // }
 }
