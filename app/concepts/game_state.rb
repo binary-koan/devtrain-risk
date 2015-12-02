@@ -6,7 +6,6 @@ class GameState
   end
 
   def player_won?(player)
-    # TODO refactor
     owned_territories_count = owned_territories(player).size
     player if game.territories.count == owned_territories_count && owned_territories_count > 1
   end
