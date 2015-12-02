@@ -4,14 +4,6 @@
     width: 32px;
     height: 32px;
     border-radius: 16px;
-
-    // &.player-0 {
-    //   background-color: nth($player-colors, 1);
-    // }
-    //
-    // &.player-1 {
-    //   background-color: nth($player-colors, 2);
-    // }
   }
 }
 
@@ -38,12 +30,14 @@ svg.map-display {
       stroke: yellow;
     }
   }
+}
 
-  // .player-0 circle {
-  //   fill: nth($player-colors, 1);
-  // }
-  //
-  // .player-1 circle {
-  //   fill: nth($player-colors, 2);
-  // }
+.controls {
+  > form > .content {
+    display: inline-block;
+    padding: 5px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    background-color: #eee;
+  }
 }
