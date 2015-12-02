@@ -1,7 +1,6 @@
 Rails.application.routes.draw do
   root 'games#new'
   resources :games, only: [:create, :show] do
-    get :state, on: :member
     post :event, on: :member
     post :end_turn, on: :member
   end

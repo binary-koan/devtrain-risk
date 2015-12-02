@@ -35,22 +35,6 @@ RSpec.describe GamesController, type: :controller do
     end
   end
 
-  describe "#state" do
-    before { get :state, id: games(:game).id }
-
-    it "is successful" do
-      expect(response).to have_http_status :success
-    end
-
-    it "renders the game state as json" do
-      state = JSON.parse(response.body)["state"]
-
-      %w{territories territoryLinks players currentPlayer}.each do |property|
-        expect(state).to have_key property
-      end
-    end
-  end
-
   describe "#event" do
     pending "Test it!"
   end
