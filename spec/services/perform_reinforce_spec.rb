@@ -51,7 +51,7 @@ RSpec.describe PerformReinforce do
       end
 
       it "adds units to the territory" do
-        expect(reinforce_event.actions[0].units_difference).to be reinforcements.remaining_reinforcementsr
+        expect(reinforce_event.actions[0].units_difference).to be reinforcements.remaining_reinforcements
       end
 
       it "adds units to the player's territory" do
