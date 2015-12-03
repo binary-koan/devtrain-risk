@@ -1,13 +1,22 @@
 class Reinforcement
   MINIMUM_UNIT_COUNT = 3
 
-  def initialize(unit_count = nil)
-    @unit_count = unit_count || MINIMUM_UNIT_COUNT
+  attr_reader :remaining_reinforcements
+
+  def initialize(player = nil)
+    @player = player
+    @remaining_reinforcements = calculate_reinforcement_count
   end
 
-  def all_units
-    units = @unit_count
-    @unit_count = 0
-    units
+  def remove_units(units_to_remove)
+    if units_to_remove <= remaining_reinforcements
+      @remaining_reinforcements -= units_to_remove
+    end
+  end
+
+  private
+
+  def calculate_reinforcement_count
+    MINIMUM_UNIT_COUNT
   end
 end

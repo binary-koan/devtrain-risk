@@ -10,6 +10,7 @@ FactoryGirl.define do
 
     factory :reinforce_event, traits: [:assigns_units_to_territory] do
       event_type "reinforce"
+      units_difference Reinforcement.new.remaining_reinforcements
     end
 
     factory :takeover_event, traits: [:assigns_units_to_territory] do

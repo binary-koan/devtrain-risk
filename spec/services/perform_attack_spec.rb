@@ -14,7 +14,18 @@ RSpec.describe PerformAttack do
   fixtures :games, :players, :territories, :territory_links, :events, :actions
 
   let(:game) { games(:game) }
-  let(:events) { game.events }
+
+  let(:base_events) do
+    game.events << create(
+      :reinforce_event,
+      game: game,
+      player: players(:player1),
+      territory: territories(:territory_top_left)
+    )
+  end
+
+  let(:events) { base_events }
+
   let(:game_state) { GameState.new(game, events) }
   let(:attacking_units) { 3 }
 
@@ -74,7 +85,7 @@ RSpec.describe PerformAttack do
         let(:territory_to) { territories(:territory_bottom_left) }
 
         let(:events) do
-          game.events << kill_on_territory(territory_from, players(:player1), 4)
+          base_events << kill_on_territory(territory_from, players(:player1), 7)
         end
 
         it "returns a cannot attack with one unit error" do
@@ -99,6 +110,21 @@ RSpec.describe PerformAttack do
             expect(service.call).to be true
             expect(service.errors).to be_none
           end
+
+          it "only lets the attacker rolls one attacking dice" do
+            expect(service).to receive(:rand).and_return 1, 6, 6
+            expect(service.call).to be true
+          end
+
+          context "the attacker loses the one dice roll" do
+            before { service.call }
+
+            let(:action) { service.attack_event.actions[0] }
+
+            it "only removes one attacking unit" do
+              expect(action.units_difference).to be -1
+            end
+          end
         end
 
         context "the attacker only attacks with two units" do
@@ -107,6 +133,21 @@ RSpec.describe PerformAttack do
           it "is a valid move" do
             expect(service.call).to be true
             expect(service.errors).to be_none
+          end
+
+          it "only lets the attack role 2 dice" do
+            expect(service).to receive(:rand).and_return 1, 1, 6, 6
+            expect(service.call).to be true
+          end
+
+          context "the attacker loses both dice rolls" do
+            before { service.call }
+
+            let(:action) { service.attack_event.actions[0] }
+
+            it "only removes one attacking unit" do
+              expect(action.units_difference).to be -2
+            end
           end
         end
 
@@ -167,7 +208,7 @@ RSpec.describe PerformAttack do
 
         context "the defender has lost all their units" do
           let(:events) do
-            game.events << kill_on_territory(territory_to, players(:player2), 4)
+            base_events << kill_on_territory(territory_to, players(:player2), 4)
           end
 
           before do

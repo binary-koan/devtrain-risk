@@ -1,16 +1,18 @@
 class PerformReinforce
   attr_reader :errors, :reinforce_event
 
-  def initialize(game_state:, current_player:, reinforcements: nil)
-    @game_state     = game_state
-    @current_player = current_player
-    @reinforcements = reinforcements || Reinforcement.new
-    @errors         = []
+  def initialize(game_state:, current_player:, reinforcements:, units_to_reinforce:)
+    @game_state         = game_state
+    @current_player     = current_player
+    @units_to_reinforce = units_to_reinforce
+    @errors             = []
   end
 
   def call
     if player_has_no_territories?
       errors << :no_territories
+    elsif !@game_state.can_reinforce?(@units_to_reinforce)
+      errors << :wrong_phase
     else
       reinforce_players_territories
     end
@@ -38,7 +40,7 @@ class PerformReinforce
   end
 
   def reinforce_territory(territory)
-    create_action(territory, @current_player, @reinforcements.all_units)
+    create_action(territory, @current_player, @units_to_reinforce)
   end
 
   def create_reinforce_event
