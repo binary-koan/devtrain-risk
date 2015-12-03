@@ -21,6 +21,8 @@ class PerformAttack
       errors << :no_link
     elsif !current_players_territory?
       errors << :wrong_player
+    elsif !@game_state.can_attack?
+      errors << :wrong_phase
     elsif !attacking_different_player?
       errors << :own_territory
     else

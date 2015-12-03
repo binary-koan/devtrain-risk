@@ -1,13 +1,20 @@
 class GameState
   TerritoryInfo = Struct.new(:owner, :units)
 
+  PHASE_ATTACKING   = :attacking
+  PHASE_ENDING      = :ending
+
   PLAYER_COLORS = %w{#4F2EC9 #63242E}
 
-  attr_reader :game
-  attr_reader :current_player
+  #TODO territory_info is only public to make == work - is that OK?
+  attr_reader :game, :current_player, :territory_info
 
   def self.current(game)
     new(game, game.events)
+  end
+
+  def ==(other)
+    game == other.game && territory_info == other.territory_info
   end
 
   def initialize(game, events)
@@ -47,11 +54,24 @@ class GameState
     end
   end
 
+  def can_attack?
+    @turn_phase == PHASE_ATTACKING
+  end
+
+  def can_fortify?
+    @turn_phase == PHASE_ATTACKING
+  end
+
   private
 
   def apply_event(event)
     if event.start_turn?
       @current_player = event.player
+      @turn_phase = PHASE_ATTACKING
+    elsif event.attack?
+      @turn_phase = PHASE_ATTACKING
+    elsif event.fortify?
+      @turn_phase = PHASE_ENDING
     end
 
     event.actions.each do |action|
