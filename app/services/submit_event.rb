@@ -8,7 +8,7 @@ class SubmitEvent
   end
 
   def call
-    case @params[:event][:event_type]
+    service = case @params[:event][:event_type]
     when "attack"
       perform_attack
     when "fortify"
@@ -21,30 +21,31 @@ class SubmitEvent
       @errors << :unknown_event_type
     end
 
-    @errors.none?
+    if service.call
+      true
+    else
+      @errors += service.errors
+      false
+    end
   end
 
   private
 
   def perform_attack
-    service = PerformAttack.new(
+    PerformAttack.new(
       territory_from: @game.territories[@params[:from].to_i],
       territory_to: @game.territories[@params[:to].to_i],
       game_state: GameState.current(@game)
     )
-    service.call
-    @errors = service.errors
   end
 
   def perform_fortify
-    service = PerformFortify.new(
+    PerformFortify.new(
       territory_from: @game.territories[@params[:from].to_i],
       territory_to: @game.territories[@params[:to].to_i],
       game_state: GameState.current(@game),
       fortifying_units: @params[:units].to_i
     )
-    service.call
-    @errors = service.errors
   end
 
   def perform_reinforce
@@ -52,6 +53,6 @@ class SubmitEvent
   end
 
   def end_turn
-    EndTurn.new(@game).call
+    EndTurn.new(@game)
   end
 end
