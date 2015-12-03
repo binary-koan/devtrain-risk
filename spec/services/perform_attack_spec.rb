@@ -99,6 +99,21 @@ RSpec.describe PerformAttack do
             expect(service.call).to be true
             expect(service.errors).to be_none
           end
+
+          it "only lets the attacker rolls one attacking dice" do
+            expect(service).to receive(:rand).and_return 1, 6, 6
+            expect(service.call).to be true
+          end
+
+          context "the attacker loses the one dice roll" do
+            before { service.call }
+
+            let(:action) { service.attack_event.actions[0] }
+
+            it "only removes one attacking unit" do
+              expect(action.units_difference).to be -1
+            end
+          end
         end
 
         context "the attacker only attacks with two units" do
@@ -107,6 +122,21 @@ RSpec.describe PerformAttack do
           it "is a valid move" do
             expect(service.call).to be true
             expect(service.errors).to be_none
+          end
+
+          it "only lets the attack role 2 dice" do
+            expect(service).to receive(:rand).and_return 1, 1, 6, 6
+            expect(service.call).to be true
+          end
+
+          context "the attacker loses both dice rolls" do
+            before { service.call }
+
+            let(:action) { service.attack_event.actions[0] }
+
+            it "only removes one attacking unit" do
+              expect(action.units_difference).to be -2
+            end
           end
         end
 

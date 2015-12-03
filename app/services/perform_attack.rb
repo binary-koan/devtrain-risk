@@ -15,9 +15,7 @@ class PerformAttack
   end
 
   def call
-    if too_many_units?
-      errors << :too_many_units
-    elsif !valid_link?
+    if !valid_link?
       errors << :no_link
     elsif !current_players_territory?
       errors << :wrong_player
@@ -35,7 +33,7 @@ class PerformAttack
   private
 
   def too_many_units?
-    @attacking_units > 3
+     @attacking_units > 3 || @attacking_units > number_of_attackers
   end
 
   def valid_link?
@@ -55,9 +53,11 @@ class PerformAttack
   end
 
   def perform_attack
-    if number_of_attackers < 1
+    if number_of_attackers < MIN_ATTACKING_UNITS
       errors << :cannot_attack_with_one_unit
-      @attack_event = nil # for some reason this gets set to non nil here?
+      @attack_event = nil
+    elsif too_many_units?
+        errors << :too_many_units
     else
       @attack_event = create_attack_event
 
@@ -76,7 +76,7 @@ class PerformAttack
 
   def units_roll_dice
     defender_rolls = roll_dice(number_of_defenders)
-    attacker_rolls = roll_dice(number_of_attackers)
+    attacker_rolls = roll_dice(@attacking_units)
 
     defender_rolls.zip(attacker_rolls).reject do |(defender, attacker)|
       defender.nil? || attacker.nil?
@@ -89,7 +89,7 @@ class PerformAttack
     if territory_taken?(defenders_lost)
       take_over_territory(defenders_lost, paired_rolls.length)
     else
-      create_action(@territory_to, find_owner(@territory_to),  -defenders_lost) if defenders_lost > 0
+      create_action(@territory_to, find_owner(@territory_to), -defenders_lost) if defenders_lost > 0
       create_action(@territory_from, find_owner(@territory_from), -attackers_lost) if attackers_lost > 0
     end
   end
