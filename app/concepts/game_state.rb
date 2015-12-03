@@ -11,9 +11,7 @@ class GameState
 
   def initialize(game)
     @game = game
-    @territory_info = Hash[game.territories.map do |territory|
-      [territory, TerritoryInfo.new(nil, 0)]
-    end]
+    @territory_info = Hash.new { |hash, key| hash[key] = TerritoryInfo.new(nil, 0) }
   end
 
   def apply_events(events)
