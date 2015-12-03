@@ -18,6 +18,8 @@ class PerformFortify
       errors << :no_link
     elsif !current_players_territory?
       errors << :wrong_player
+    elsif !@game_state.can_fortify?
+      errors << :wrong_phase
     elsif !fortifying_own_territory?
       errors << :fortifying_enemy_territory
     elsif !minimum_number_of_units?

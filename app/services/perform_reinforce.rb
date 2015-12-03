@@ -11,6 +11,8 @@ class PerformReinforce
   def call
     if player_has_no_territories?
       errors << :no_territories
+    elsif !@game_state.can_reinforce?(@reinforcements.all_units)
+      errors << :wrong_phase
     else
       reinforce_players_territories
     end

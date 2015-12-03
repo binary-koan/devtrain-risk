@@ -2,10 +2,13 @@ require "rails_helper"
 
 RSpec.describe PerformReinforce do
   let(:game)    { create(:game) }
-  let(:player1) { create(:player, game: game) }
-  let(:player2) { create(:player, game: game) }
-  let(:jupiter) { create(:territory, game: game) }
-  let(:mars)    { create(:territory, game: game) }
+
+  let!(:player1) { create(:player, game: game) }
+  let!(:player2) { create(:player, game: game) }
+  let!(:jupiter) { create(:territory, game: game) }
+  let!(:mars)    { create(:territory, game: game) }
+
+  before { create(:start_turn_event, player: player1, game: game) }
 
   let(:game_state) { GameState.current(game) }
 
