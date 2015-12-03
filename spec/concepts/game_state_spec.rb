@@ -12,6 +12,14 @@ RSpec.describe GameState do
 
   subject(:game_state) { GameState.new(game, events) }
 
+  describe "#player_color" do
+    pending "Test it!"
+  end
+
+  describe "#won?" do
+    pending "Test it!"
+  end
+
   describe "#winning_player" do
     subject { game_state.winning_player }
 
@@ -146,5 +154,21 @@ RSpec.describe GameState do
       owned_territories = game_state.owned_territories(player2)
       expect(owned_territories).to be_all { |t| game_state.territory_owner(t) == player2 }
     end
+  end
+
+  describe "#can_reinforce?" do
+    pending "Test it!"
+  end
+
+  describe "#can_attack?" do
+    pending "Test it!"
+  end
+
+  describe "#can_fortify?" do
+    pending "Test it!"
+  end
+
+  describe "#territory_links" do
+    pending "Test it!"
   end
 end

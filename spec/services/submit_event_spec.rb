@@ -116,5 +116,16 @@ RSpec.describe SubmitEvent do
         expect(service.call).to eq true
       end
     end
+
+    context "with an unknown type" do
+      let(:event_type) { "nothing" }
+
+      it "causes an error" do
+        expect(service.call).to eq false
+        expect(service.errors).to contain_exactly :unknown_event_type
+      end
+    end
+
+    pending "Test reinforcements and unknown type!"
   end
 end
