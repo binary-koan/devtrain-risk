@@ -1,19 +1,23 @@
 class PerformAttack
   MIN_UNITS_ON_TERRITORY = 1
-  MAX_ATTACKING_UNITS = 3
-  MAX_DEFENDING_UNITS = 2
+  MIN_ATTACKING_UNITS    = 1
+  MAX_ATTACKING_UNITS    = 3
+  MAX_DEFENDING_UNITS    = 2
 
   attr_reader :errors, :attack_event
 
-  def initialize(territory_from:, territory_to:, game_state:)
-    @territory_from = territory_from
-    @territory_to   = territory_to
-    @game_state     = game_state
-    @errors         = []
+  def initialize(territory_from:, territory_to:, game_state:, attacking_units: nil)
+    @territory_from  = territory_from
+    @territory_to    = territory_to
+    @game_state      = game_state
+    @attacking_units = attacking_units || MIN_ATTACKING_UNITS
+    @errors          = []
   end
 
   def call
-    if !valid_link?
+    if too_many_units?
+      errors << :too_many_units
+    elsif !valid_link?
       errors << :no_link
     elsif !current_players_territory?
       errors << :wrong_player
@@ -27,6 +31,10 @@ class PerformAttack
   end
 
   private
+
+  def too_many_units?
+    @attacking_units > 3
+  end
 
   def valid_link?
     @territory_from.connected_territories.include?(@territory_to)

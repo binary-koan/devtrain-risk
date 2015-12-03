@@ -16,15 +16,17 @@ RSpec.describe PerformAttack do
 
   let(:service) do
     PerformAttack.new(
-      territory_from: territories(territory_from),
-      territory_to:   territories(territory_to),
-      game_state:     game_state
+      territory_from:  territories(territory_from),
+      territory_to:    territories(territory_to),
+      game_state:      game_state,
+      attacking_units: attacking_units
     )
   end
 
   describe "#call" do
     fixtures :games, :players, :territories, :territory_links, :events, :actions
     let(:game_state) { GameState.new(games(:game)) }
+    let(:attacking_units) { 3 }
 
     context "attacking from territory that is not current players" do
       let(:territory_from) { :territory_bottom_left }
@@ -88,6 +90,33 @@ RSpec.describe PerformAttack do
         it "has no errors" do
           expect(service.call).to be true
           expect(service.errors).to be_none
+        end
+
+        context "the attacker only attacks with one unit" do
+          let(:attacking_units) { 1 }
+
+          it "is a valid move" do
+            expect(service.call).to be true
+            expect(service.errors).to be_none
+          end
+        end
+
+        context "the attacker only attacks with two units" do
+          let(:attacking_units) { 2 }
+
+          it "is a valid move" do
+            expect(service.call).to be true
+            expect(service.errors).to be_none
+          end
+        end
+
+        context "the attacker only attacks with two units" do
+          let(:attacking_units) { 4 }
+
+          it "is a valid move" do
+            expect(service.call).to be false
+            expect(service.errors).to contain_exactly :too_many_units
+          end
         end
 
         context "the attackers and defenders rolls match" do

@@ -3,11 +3,11 @@ class PerformFortify
 
   attr_reader :errors, :fortify_event
 
-  def initialize(territory_to:, territory_from:, game_state:, fortifying_units:)
+  def initialize(territory_to:, territory_from:, game_state:, fortifying_units: nil)
     @territory_to     = territory_to
     @territory_from   = territory_from
     @game_state       = game_state
-    @fortifying_units = fortifying_units
+    @fortifying_units = fortifying_units || MINIMUM_FORTIFYING_UNITS
     @errors           = []
   end
 
