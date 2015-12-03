@@ -30,7 +30,7 @@ class SubmitEvent
     service = PerformAttack.new(
       territory_from: @game.territories[@params[:from].to_i],
       territory_to: @game.territories[@params[:to].to_i],
-      game_state: GameState.new(@game)
+      game_state: GameState.current(@game)
     )
     service.call
     @errors = service.errors
@@ -40,7 +40,7 @@ class SubmitEvent
     service = PerformFortify.new(
       territory_from: @game.territories[@params[:from].to_i],
       territory_to: @game.territories[@params[:to].to_i],
-      game_state: GameState.new(@game),
+      game_state: GameState.current(@game),
       fortifying_units: @params[:units].to_i
     )
     service.call
