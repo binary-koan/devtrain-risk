@@ -4,17 +4,16 @@ class GameState
   PLAYER_COLORS = %w{#4F2EC9 #63242E}
 
   attr_reader :game
+  attr_reader :current_player
 
   def self.current(game)
-    new(game).tap { |state| state.apply_events(game.events) }
+    new(game, game.events)
   end
 
-  def initialize(game)
+  def initialize(game, events)
     @game = game
     @territory_info = Hash.new { |hash, key| hash[key] = TerritoryInfo.new(nil, 0) }
-  end
 
-  def apply_events(events)
     events.each { |event| apply_event(event) }
   end
 
@@ -28,10 +27,6 @@ class GameState
 
   def winning_player
     @game.players.detect { |player| owned_territories(player).size == @territory_info.size }
-  end
-
-  def current_player
-    @current_player
   end
 
   def owned_territories(player)

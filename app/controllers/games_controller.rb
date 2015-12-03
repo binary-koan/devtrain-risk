@@ -15,4 +15,10 @@ class GamesController < ApplicationController
   def show
     @game_state = GameState.current(@game)
   end
+
+  private
+
+  def assign_game
+    @game = Game.find(params[:id])
+  end
 end

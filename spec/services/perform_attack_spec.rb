@@ -1,21 +1,21 @@
 require "rails_helper"
 
 RSpec.describe PerformAttack do
-  def remove_two_defenders
-    expect(service).to receive(:rand).and_return 1, 1, 6, 6, 6
-    service.call
-    game_state.apply_events([service.attack_event])
-  end
-
-  def remove_two_attackers
-    allow(service).to receive(:rand).and_return 6
-    service.call
-    game_state.apply_events([service.attack_event])
+  def kill_on_territory(territory, player, count)
+    create(
+      :mock_event,
+      game: game,
+      player: player,
+      territory: territory,
+      units_difference: -count
+    )
   end
 
   fixtures :games, :players, :territories, :territory_links, :events, :actions
 
-  let(:game_state) { GameState.current(games(:game)) }
+  let(:game) { games(:game) }
+  let(:events) { game.events }
+  let(:game_state) { GameState.new(game, events) }
   let(:attacking_units) { 3 }
 
   let(:service) do
@@ -29,8 +29,8 @@ RSpec.describe PerformAttack do
 
   describe "#call" do
     context "attacking from territory that is not current players" do
-      let(:territory_from) { :territory_bottom_left }
-      let(:territory_to) { :territory_top_left }
+      let(:territory_from) { territories(:territory_bottom_left) }
+      let(:territory_to) { territories(:territory_top_left) }
 
       it "returns a wrong player error" do
         expect(service.call).to be false
@@ -39,8 +39,8 @@ RSpec.describe PerformAttack do
     end
 
     context "attacking and defending the same territory" do
-      let(:territory_from) { :territory_top_left }
-      let(:territory_to) { :territory_top_left }
+      let(:territory_from) { territories(:territory_top_left) }
+      let(:territory_to) { territories(:territory_top_left) }
 
       it "returns a no link error" do
         expect(service.call).to be false
@@ -49,8 +49,8 @@ RSpec.describe PerformAttack do
     end
 
     context "attacking players own territory" do
-      let(:territory_from) { :territory_top_left }
-      let(:territory_to) { :territory_top_right }
+      let(:territory_from) { territories(:territory_top_left) }
+      let(:territory_to) { territories(:territory_top_right) }
 
       it "indicates that it is not a valid move" do
         expect(service.call).to be false
@@ -60,8 +60,8 @@ RSpec.describe PerformAttack do
 
     context "attacking an enemie's territory" do
       context "when the territory isn't a neighbour" do
-        let(:territory_from) { :territory_top_left }
-        let(:territory_to) { :territory_bottom_right }
+        let(:territory_from) { territories(:territory_top_left) }
+        let(:territory_to) { territories(:territory_bottom_right) }
 
         it "returns a no link error" do
           expect(service.call).to be false
@@ -70,11 +70,11 @@ RSpec.describe PerformAttack do
       end
 
       context "the attacker only has one unit left" do
-        let(:territory_from) { :territory_top_left }
-        let(:territory_to) { :territory_bottom_left }
+        let(:territory_from) { territories(:territory_top_left) }
+        let(:territory_to) { territories(:territory_bottom_left) }
 
-        before do
-          2.times { remove_two_attackers }
+        let(:events) do
+          game.events << kill_on_territory(territory_from, players(:player1), 4)
         end
 
         it "returns a cannot attack with one unit error" do
@@ -84,8 +84,8 @@ RSpec.describe PerformAttack do
       end
 
       context "the territory is a neighbour" do
-        let(:territory_from) { :territory_top_left }
-        let(:territory_to) { :territory_bottom_left }
+        let(:territory_from) { territories(:territory_top_left) }
+        let(:territory_to) { territories(:territory_bottom_left) }
 
         it "has no errors" do
           expect(service.call).to be true
@@ -126,20 +126,18 @@ RSpec.describe PerformAttack do
 
           before { service.call }
 
-          let(:action) { service.attack_event.actions[0] }
-
           it "removes 2 attackers" do
-            units_lost = action.units_difference
+            units_lost = service.attack_event.actions[0].units_difference
             expect(units_lost).to eq -2
           end
 
           it "removes from the correct territory" do
-            territory = action.territory
+            territory = service.attack_event.actions[0].territory
             expect(territory).to eq territories(:territory_top_left)
           end
 
           it "doesn't change the ownership of the territory" do
-            territory_owner = action.territory_owner
+            territory_owner = service.attack_event.actions[0].territory_owner
             expect(territory_owner).to eq players(:player1)
           end
         end
@@ -151,64 +149,61 @@ RSpec.describe PerformAttack do
 
           before { service.call }
 
-          let(:action) { service.attack_event.actions[0] }
-
           it "loses 2 defenders" do
-            units_lost = action.units_difference
+            units_lost = service.attack_event.actions[0].units_difference
             expect(units_lost).to eq -2
           end
 
           it "removes from the correct territory" do
-            territory = action.territory
+            territory = service.attack_event.actions[0].territory
             expect(territory).to eq territories(:territory_bottom_left)
           end
 
           it "doesn't change the ownership of the territory" do
-            territory_owner = action.territory_owner
+            territory_owner = service.attack_event.actions[0].territory_owner
             expect(territory_owner).to eq players(:player2)
           end
         end
 
         context "the defender has lost all their units" do
-          before do
-            2.times { remove_two_defenders }
+          let(:events) do
+            game.events << kill_on_territory(territory_to, players(:player2), 4)
           end
 
-          let(:attack_event) do
+          before do
             expect(service).to receive(:rand).and_return 1, 6, 6, 6
             service.call
+          end
+
+          subject(:attack_event) do
             service.attack_event
           end
 
           context "removing the defenders from defeated territory" do
-            let(:remove_defenders_action) { attack_event.actions[0] }
-
             it "removes units from the defending territory" do
-              expect(remove_defenders_action.units_difference).to eq -1
+              expect(attack_event.actions[0].units_difference).to eq -1
             end
 
             it "removes units from the correct territory" do
-              expect(remove_defenders_action.territory).to eq territories(:territory_bottom_left)
+              expect(attack_event.actions[0].territory).to eq territories(:territory_bottom_left)
             end
 
             it "doesn't change the ownership of the territory" do
-              expect(remove_defenders_action.territory_owner).to eq players(:player2)
+              expect(attack_event.actions[0].territory_owner).to eq players(:player2)
             end
           end
 
           context "adding attackers units to defeated territory" do
-            let(:reinforce_territory_action) { attack_event.actions[1] }
-
             it "adds the attacking units to the defeated territory" do
-              expect(reinforce_territory_action.units_difference).to eq 1
+              expect(attack_event.actions[1].units_difference).to eq 1
             end
 
             it "adds units to the defeated territory" do
-              expect(reinforce_territory_action.territory).to eq territories(:territory_bottom_left)
+              expect(attack_event.actions[1].territory).to eq territories(:territory_bottom_left)
             end
 
             it "changes the owner of the territory to the attacker" do
-              expect(reinforce_territory_action.territory_owner).to eq players(:player1)
+              expect(attack_event.actions[1].territory_owner).to eq players(:player1)
             end
           end
 
