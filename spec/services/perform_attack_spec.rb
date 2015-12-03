@@ -20,8 +20,8 @@ RSpec.describe PerformAttack do
 
   let(:service) do
     PerformAttack.new(
-      territory_from:  territories(territory_from),
-      territory_to:    territories(territory_to),
+      territory_from:  territory_from,
+      territory_to:    territory_to,
       game_state:      game_state,
       attacking_units: attacking_units
     )
