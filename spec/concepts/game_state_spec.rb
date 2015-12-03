@@ -2,12 +2,25 @@ require "rails_helper"
 
 RSpec.describe GameState do
   let(:game)    { create(:game) }
+
   let(:player1) { create(:player, game: game) }
   let(:player2) { create(:player, game: game) }
   let(:jupiter) { create(:territory, game: game) }
   let(:mars)    { create(:territory, game: game) }
 
+  #TODO is there a non-horrible way to do this?
+  before do
+    player1
+    player2
+    jupiter
+    mars
+  end
+
   subject(:game_state) { GameState.new(game) }
+
+  let(:events)  { [] }
+
+  before        { game_state.apply_events(events) }
 
   describe "#winning_player" do
     subject { game_state.winning_player }
@@ -17,43 +30,53 @@ RSpec.describe GameState do
     end
 
     context "each player owns one territory" do
-      before do
-        create(:reinforce_event, player: player1, game: game, territory: mars)
-        create(:reinforce_event, player: player2, game: game, territory: jupiter)
+      let(:events) do
+        [
+          create(:reinforce_event, player: player1, game: game, territory: mars),
+          create(:reinforce_event, player: player2, game: game, territory: jupiter)
+        ]
       end
 
       it { is_expected.to be_nil }
     end
 
     context "player 1 owns both territories" do
-      before do
-        create(:reinforce_event, player: player1, game: game, territory: mars)
-        create(:reinforce_event, player: player1, game: game, territory: jupiter)
+      let(:events) do
+        [
+          create(:reinforce_event, player: player1, game: game, territory: mars),
+          create(:reinforce_event, player: player1, game: game, territory: jupiter)
+        ]
       end
 
-      it { is_expected.to eq player1}
+      it { is_expected.to eq player1 }
     end
 
     context "player 2 owns both territories" do
-      before do
-        create(:reinforce_event, player: player2, game: game, territory: mars)
-        create(:reinforce_event, player: player2, game: game, territory: jupiter)
+      let(:events) do
+        [
+          create(:reinforce_event, player: player2, game: game, territory: mars),
+          create(:reinforce_event, player: player2, game: game, territory: jupiter)
+        ]
       end
 
-      it { is_expected.to eq player2}
+      it { is_expected.to eq player2 }
     end
   end
 
   describe "#current_player" do
     subject { game_state.current_player }
-    before { create(:start_turn_event, game: game, player: player1) }
+    let(:events) do
+      [create(:start_turn_event, game: game, player: player1)]
+    end
 
     context "when one player has started their turn" do
       it { is_expected.to eq player1 }
     end
 
     context "when the other player has also started their turn" do
-      before { create(:start_turn_event, game: game, player: player2) }
+      before do
+        game_state.apply_events([create(:start_turn_event, game: game, player: player2)])
+      end
 
       it { is_expected.to eq player2 }
     end
@@ -68,7 +91,7 @@ RSpec.describe GameState do
     end
 
     context "when one player owns one territory" do
-      before { create(:reinforce_event, player: player1, game: game, territory: jupiter) }
+      let(:events) { [create(:reinforce_event, player: player1, game: game, territory: jupiter)] }
 
       it "contains the territory for the owning player" do
         expect(game_state.owned_territories(player1)).to contain_exactly(jupiter)
@@ -80,9 +103,11 @@ RSpec.describe GameState do
     end
 
     context "when both players own one territory" do
-      before do
-        create(:reinforce_event, player: player1, game: game, territory: mars)
-        create(:reinforce_event, player: player2, game: game, territory: jupiter)
+      let(:events) do
+        [
+          create(:reinforce_event, player: player1, game: game, territory: mars),
+          create(:reinforce_event, player: player2, game: game, territory: jupiter)
+        ]
       end
 
       it "contains the correct territory for player 1" do
@@ -95,7 +120,9 @@ RSpec.describe GameState do
 
       context "when one player has taken over the other one's territory" do
         before do
-          create(:takeover_event, player: player1, game: game, territory: jupiter)
+          game_state.apply_events([
+            create(:takeover_event, player: player1, game: game, territory: jupiter)
+          ])
         end
 
         it "contains both territories for player 1" do
@@ -110,9 +137,11 @@ RSpec.describe GameState do
   end
 
   describe "#territory_owner" do
-    before do
-      create(:reinforce_event, player: player1, game: game, territory: mars)
-      create(:reinforce_event, player: player2, game: game, territory: jupiter)
+    let(:events) do
+      [
+        create(:reinforce_event, player: player1, game: game, territory: mars),
+        create(:reinforce_event, player: player2, game: game, territory: jupiter)
+      ]
     end
 
     it "is the inverse of #owned_territories for player 1" do

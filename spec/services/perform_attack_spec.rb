@@ -1,18 +1,22 @@
 require "rails_helper"
-require_relative "../../app/concepts/game_state"
-require_relative "../../app/services/perform_attack"
-
 
 RSpec.describe PerformAttack do
   def remove_two_defenders
     expect(service).to receive(:rand).and_return 1, 1, 6, 6, 6
     service.call
+    game_state.apply_events([service.attack_event])
   end
 
   def remove_two_attackers
     allow(service).to receive(:rand).and_return 6
     service.call
+    game_state.apply_events([service.attack_event])
   end
+
+  fixtures :games, :players, :territories, :territory_links, :events, :actions
+
+  let(:game_state) { GameState.current(games(:game)) }
+  let(:attacking_units) { 3 }
 
   let(:service) do
     PerformAttack.new(
@@ -24,10 +28,6 @@ RSpec.describe PerformAttack do
   end
 
   describe "#call" do
-    fixtures :games, :players, :territories, :territory_links, :events, :actions
-    let(:game_state) { GameState.new(games(:game)) }
-    let(:attacking_units) { 3 }
-
     context "attacking from territory that is not current players" do
       let(:territory_from) { :territory_bottom_left }
       let(:territory_to) { :territory_top_left }

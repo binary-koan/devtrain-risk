@@ -1,13 +1,9 @@
 require "rails_helper"
-require_relative "../../app/concepts/game_state"
-require_relative "../../app/services/perform_fortify"
-require_relative "../../app/services/perform_attack"
 
-
-RSpec.describe PerformAttack do
+RSpec.describe PerformFortify do
   def remove_units_from_territory(player, territory, units)
     event = Event.attack(
-      game: game_state.game,
+      game: game,
       player: player
     ).tap { |e| e.save!}
 
@@ -29,7 +25,8 @@ RSpec.describe PerformAttack do
 
   describe "#call" do
     fixtures :games, :players, :territories, :territory_links, :events, :actions
-    let(:game_state) { GameState.new(games(:game)) }
+    let(:game) { games(:game) }
+    let(:game_state) { GameState.current(game) }
     let(:fortifying_units) { 1 }
     let(:player1) { players(:player1) }
     let(:player2) { players(:player2) }

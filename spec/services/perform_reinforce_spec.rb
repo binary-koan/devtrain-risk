@@ -1,7 +1,4 @@
 require "rails_helper"
-require_relative "../../app/concepts/game_state"
-require_relative "../../app/services/perform_reinforce"
-
 
 RSpec.describe PerformReinforce do
   let(:game)    { create(:game) }
@@ -10,7 +7,7 @@ RSpec.describe PerformReinforce do
   let(:jupiter) { create(:territory, game: game) }
   let(:mars)    { create(:territory, game: game) }
 
-  let(:game_state) { GameState.new(game) }
+  let(:game_state) { GameState.current(game) }
 
   let(:service) do
     PerformReinforce.new(
@@ -45,15 +42,14 @@ RSpec.describe PerformReinforce do
 
       let(:player) { player1 }
       let(:reinforce_event) { service.reinforce_event }
-      let(:action) { reinforce_event.actions[0] }
       let(:reinforcement) { Reinforcement.new }
 
       it "adds units to the territory" do
-        expect(action.units_difference).to be reinforcement.all_units
+        expect(reinforce_event.actions[0].units_difference).to be reinforcement.all_units
       end
 
       it "adds units to the player's territory" do
-        expect(action.territory_owner).to be player1
+        expect(reinforce_event.actions[0].territory_owner).to be player1
       end
     end
 
@@ -66,15 +62,14 @@ RSpec.describe PerformReinforce do
 
       let(:player) { player2 }
       let(:reinforce_event) { service.reinforce_event }
-      let(:action) { reinforce_event.actions[0] }
       let(:reinforcement) { Reinforcement.new }
 
       it "adds units to the territory" do
-        expect(action.units_difference).to be reinforcement.all_units
+        expect(reinforce_event.actions[0].units_difference).to be reinforcement.all_units
       end
 
       it "adds units to the player's territory" do
-        expect(action.territory_owner).to be player2
+        expect(reinforce_event.actions[0].territory_owner).to be player2
       end
     end
   end
