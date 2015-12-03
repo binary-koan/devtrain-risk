@@ -1,8 +1,8 @@
 class PerformAttack
-  MIN_UNITS_ON_TERRITORY = 1
-  MIN_ATTACKING_UNITS    = 1
-  MAX_ATTACKING_UNITS    = 3
-  MAX_DEFENDING_UNITS    = 2
+  MIN_UNITS_ON_TERRITORY  = 1
+  MIN_ATTACKING_UNITS     = 1
+  MAX_ATTACKING_UNITS     = 3
+  MAX_DEFENDING_UNITS     = 2
 
   attr_reader :errors, :attack_event
 
@@ -10,7 +10,7 @@ class PerformAttack
     @territory_from  = territory_from
     @territory_to    = territory_to
     @game_state      = game_state
-    @attacking_units = attacking_units || MIN_ATTACKING_UNITS
+    @attacking_units = attacking_units || default_attacking_units
     @errors          = []
   end
 
@@ -31,6 +31,10 @@ class PerformAttack
   end
 
   private
+
+  def default_attacking_units
+    number_of_attackers
+  end
 
   def too_many_units?
      @attacking_units > 3 || @attacking_units > number_of_attackers
