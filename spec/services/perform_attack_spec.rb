@@ -175,51 +175,51 @@ RSpec.describe PerformAttack do
             service.call
           end
 
-          subject(:attack_event) do
-            service.attack_event
-          end
-
           context "removing the defenders from defeated territory" do
+            let(:remove_defenders_event) { service.attack_event.actions[0] }
+
             it "removes units from the defending territory" do
-              expect(attack_event.actions[0].units_difference).to eq -1
+              expect(remove_defenders_event.units_difference).to eq -1
             end
 
             it "removes units from the correct territory" do
-              expect(attack_event.actions[0].territory).to eq territories(:territory_bottom_left)
+              expect(remove_defenders_event.territory).to eq territories(:territory_bottom_left)
             end
 
             it "doesn't change the ownership of the territory" do
-              expect(attack_event.actions[0].territory_owner).to eq players(:player2)
+              expect(remove_defenders_event.territory_owner).to eq players(:player2)
             end
           end
 
           context "adding attackers units to defeated territory" do
+            let(:add_attackers_event) { service.attack_event.actions[1] }
+
             it "adds the attacking units to the defeated territory" do
-              expect(attack_event.actions[1].units_difference).to eq 1
+              expect(add_attackers_event.units_difference).to eq 1
             end
 
             it "adds units to the defeated territory" do
-              expect(attack_event.actions[1].territory).to eq territories(:territory_bottom_left)
+              expect(add_attackers_event.territory).to eq territories(:territory_bottom_left)
             end
 
             it "changes the owner of the territory to the attacker" do
-              expect(attack_event.actions[1].territory_owner).to eq players(:player1)
+              expect(add_attackers_event.territory_owner).to eq players(:player1)
             end
           end
 
           context "removing attack units from attacking territory" do
-            let(:remove_attackers_from_territory) { attack_event.actions[2] }
+            let(:remove_attackers_event) { service.attack_event.actions[2] }
 
             it "removes the attacking units from the attacking territory" do
-              expect(remove_attackers_from_territory.units_difference).to eq -1
+              expect(remove_attackers_event.units_difference).to eq -1
             end
 
             it "removes units from the correct attacking territory" do
-              expect(remove_attackers_from_territory.territory).to eq territories(:territory_top_left)
+              expect(remove_attackers_event.territory).to eq territories(:territory_top_left)
             end
 
             it "doesn't change the ownership of the territory" do
-              expect(remove_attackers_from_territory.territory_owner).to eq players(:player1)
+              expect(remove_attackers_event.territory_owner).to eq players(:player1)
             end
           end
         end

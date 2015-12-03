@@ -34,8 +34,4 @@ RSpec.describe GamesController, type: :controller do
       expect(response).to render_template :show
     end
   end
-
-  describe "#event" do
-    pending "Test it!"
-  end
 end

@@ -26,12 +26,13 @@ RSpec.describe CreateGame do
     end
 
     it "assigns all territories to players" do
-      # ^ is actually what the next line means (with this game structure), but it isn't exactly clear ...
+      #TODO ^ is actually what the next line means (with this game structure), but it isn't exactly clear ...
       expect(game.territories).to be_all { |territory| territory.actions.size > 0 }
     end
 
-    context "makes sure that each player owns the same number of territories" do
-      pending "how should this work?"
+    it "makes sure that each player owns the same number of territories" do
+      player_territories = game.players.map { |player| game_state.owned_territories(player) }
+      expect(player_territories.map(&:size).uniq.size).to eq 1
     end
 
     it "adds units to territories" do
