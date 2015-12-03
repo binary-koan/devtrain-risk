@@ -1,24 +1,29 @@
 reinforce_top_left:
+  id: 1
   event_type: reinforce
   game: game
   player: player1
 
 reinforce_top_right:
+  id: 2
   event_type: reinforce
   game: game
   player: player1
 
 reinforce_bottom_right:
+  id: 3
   event_type: reinforce
   game: game
   player: player2
 
 reinforce_bottom_left:
+  id: 4
   event_type: reinforce
   game: game
   player: player2
 
 start_game:
+  id: 5
   event_type: start_turn
   game: game
   player: player1

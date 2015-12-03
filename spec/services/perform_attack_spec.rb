@@ -14,7 +14,18 @@ RSpec.describe PerformAttack do
   fixtures :games, :players, :territories, :territory_links, :events, :actions
 
   let(:game) { games(:game) }
-  let(:events) { game.events }
+
+  let(:base_events) do
+    game.events << create(
+      :reinforce_event,
+      game: game,
+      player: players(:player1),
+      territory: territories(:territory_top_left)
+    )
+  end
+
+  let(:events) { base_events }
+
   let(:game_state) { GameState.new(game, events) }
   let(:attacking_units) { 3 }
 
@@ -74,7 +85,7 @@ RSpec.describe PerformAttack do
         let(:territory_to) { territories(:territory_bottom_left) }
 
         let(:events) do
-          game.events << kill_on_territory(territory_from, players(:player1), 4)
+          base_events << kill_on_territory(territory_from, players(:player1), 7)
         end
 
         it "returns a cannot attack with one unit error" do
@@ -197,7 +208,7 @@ RSpec.describe PerformAttack do
 
         context "the defender has lost all their units" do
           let(:events) do
-            game.events << kill_on_territory(territory_to, players(:player2), 4)
+            base_events << kill_on_territory(territory_to, players(:player2), 4)
           end
 
           before do

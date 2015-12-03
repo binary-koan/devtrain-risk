@@ -14,26 +14,39 @@ RSpec.describe PerformFortify do
     )
   end
 
+  let(:game) { games(:game) }
+
+  let(:base_events) do
+    game.events << create(
+      :reinforce_event,
+      game: game,
+      player: players(:player1),
+      territory: territories(:territory_top_left)
+    )
+  end
+
+  let(:events) { base_events }
+
+  let(:game_state) { GameState.new(game, events) }
+
   let(:service) do
     PerformFortify.new(
-      territory_from:   territories(territory_from),
-      territory_to:     territories(territory_to),
+      territory_from:   territory_from,
+      territory_to:     territory_to,
       game_state:       game_state,
       fortifying_units: fortifying_units
     )
   end
 
   describe "#call" do
-    fixtures :games, :players, :territories, :territory_links, :events, :actions
-    let(:game) { games(:game) }
-    let(:game_state) { GameState.current(game) }
+    fixtures :games, :players, :territories
     let(:fortifying_units) { 1 }
     let(:player1) { players(:player1) }
     let(:player2) { players(:player2) }
 
     context "fortifying from territory that is not current players" do
-      let(:territory_from) { :territory_bottom_left }
-      let(:territory_to) { :territory_top_left }
+      let(:territory_from) { territories(:territory_bottom_left) }
+      let(:territory_to) { territories(:territory_top_left) }
 
       it "returns a wrong player error" do
         expect(service.call).to be false
@@ -42,8 +55,8 @@ RSpec.describe PerformFortify do
     end
 
     context "fortifying from territory to another with no valid link" do
-      let(:territory_from) { :territory_top_left }
-      let(:territory_to) { :territory_bottom_right }
+      let(:territory_from) { territories(:territory_top_left) }
+      let(:territory_to) { territories(:territory_bottom_right) }
 
       it "returns a no link error" do
         expect(service.call).to be false
@@ -52,8 +65,8 @@ RSpec.describe PerformFortify do
     end
 
     context "fortifying an enemies territory" do
-      let(:territory_from) { :territory_top_left }
-      let(:territory_to) { :territory_bottom_left }
+      let(:territory_from) { territories(:territory_top_left) }
+      let(:territory_to) { territories(:territory_bottom_left) }
 
       it "returns a fortifying_enemy_territory error" do
         expect(service.call).to be false
@@ -62,8 +75,8 @@ RSpec.describe PerformFortify do
     end
 
     context "fortifying the same territory" do
-      let(:territory_from) { :territory_top_left }
-      let(:territory_to) { :territory_top_left }
+      let(:territory_from) { territories(:territory_top_left) }
+      let(:territory_to) { territories(:territory_top_left) }
 
       it "returns a same_territory error" do
         expect(service.call).to be false
@@ -72,8 +85,8 @@ RSpec.describe PerformFortify do
     end
 
     context "fortifying less than the minimum number of units" do
-      let(:territory_from) { :territory_top_left }
-      let(:territory_to) { :territory_top_right }
+      let(:territory_from) { territories(:territory_top_left) }
+      let(:territory_to) { territories(:territory_top_right) }
       let(:fortifying_units) { 0 }
 
       it "returns a minimum_number_of_units error" do
@@ -83,19 +96,19 @@ RSpec.describe PerformFortify do
     end
 
     context "fortifying from territory with only one unit" do
-      let(:territory_from) { :territory_top_left }
-      let(:territory_to) { :territory_top_right }
+      let(:territory_from) { territories(:territory_top_left) }
+      let(:territory_to) { territories(:territory_top_right) }
 
       it "returns a fortify_with_one_unit error" do
-        remove_units_from_territory(player1, territories(:territory_top_left), 4)
+        remove_units_from_territory(player1, territory_from, 7)
         expect(service.call).to be false
         expect(service.errors).to contain_exactly :fortify_with_one_unit
       end
     end
 
     context "fortifying a valid territory" do
-      let(:territory_from) { :territory_top_left }
-      let(:territory_to) { :territory_top_right }
+      let(:territory_from) { territories(:territory_top_left) }
+      let(:territory_to) { territories(:territory_top_right) }
       let(:fortifying_units) { 3 }
 
       it "has no errors" do
@@ -112,7 +125,7 @@ RSpec.describe PerformFortify do
       end
 
       it "adds the units to the correct territory" do
-        expect(receiving_action.territory).to be territories(:territory_top_right)
+        expect(receiving_action.territory).to be territory_to
       end
 
       it "doesn't change the ownership of the receiving territory" do
@@ -126,7 +139,7 @@ RSpec.describe PerformFortify do
       end
 
       it "removes the units from the correct territory" do
-        expect(sending_action.territory).to be territories(:territory_top_left)
+        expect(sending_action.territory).to be territory_from
       end
 
       it "doesn't change the ownership of the sending territory" do

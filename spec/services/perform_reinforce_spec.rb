@@ -1,6 +1,10 @@
 require "rails_helper"
 
 RSpec.describe PerformReinforce do
+  def start_turn(player)
+    create(:start_turn_event, player: player1, game: game)
+  end
+
   let(:game)    { create(:game) }
 
   let!(:player1) { create(:player, game: game) }
@@ -8,7 +12,7 @@ RSpec.describe PerformReinforce do
   let!(:jupiter) { create(:territory, game: game) }
   let!(:mars)    { create(:territory, game: game) }
 
-  before { create(:start_turn_event, player: player1, game: game) }
+  let(:player) { player1 }
 
   let(:game_state) { GameState.current(game) }
   let(:reinforcements) { Reinforcement.new(player) }
@@ -25,9 +29,10 @@ RSpec.describe PerformReinforce do
 
   describe "#call" do
     context "with no territories owned" do
-      let(:player) { player1 }
-
-      before(:each) { service.call }
+      before do
+        start_turn(player1)
+        service.call
+      end
 
       it "returns a no territory error for player 1" do
         expect(service.errors).to contain_exactly :no_territories
@@ -41,21 +46,21 @@ RSpec.describe PerformReinforce do
     end
 
     context "with a territory owned" do
-      let(:player) { player1 }
       let(:reinforce_event) { service.reinforce_event }
 
       before do
         create(:reinforce_event, player: player1, game: game, territory: mars)
         create(:reinforce_event, player: player2, game: game, territory: jupiter)
+        start_turn(player1)
         service.call
       end
 
       it "adds units to the territory" do
-        expect(reinforce_event.actions[0].units_difference).to be reinforcements.remaining_reinforcements
+        expect(reinforce_event.actions[0].units_difference).to eq reinforcements.remaining_reinforcements
       end
 
       it "adds units to the player's territory" do
-        expect(reinforce_event.actions[0].territory_owner).to be player1
+        expect(reinforce_event.actions[0].territory_owner).to eq player1
       end
     end
 
@@ -66,37 +71,37 @@ RSpec.describe PerformReinforce do
       before do
         create(:reinforce_event, player: player1, game: game, territory: mars)
         create(:reinforce_event, player: player2, game: game, territory: jupiter)
+        start_turn(player1)
         service.call
       end
 
-
       it "adds units to the territory" do
-        expect(reinforce_event.actions[0].units_difference).to be reinforcements.remaining_reinforcements
+        expect(reinforce_event.actions[0].units_difference).to eq reinforcements.remaining_reinforcements
       end
 
       it "adds units to the player's territory" do
-        expect(reinforce_event.actions[0].territory_owner).to be player2
+        expect(reinforce_event.actions[0].territory_owner).to eq player2
       end
     end
 
     context "player1 reinforces a single unit" do
-      let(:player) { player1 }
       let(:units_to_reinforce) { 1 }
 
       before do
         create(:reinforce_event, player: player1, game: game, territory: mars)
         create(:reinforce_event, player: player2, game: game, territory: jupiter)
+        start_turn(player1)
         service.call
       end
 
       let(:reinforce_event) { service.reinforce_event }
 
       it "adds units to the territory" do
-        expect(reinforce_event.actions[0].units_difference).to be 1
+        expect(reinforce_event.actions[0].units_difference).to eq 1
       end
 
       it "adds units to the player's territory" do
-        expect(reinforce_event.actions[0].territory_owner).to be player1
+        expect(reinforce_event.actions[0].territory_owner).to eq player1
       end
     end
   end
