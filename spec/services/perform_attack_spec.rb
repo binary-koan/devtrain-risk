@@ -142,7 +142,7 @@ RSpec.describe PerformAttack do
 
           context "the attacker loses both dice rolls" do
             before do
-              expect(service).to(:rand).exactly(4).times.and_return 1, 1, 6, 6
+              expect(service).to receive(:rand).exactly(4).times.and_return 1, 1, 6, 6
               service.call
             end
 
