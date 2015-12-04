@@ -12,14 +12,6 @@ RSpec.describe GameState do
 
   subject(:game_state) { BuildGameState.new(game, events).call }
 
-  describe "#player_color" do
-    it "should return a different colour for player 1 and 2" do
-      player1_color = game_state.player_color(game.players[0])
-      player2_color = game_state.player_color(game.players[1])
-      expect(player1_color).not_to eq player2_color
-    end
-  end
-
   describe "#won?" do
     subject { game_state.won? }
 

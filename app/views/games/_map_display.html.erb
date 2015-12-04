@@ -6,7 +6,7 @@
     <% end %>
     <% @game.territories.each.with_index do |territory, index| %>
       <g class="node" transform="translate(<%= territory.x %>,<%= territory.y %>)">
-        <circle r="30" fill="<%= @game_state.player_color(@game_state.territory_owner(territory)) %>" />
+        <circle r="30" fill="<%= player_color(@game, @game_state.territory_owner(territory)) %>" />
         <text text-anchor="middle" dy="-4px"><%= index %></text>
         <text text-anchor="middle" dy="10px"><%= @game_state.units_on_territory(territory) %> unit(s)</text>
       </g>

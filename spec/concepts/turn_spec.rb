@@ -10,6 +10,10 @@ RSpec.describe Turn do
 
   let(:turn) { Turn.new(player, events) }
 
+  describe "#reinforcements_available" do
+    pending "Test it!"
+  end
+
   describe "#can_reinforce?" do
     let(:reinforcement_units) { 1 }
 

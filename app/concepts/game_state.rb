@@ -1,8 +1,6 @@
 class GameState
   TerritoryInfo = Struct.new(:owner, :units)
 
-  PLAYER_COLORS = %w{#4F2EC9 #63242E}
-
   #TODO territory_info is only public to make == work - is that OK?
   attr_reader :game, :territory_info
 
@@ -20,10 +18,6 @@ class GameState
 
   def current_player
     @turns.last.player
-  end
-
-  def player_color(player)
-    PLAYER_COLORS[game.players.find_index(player)]
   end
 
   def won?
