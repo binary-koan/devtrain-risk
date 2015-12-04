@@ -17,15 +17,16 @@ class SubmitEvent
       perform_reinforce
     when "start_turn"
       end_turn
-    else
-      @errors << :unknown_event_type
     end
 
-    if service.call
-      true
-    else
+    if !service
+      @errors << :unknown_event_type
+      false
+    elsif !service.call
       @errors += service.errors
       false
+    else
+      true
     end
   end
 
