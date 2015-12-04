@@ -118,6 +118,44 @@ RSpec.describe SubmitEvent do
       end
     end
 
+    context "with a fortify event" do
+      let(:event_type) { "reinforce" }
+      let(:units) { 5 }
+      let(:reinforce_service) { instance_double(PerformReinforce, call: true, errors: []) }
+
+      it "calls the PerformReinforce service with correct parameters" do
+        expect(PerformReinforce).to receive(:new).with(
+          territory: game.territories[to_index],
+          game_state: game_state,
+          units_to_reinforce: 5
+        ).and_return(reinforce_service)
+
+        service.call
+      end
+
+      it "succeeds if the PerformReinforce service succeeds" do
+        expect(PerformReinforce).to receive(:new).and_return(reinforce_service)
+
+        expect(service.call).to eq true
+      end
+
+      it "fails if the PerformReinforce service fails" do
+        expect(PerformReinforce).to receive(:new).and_return(reinforce_service)
+        expect(reinforce_service).to receive(:call).and_return(false)
+
+        expect(service.call).to eq false
+      end
+
+      it "has the same errors as the service if it fails" do
+        expect(PerformReinforce).to receive(:new).and_return(reinforce_service)
+        expect(reinforce_service).to receive(:call).and_return(false)
+        expect(reinforce_service).to receive(:errors).and_return([:error])
+
+        service.call
+        expect(service.errors).to eq [:error]
+      end
+    end
+
     context "with an unknown type" do
       let(:event_type) { "nothing" }
 
@@ -126,7 +164,5 @@ RSpec.describe SubmitEvent do
         expect(service.errors).to contain_exactly :unknown_event_type
       end
     end
-
-    pending "Test reinforcements!"
   end
 end

@@ -52,6 +52,10 @@ class GameState
     end
   end
 
+  def reinforcements_available
+    @turns.last.reinforcements_available
+  end
+
   def can_reinforce?(unit_count)
     @turns.last.can_reinforce?(unit_count)
   end

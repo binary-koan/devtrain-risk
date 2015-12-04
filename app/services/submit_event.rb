@@ -51,7 +51,11 @@ class SubmitEvent
   end
 
   def perform_reinforce
-    fail "Reinforcement isn't implemented yet" #TODO
+    PerformReinforce.new(
+      game_state: @game_state,
+      territory: @game.territories[@params[:to].to_i],
+      units_to_reinforce: @params[:units].to_i
+    )
   end
 
   def end_turn

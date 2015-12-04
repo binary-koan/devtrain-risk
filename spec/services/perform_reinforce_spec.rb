@@ -2,26 +2,26 @@ require "rails_helper"
 
 RSpec.describe PerformReinforce do
   def start_turn(player)
-    create(:start_turn_event, player: player1, game: game)
+    create(:start_turn_event, player: player, game: game)
   end
 
-  let(:game)    { create(:game) }
+  let(:game) { create(:game) }
 
-  let!(:player1) { create(:player, game: game) }
-  let!(:player2) { create(:player, game: game) }
+  let!(:player1) { create(:player, name: "Player 1", game: game) }
+  let!(:player2) { create(:player, name: "Player 2", game: game) }
   let!(:jupiter) { create(:territory, game: game) }
   let!(:mars)    { create(:territory, game: game) }
 
-  let(:player) { player1 }
-
   let(:game_state) { BuildGameState.new(game, game.events).call }
-  let(:reinforcements) { Reinforcement.new(player) }
+  let(:reinforcements) { Reinforcement.new(player1) }
   let(:units_to_reinforce) { 3 }
+
+  let(:territory) { jupiter }
 
   let(:service) do
     PerformReinforce.new(
       game_state:         game_state,
-      current_player:     player,
+      territory:          territory,
       units_to_reinforce: units_to_reinforce
     )
   end
@@ -71,6 +71,7 @@ RSpec.describe PerformReinforce do
         create(:reinforce_event, player: player1, game: game, territory: mars)
         create(:reinforce_event, player: player2, game: game, territory: jupiter)
         start_turn(player1)
+        start_turn(player2)
         service.call
       end
 

@@ -25,9 +25,10 @@
   <% if @game_state.can_reinforce?(1) %>
     <%= form_for [@game, Event.reinforce] do |f| %>
       <div class="content">
+        <div><%= @game_state.reinforcements_available %> reinforcements available.</div>
         <%= f.hidden_field :event_type %>
-        Add <%= text_field_tag :units, "" %> units
-        to <%= text_field_tag :to %>
+        Place <%= text_field_tag :units, "" %> units
+        on <%= text_field_tag :to %>
         <%= f.submit "Reinforce" %>
       </div>
     <% end %>
