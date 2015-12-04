@@ -31,7 +31,7 @@ RSpec.describe SubmitEvent do
         expect(PerformAttack).to receive(:new).with(
           territory_from: game.territories[from_index],
           territory_to: game.territories[to_index],
-          game_state: GameState.current(game)
+          game_state: BuildGameState.new(game, game.events).call
         ).and_return(attack_service)
 
         service.call
@@ -69,7 +69,7 @@ RSpec.describe SubmitEvent do
         expect(PerformFortify).to receive(:new).with(
           territory_from: game.territories[from_index],
           territory_to: game.territories[to_index],
-          game_state: GameState.current(game),
+          game_state: BuildGameState.new(game, game.events).call,
           fortifying_units: 5
         ).and_return(fortify_service)
 

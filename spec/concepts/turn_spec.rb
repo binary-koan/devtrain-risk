@@ -6,7 +6,9 @@ RSpec.describe Turn do
   let(:game) { games(:game) }
   let(:player) { players(:player1) }
 
-  let(:turn) { Turn.new(player) }
+  let(:events) { [] }
+
+  let(:turn) { Turn.new(player, events) }
 
   describe "#can_reinforce?" do
     let(:reinforcement_units) { 1 }
@@ -26,40 +28,40 @@ RSpec.describe Turn do
     end
 
     context "when a complete reinforcement has already been made" do
-      before do
-        turn.apply_event(create(
+      let(:events) do
+        [create(
           :reinforce_event,
           game: game,
           player: player,
           territory: territories(:territory_top_left)
-        ))
+        )]
       end
 
       it { is_expected.to eq false }
     end
 
     context "when an incomplete reinforcement has been made" do
-      before do
-        turn.apply_event(create(
+      let(:events) do
+        [create(
           :reinforce_event,
           game: game,
           player: player,
           territory: territories(:territory_top_left),
           units_difference: 1
-        ))
+        )]
       end
 
       it { is_expected.to eq true }
     end
 
     context "when an attack has been made" do
-      before do
-        turn.apply_event(create(
+      let(:events) do
+        [create(
           :takeover_event,
           game: game,
           player: player,
           territory: territories(:territory_top_left)
-        ))
+        )]
       end
 
       it { is_expected.to eq false }
@@ -74,40 +76,40 @@ RSpec.describe Turn do
     end
 
     context "when a complete reinforcement has been made" do
-      before do
-        turn.apply_event(create(
+      let(:events) do
+        [create(
           :reinforce_event,
           game: game,
           player: player,
           territory: territories(:territory_top_left)
-        ))
+        )]
       end
 
       it { is_expected.to eq true }
     end
 
     context "when an incomplete reinforcement has been made" do
-      before do
-        turn.apply_event(create(
+      let(:events) do
+        [create(
           :reinforce_event,
           game: game,
           player: player,
           territory: territories(:territory_top_left),
           units_difference: 1
-        ))
+        )]
       end
 
       it { is_expected.to eq false }
     end
 
     context "when an attack has been made" do
-      before do
-        turn.apply_event(create(
+      let(:events) do
+        [create(
           :takeover_event,
           game: game,
           player: player,
           territory: territories(:territory_top_left)
-        ))
+        )]
       end
 
       it { is_expected.to eq true }
@@ -122,40 +124,26 @@ RSpec.describe Turn do
     end
 
     context "when a complete reinforcement has been made" do
-      before do
-        turn.apply_event(create(
+      let(:events) do
+        [create(
           :reinforce_event,
           game: game,
           player: player,
           territory: territories(:territory_top_left)
-        ))
+        )]
       end
 
       it { is_expected.to eq true }
     end
 
-    context "when an incomplete reinforcement has been made" do
-      before do
-        turn.apply_event(create(
-          :reinforce_event,
-          game: game,
-          player: player,
-          territory: territories(:territory_top_left),
-          units_difference: 1
-        ))
-      end
-
-      it { is_expected.to eq false }
-    end
-
     context "when an attack has been made" do
-      before do
-        turn.apply_event(create(
+      let(:events) do
+        [create(
           :takeover_event,
           game: game,
           player: player,
           territory: territories(:territory_top_left)
-        ))
+        )]
       end
 
       it { is_expected.to eq true }

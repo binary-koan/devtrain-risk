@@ -6,23 +6,20 @@ class GameState
   #TODO territory_info is only public to make == work - is that OK?
   attr_reader :game, :territory_info
 
-  def self.current(game)
-    new(game, game.events)
+  def initialize(game, turns)
+    @game = game
+    @turns = turns
+    @territory_info = Hash.new { |hash, key| hash[key] = TerritoryInfo.new(nil, 0) }
+
+    turns.each { |turn| apply_actions(turn.actions) }
   end
 
   def ==(other)
     game == other.game && territory_info == other.territory_info
   end
 
-  def initialize(game, events)
-    @game = game
-    @territory_info = Hash.new { |hash, key| hash[key] = TerritoryInfo.new(nil, 0) }
-
-    events.each { |event| apply_event(event) }
-  end
-
   def current_player
-    @current_turn.player
+    @turns.last.player
   end
 
   def player_color(player)
@@ -56,27 +53,21 @@ class GameState
   end
 
   def can_reinforce?(unit_count)
-    @current_turn.can_reinforce?(unit_count)
+    @turns.last.can_reinforce?(unit_count)
   end
 
   def can_attack?
-    @current_turn.can_attack?
+    @turns.last.can_attack?
   end
 
   def can_fortify?
-    @current_turn.can_fortify?
+    @turns.last.can_fortify?
   end
 
   private
 
-  def apply_event(event)
-    if event.start_turn?
-      @current_turn = Turn.new(event.player)
-    elsif @current_turn
-      @current_turn.apply_event(event)
-    end
-
-    event.actions.each do |action|
+  def apply_actions(actions)
+    actions.each do |action|
       @territory_info[action.territory].owner = action.territory_owner
       @territory_info[action.territory].units += action.units_difference
     end

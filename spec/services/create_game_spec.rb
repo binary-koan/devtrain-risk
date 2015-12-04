@@ -5,7 +5,7 @@ RSpec.describe CreateGame do
     let(:service) { CreateGame.new }
 
     subject(:game) { service.call }
-    let(:game_state) { GameState.current(game) }
+    let(:game_state) { BuildGameState.new(game, game.events).call }
 
     it "returns a saved game instance" do
       expect(game).to be_a Game

@@ -10,14 +10,51 @@ RSpec.describe GameState do
 
   let(:events) { [] }
 
-  subject(:game_state) { GameState.new(game, events) }
+  subject(:game_state) { BuildGameState.new(game, events).call }
 
   describe "#player_color" do
-    pending "Test it!"
+    it "should return a different colour for player 1 and 2" do
+      player1_color = game_state.player_color(game.players[0])
+      player2_color = game_state.player_color(game.players[1])
+      expect(player1_color).not_to eq player2_color
+    end
   end
 
   describe "#won?" do
-    pending "Test it!"
+    subject { game_state.won? }
+
+    context "when each player owns one territory" do
+      let(:events) do
+        [
+          create(:reinforce_event, player: player1, game: game, territory: mars),
+          create(:reinforce_event, player: player2, game: game, territory: jupiter)
+        ]
+      end
+
+      it { is_expected.to eq false }
+    end
+
+    context "when player 1 owns both territories" do
+      let(:events) do
+        [
+          create(:reinforce_event, player: player1, game: game, territory: mars),
+          create(:reinforce_event, player: player1, game: game, territory: jupiter)
+        ]
+      end
+
+      it { is_expected.to eq true }
+    end
+
+    context "when player 2 owns both territories" do
+      let(:events) do
+        [
+          create(:reinforce_event, player: player2, game: game, territory: mars),
+          create(:reinforce_event, player: player2, game: game, territory: jupiter)
+        ]
+      end
+
+      it { is_expected.to eq true }
+    end
   end
 
   describe "#winning_player" do
@@ -154,18 +191,6 @@ RSpec.describe GameState do
       owned_territories = game_state.owned_territories(player2)
       expect(owned_territories).to be_all { |t| game_state.territory_owner(t) == player2 }
     end
-  end
-
-  describe "#can_reinforce?" do
-    pending "Test it!"
-  end
-
-  describe "#can_attack?" do
-    pending "Test it!"
-  end
-
-  describe "#can_fortify?" do
-    pending "Test it!"
   end
 
   describe "#territory_links" do

@@ -5,11 +5,19 @@ class Turn
 
   attr_reader :player
 
-  def initialize(player)
+  def initialize(player, events)
     @player = player
+    @events = events
+
     @phase = PHASE_REINFORCING
     @reinforcements = Reinforcement.new
     @fortified = false
+
+    @events.each { |event| apply_event(event) }
+  end
+
+  def actions
+    @events.map(&:actions).flatten
   end
 
   def can_reinforce?(unit_count)
@@ -21,6 +29,8 @@ class Turn
   end
 
   alias_method :can_fortify?, :can_attack?
+
+  private
 
   def apply_event(event)
     if event.reinforce?

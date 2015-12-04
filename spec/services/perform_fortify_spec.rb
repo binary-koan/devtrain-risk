@@ -27,7 +27,7 @@ RSpec.describe PerformFortify do
 
   let(:events) { base_events }
 
-  let(:game_state) { GameState.new(game, events) }
+  let(:game_state) { BuildGameState.new(game, events).call }
 
   let(:service) do
     PerformFortify.new(

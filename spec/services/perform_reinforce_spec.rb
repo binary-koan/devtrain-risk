@@ -14,7 +14,7 @@ RSpec.describe PerformReinforce do
 
   let(:player) { player1 }
 
-  let(:game_state) { GameState.current(game) }
+  let(:game_state) { BuildGameState.new(game, game.events).call }
   let(:reinforcements) { Reinforcement.new(player) }
   let(:units_to_reinforce) { 3 }
 

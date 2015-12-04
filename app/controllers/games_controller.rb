@@ -10,7 +10,7 @@ class GamesController < ApplicationController
   end
 
   def show
-    @game_state = GameState.current(@game)
+    @game_state = BuildGameState.new(@game, @game.events).call
   end
 
   private

@@ -3,6 +3,7 @@ class SubmitEvent
 
   def initialize(game, params)
     @game = game
+    @game_state = BuildGameState.new(@game, @game.events).call
     @params = params
     @errors = []
   end
@@ -36,7 +37,7 @@ class SubmitEvent
     PerformAttack.new(
       territory_from: @game.territories[@params[:from].to_i],
       territory_to: @game.territories[@params[:to].to_i],
-      game_state: GameState.current(@game)
+      game_state: @game_state
     )
   end
 
@@ -44,7 +45,7 @@ class SubmitEvent
     PerformFortify.new(
       territory_from: @game.territories[@params[:from].to_i],
       territory_to: @game.territories[@params[:to].to_i],
-      game_state: GameState.current(@game),
+      game_state: @game_state,
       fortifying_units: @params[:units].to_i
     )
   end
