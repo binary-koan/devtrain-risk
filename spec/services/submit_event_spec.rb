@@ -118,7 +118,7 @@ RSpec.describe SubmitEvent do
       end
     end
 
-    context "with a fortify event" do
+    context "with a reinforce event" do
       let(:event_type) { "reinforce" }
       let(:units) { 5 }
       let(:reinforce_service) { instance_double(PerformReinforce, call: true, errors: []) }
