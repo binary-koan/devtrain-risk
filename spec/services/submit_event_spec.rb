@@ -126,6 +126,6 @@ RSpec.describe SubmitEvent do
       end
     end
 
-    pending "Test reinforcements and unknown type!"
+    pending "Test reinforcements!"
   end
 end

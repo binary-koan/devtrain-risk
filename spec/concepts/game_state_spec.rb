@@ -194,6 +194,25 @@ RSpec.describe GameState do
   end
 
   describe "#territory_links" do
-    pending "Test it!"
+    before do
+      create(:territory_link, from_territory: jupiter, to_territory: mars)
+    end
+
+    subject { game_state.territory_links }
+
+    context "with a link from one territory to another" do
+      it { is_expected.to contain_exactly([jupiter, mars]) }
+    end
+
+    context "with multiple links between territories" do
+      let(:saturn) { create(:territory, game: game) }
+
+      before do
+        create(:territory_link, from_territory: saturn, to_territory: mars)
+        create(:territory_link, from_territory: saturn, to_territory: jupiter)
+      end
+
+      it { is_expected.to contain_exactly([jupiter, mars], [saturn, mars], [saturn, jupiter]) }
+    end
   end
 end
