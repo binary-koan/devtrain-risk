@@ -193,6 +193,38 @@ RSpec.describe GameState do
     end
   end
 
+  #TODO refactor all specs to be more like this
+
+  describe "#can_attack?" do
+    let(:turn) { instance_double(Turn, actions: []) }
+    let(:game_state) { GameState.new(game, [turn]) }
+
+    it "should delegate to the current turn" do
+      expect(turn).to receive(:can_attack?).and_return(true)
+      expect(game_state.can_attack?).to eq true
+    end
+  end
+
+  describe "#can_fortify?" do
+    let(:turn) { instance_double(Turn, actions: []) }
+    let(:game_state) { GameState.new(game, [turn]) }
+
+    it "should delegate to the current turn" do
+      expect(turn).to receive(:can_fortify?).and_return(true)
+      expect(game_state.can_fortify?).to eq true
+    end
+  end
+
+  describe "#can_reinforce?" do
+    let(:turn) { instance_double(Turn, actions: []) }
+    let(:game_state) { GameState.new(game, [turn]) }
+
+    it "should delegate to the current turn" do
+      expect(turn).to receive(:can_reinforce?).with(3).and_return(true)
+      expect(game_state.can_reinforce?(3)).to eq true
+    end
+  end
+
   describe "#territory_links" do
     before do
       create(:territory_link, from_territory: jupiter, to_territory: mars)
