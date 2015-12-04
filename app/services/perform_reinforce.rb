@@ -18,7 +18,7 @@ class PerformReinforce
       reinforce_players_territories
     end
 
-    @reinforce_event != nil
+    @reinforce_event.present?
   end
 
   private

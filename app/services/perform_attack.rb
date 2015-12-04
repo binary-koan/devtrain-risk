@@ -27,7 +27,7 @@ class PerformAttack
       perform_attack
     end
 
-    @attack_event != nil
+    @attack_event.present?
   end
 
   private

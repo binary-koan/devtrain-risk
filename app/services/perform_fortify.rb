@@ -28,7 +28,7 @@ class PerformFortify
       perform_fortify
     end
 
-    @fortify_event != nil
+    @fortify_event.present?
   end
 
   private

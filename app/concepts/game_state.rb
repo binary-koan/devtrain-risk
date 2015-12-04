@@ -27,7 +27,7 @@ class GameState
   end
 
   def won?
-    winning_player != nil
+    winning_player.present?
   end
 
   def winning_player
