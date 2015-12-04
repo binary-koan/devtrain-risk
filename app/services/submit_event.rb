@@ -55,6 +55,6 @@ class SubmitEvent
   end
 
   def end_turn
-    EndTurn.new(@game)
+    EndTurn.new(@game_state)
   end
 end

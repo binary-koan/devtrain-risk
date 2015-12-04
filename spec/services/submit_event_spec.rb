@@ -20,6 +20,7 @@ RSpec.describe SubmitEvent do
     end
 
     let(:game) { games(:game) }
+    let(:game_state) { BuildGameState.new(game, game.events).call }
 
     subject(:service) { SubmitEvent.new(game, params) }
 
@@ -69,7 +70,7 @@ RSpec.describe SubmitEvent do
         expect(PerformFortify).to receive(:new).with(
           territory_from: game.territories[from_index],
           territory_to: game.territories[to_index],
-          game_state: BuildGameState.new(game, game.events).call,
+          game_state: game_state,
           fortifying_units: 5
         ).and_return(fortify_service)
 
@@ -105,7 +106,7 @@ RSpec.describe SubmitEvent do
       let(:end_turn_service) { instance_double(EndTurn, call: true) }
 
       it "calls the EndTurn service with correct parameters" do
-        expect(EndTurn).to receive(:new).with(game).and_return(end_turn_service)
+        expect(EndTurn).to receive(:new).with(game_state).and_return(end_turn_service)
 
         service.call
       end

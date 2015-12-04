@@ -22,7 +22,6 @@ RSpec.describe PerformReinforce do
     PerformReinforce.new(
       game_state:         game_state,
       current_player:     player,
-      reinforcements:     reinforcements,
       units_to_reinforce: units_to_reinforce
     )
   end

@@ -1,7 +1,7 @@
 class PerformReinforce
   attr_reader :errors, :reinforce_event
 
-  def initialize(game_state:, current_player:, reinforcements:, units_to_reinforce:)
+  def initialize(game_state:, current_player:, units_to_reinforce:)
     @game_state         = game_state
     @current_player     = current_player
     @units_to_reinforce = units_to_reinforce
