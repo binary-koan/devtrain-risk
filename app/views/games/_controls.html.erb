@@ -1,31 +1,37 @@
 <div class="controls">
-  <%= form_for [@game, Event.attack] do |f| %>
-    <div class="content">
-      <%= f.hidden_field :event_type %>
-      Attack from <%= text_field_tag :from, "" %>
-      to <%= text_field_tag :to %>
-      <%= f.submit "Attack" %>
-    </div>
+  <% if @game_state.can_attack? %>
+    <%= form_for [@game, Event.attack] do |f| %>
+      <div class="content">
+        <%= f.hidden_field :event_type %>
+        Attack from <%= text_field_tag :from, "" %>
+        to <%= text_field_tag :to %>
+        <%= f.submit "Attack" %>
+      </div>
+    <% end %>
   <% end %>
 
-  <%= form_for [@game, Event.fortify] do |f| %>
-    <div class="content">
-      <%= f.hidden_field :event_type %>
-      Move <%= text_field_tag :units, "" %> units
-      from <%= text_field_tag :from, "" %>
-      to <%= text_field_tag :to %>
-      <%= f.submit "Fortify" %>
-    </div>
+  <% if @game_state.can_fortify? %>
+    <%= form_for [@game, Event.fortify] do |f| %>
+      <div class="content">
+        <%= f.hidden_field :event_type %>
+        Move <%= text_field_tag :units, "" %> units
+        from <%= text_field_tag :from, "" %>
+        to <%= text_field_tag :to %>
+        <%= f.submit "Fortify" %>
+      </div>
+    <% end %>
   <% end %>
 
-  <!-- <%= form_for [@game, Event.reinforce] do |f| %>
-    <div class="content">
-      <%= f.hidden_field :event_type %>
-      Add <%= text_field_tag :units, "" %> units
-      to <%= text_field_tag :to %>
-      <%= f.submit "Reinforce" %>
-    </div>
-  <% end %> -->
+  <% if @game_state.can_reinforce?(1) %>
+    <%= form_for [@game, Event.reinforce] do |f| %>
+      <div class="content">
+        <%= f.hidden_field :event_type %>
+        Add <%= text_field_tag :units, "" %> units
+        to <%= text_field_tag :to %>
+        <%= f.submit "Reinforce" %>
+      </div>
+    <% end %>
+  <% end %>
 
   <%= form_for [@game, Event.start_turn] do |f| %>
     <%= f.hidden_field :event_type %>
