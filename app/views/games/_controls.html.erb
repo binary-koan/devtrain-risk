@@ -3,7 +3,8 @@
     <%= form_for [@game, Event.attack] do |f| %>
       <div class="content">
         <%= f.hidden_field :event_type %>
-        Attack from <%= text_field_tag :from, "" %>
+        Attack <%= text_field_tag :units, "" %> units
+        from <%= text_field_tag :from, "" %>
         to <%= text_field_tag :to %>
         <%= f.submit "Attack" %>
       </div>

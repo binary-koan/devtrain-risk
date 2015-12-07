@@ -6,11 +6,11 @@ class PerformAttack
 
   attr_reader :errors, :attack_event
 
-  def initialize(territory_from:, territory_to:, game_state:, attacking_units: nil)
+  def initialize(territory_from:, territory_to:, game_state:, attacking_units:)
     @territory_from  = territory_from
     @territory_to    = territory_to
     @game_state      = game_state
-    @attacking_units = attacking_units || default_attacking_units
+    @attacking_units = attacking_units
     @errors          = []
   end
 
@@ -32,12 +32,12 @@ class PerformAttack
 
   private
 
-  def default_attacking_units
-    number_of_attackers
-  end
-
   def too_many_units?
      @attacking_units > 3 || @attacking_units > number_of_attackers
+  end
+
+  def too_few_units?
+    @attacking_units < MIN_ATTACKING_UNITS
   end
 
   def valid_link?
@@ -61,7 +61,9 @@ class PerformAttack
       errors << :cannot_attack_with_one_unit
       @attack_event = nil
     elsif too_many_units?
-        errors << :too_many_units
+      errors << :too_many_units
+    elsif too_few_units?
+      errors << :too_few_units
     else
       ActiveRecord::Base.transaction do
         @attack_event = create_attack_event

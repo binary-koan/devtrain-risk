@@ -103,6 +103,15 @@ RSpec.describe PerformAttack do
           expect(service.errors).to be_none
         end
 
+        context "th attacker tries to attack with no units" do
+          let(:attacking_units) { 0 }
+
+          it "returns a too_few_units error" do
+            expect(service.call).to be false
+            expect(service.errors).to contain_exactly :too_few_units
+          end
+        end
+
         context "the attacker only attacks with one unit" do
           let(:attacking_units) { 1 }
 

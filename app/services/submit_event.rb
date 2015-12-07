@@ -37,7 +37,8 @@ class SubmitEvent
     PerformAttack.new(
       territory_from: @game.territories[@params[:from].to_i],
       territory_to: @game.territories[@params[:to].to_i],
-      game_state: @game_state
+      game_state: @game_state,
+      attacking_units: @params[:units].to_i
     )
   end
 

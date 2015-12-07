@@ -26,13 +26,15 @@ RSpec.describe SubmitEvent do
 
     context "with an attack event" do
       let(:event_type) { "attack" }
+      let(:units) { 1 }
       let(:attack_service) { instance_double(PerformAttack, call: true, errors: []) }
 
       it "calls the PerformAttack service with correct parameters" do
         expect(PerformAttack).to receive(:new).with(
           territory_from: game.territories[from_index],
           territory_to: game.territories[to_index],
-          game_state: BuildGameState.new(game, game.events).call
+          game_state: BuildGameState.new(game, game.events).call,
+          attacking_units: units
         ).and_return(attack_service)
 
         service.call
