@@ -3,7 +3,7 @@ class SubmitEvent
 
   def initialize(game, params)
     @game = game
-    @game_state = BuildGameState.new(@game, @game.events).call
+    @turn = BuildCurrentTurn.new(@game.events).call
     @params = params
     @errors = []
   end
@@ -37,7 +37,7 @@ class SubmitEvent
     PerformAttack.new(
       territory_from: @game.territories[@params[:from].to_i],
       territory_to: @game.territories[@params[:to].to_i],
-      game_state: @game_state,
+      turn: @turn,
       attacking_units: @params[:units].to_i
     )
   end
@@ -46,20 +46,20 @@ class SubmitEvent
     PerformFortify.new(
       territory_from: @game.territories[@params[:from].to_i],
       territory_to: @game.territories[@params[:to].to_i],
-      game_state: @game_state,
+      turn: @turn,
       fortifying_units: @params[:units].to_i
     )
   end
 
   def perform_reinforce
     PerformReinforce.new(
-      game_state: @game_state,
+      turn: @turn,
       territory: @game.territories[@params[:to].to_i],
       units_to_reinforce: @params[:units].to_i
     )
   end
 
   def end_turn
-    EndTurn.new(@game_state)
+    EndTurn.new(@turn)
   end
 end

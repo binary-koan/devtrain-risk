@@ -12,15 +12,17 @@ RSpec.describe PerformReinforce do
   let!(:jupiter) { create(:territory, game: game) }
   let!(:mars)    { create(:territory, game: game) }
 
-  let(:game_state) { BuildGameState.new(game, game.events).call }
-  let(:reinforcements) { Reinforcement.new(player1) }
+  let(:turn) { BuildCurrentTurn.new(game.events).call }
+  let(:game_state) { turn.game_state }
+  let(:reinforcements) { turn.reinforcements }
+
   let(:units_to_reinforce) { 3 }
 
   let(:territory) { jupiter }
 
   let(:service) do
     PerformReinforce.new(
-      game_state:         game_state,
+      turn:               turn,
       territory:          territory,
       units_to_reinforce: units_to_reinforce
     )
@@ -56,7 +58,7 @@ RSpec.describe PerformReinforce do
       end
 
       it "adds units to the territory" do
-        expect(reinforce_event.actions[0].units_difference).to eq reinforcements.remaining_reinforcements
+        expect(reinforce_event.actions[0].units_difference).to eq reinforcements.remaining_units
       end
 
       it "adds units to the player's territory" do
@@ -77,7 +79,7 @@ RSpec.describe PerformReinforce do
       end
 
       it "adds units to the territory" do
-        expect(reinforce_event.actions[0].units_difference).to eq reinforcements.remaining_reinforcements
+        expect(reinforce_event.actions[0].units_difference).to eq reinforcements.remaining_units
       end
 
       it "adds units to the player's territory" do

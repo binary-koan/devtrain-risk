@@ -5,7 +5,8 @@ RSpec.describe CreateGame do
     let(:service) { CreateGame.new }
 
     subject(:game) { service.call }
-    let(:game_state) { BuildGameState.new(game, game.events).call }
+    let(:turn) { BuildCurrentTurn.new(game.events).call }
+    let(:game_state) { turn.game_state }
 
     it "returns a saved game instance" do
       expect(game).to be_a Game
@@ -43,7 +44,7 @@ RSpec.describe CreateGame do
 
     it "creates a start turn event for the initial player" do
       expect(game.events.last.event_type).to eq "start_turn"
-      expect(game_state.current_player).to eq game.players.first
+      expect(game.events.last.player).to eq game.players.first
     end
   end
 end

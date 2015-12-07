@@ -20,7 +20,8 @@ RSpec.describe SubmitEvent do
     end
 
     let(:game) { games(:game) }
-    let(:game_state) { BuildGameState.new(game, game.events).call }
+    let(:turn) { BuildCurrentTurn.new(game.events).call }
+    let(:game_state) { turn.game_state }
 
     subject(:service) { SubmitEvent.new(game, params) }
 
@@ -31,9 +32,9 @@ RSpec.describe SubmitEvent do
 
       it "calls the PerformAttack service with correct parameters" do
         expect(PerformAttack).to receive(:new).with(
-          territory_from: game.territories[from_index],
-          territory_to: game.territories[to_index],
-          game_state: BuildGameState.new(game, game.events).call,
+          territory_from:  game.territories[from_index],
+          territory_to:    game.territories[to_index],
+          turn:            BuildCurrentTurn.new(game.events).call,
           attacking_units: units
         ).and_return(attack_service)
 
@@ -70,9 +71,9 @@ RSpec.describe SubmitEvent do
 
       it "calls the PerformFortify service with correct parameters" do
         expect(PerformFortify).to receive(:new).with(
-          territory_from: game.territories[from_index],
-          territory_to: game.territories[to_index],
-          game_state: game_state,
+          territory_from:   game.territories[from_index],
+          territory_to:     game.territories[to_index],
+          turn:             turn,
           fortifying_units: 5
         ).and_return(fortify_service)
 
@@ -108,7 +109,7 @@ RSpec.describe SubmitEvent do
       let(:end_turn_service) { instance_double(EndTurn, call: true) }
 
       it "calls the EndTurn service with correct parameters" do
-        expect(EndTurn).to receive(:new).with(game_state).and_return(end_turn_service)
+        expect(EndTurn).to receive(:new).with(turn).and_return(end_turn_service)
 
         service.call
       end
@@ -127,8 +128,8 @@ RSpec.describe SubmitEvent do
 
       it "calls the PerformReinforce service with correct parameters" do
         expect(PerformReinforce).to receive(:new).with(
-          territory: game.territories[to_index],
-          game_state: game_state,
+          territory:          game.territories[to_index],
+          turn:               turn,
           units_to_reinforce: 5
         ).and_return(reinforce_service)
 

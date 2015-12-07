@@ -27,13 +27,14 @@ RSpec.describe PerformFortify do
 
   let(:events) { base_events }
 
-  let(:game_state) { BuildGameState.new(game, events).call }
+  let(:turn) { BuildCurrentTurn.new(events).call }
+  let(:game_state) { turn.game_state }
 
   let(:service) do
     PerformFortify.new(
       territory_from:   territory_from,
       territory_to:     territory_to,
-      game_state:       game_state,
+      turn:             turn,
       fortifying_units: fortifying_units
     )
   end

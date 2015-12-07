@@ -6,9 +6,9 @@ RSpec.describe Turn do
   let(:game) { games(:game) }
   let(:player) { players(:player1) }
 
-  let(:events) { [] }
+  let(:events) { [create(:mock_event)] }
 
-  let(:turn) { Turn.new(player, events) }
+  let(:turn) { Turn.new(events) }
 
   describe "#reinforcements_available" do
     pending "Test it!"

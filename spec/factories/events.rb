@@ -1,16 +1,12 @@
 FactoryGirl.define do
-  factory :event, aliases: [:start_turn_event] do
+  factory :event, aliases: [:start_turn_event, :mock_event] do
     game
     player
     event_type "start_turn"
 
-    factory :mock_event, traits: [:assigns_units_to_territory] do
-      event_type "reinforce"
-    end
-
     factory :reinforce_event, traits: [:assigns_units_to_territory] do
       event_type "reinforce"
-      units_difference Reinforcement.new.remaining_reinforcements
+      units_difference Reinforcement::MINIMUM_UNIT_COUNT
     end
 
     factory :takeover_event, traits: [:assigns_units_to_territory] do

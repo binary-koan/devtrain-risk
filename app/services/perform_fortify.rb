@@ -3,10 +3,10 @@ class PerformFortify
 
   attr_reader :errors, :fortify_event
 
-  def initialize(territory_to:, territory_from:, game_state:, fortifying_units: nil)
+  def initialize(territory_to:, territory_from:, turn:, fortifying_units: nil)
     @territory_to     = territory_to
     @territory_from   = territory_from
-    @game_state       = game_state
+    @turn             = turn
     @fortifying_units = fortifying_units || MINIMUM_FORTIFYING_UNITS
     @errors           = []
   end
@@ -18,7 +18,7 @@ class PerformFortify
       errors << :no_link
     elsif !current_players_territory?
       errors << :wrong_player
-    elsif !@game_state.can_fortify?
+    elsif !@turn.can_fortify?
       errors << :wrong_phase
     elsif !fortifying_own_territory?
       errors << :fortifying_enemy_territory
@@ -42,7 +42,7 @@ class PerformFortify
   end
 
   def current_players_territory?
-    find_owner(@territory_from) == @game_state.current_player
+    find_owner(@territory_from) == @turn.player
   end
 
   def fortifying_own_territory?
@@ -54,14 +54,14 @@ class PerformFortify
   end
 
   def find_owner(territory)
-    @game_state.territory_owner(territory)
+    @turn.game_state.territory_owner(territory)
   end
 
   def perform_fortify
     if number_of_units <= 1
       errors << :fortify_with_one_unit
     elsif number_of_units - 1 < @fortifying_units
-      errors << :fortifying_too_many_units  
+      errors << :fortifying_too_many_units
     else
       ActiveRecord::Base.transaction do
         @fortify_event = create_fortify_event
@@ -77,13 +77,13 @@ class PerformFortify
   end
 
   def number_of_units
-    @game_state.units_on_territory(@territory_from)
+    @turn.game_state.units_on_territory(@territory_from)
   end
 
   def create_fortify_event
     Event.fortify(
-      game: @game_state.game,
-      player: @game_state.territory_owner(@territory_from)
+      game: @turn.game,
+      player: @turn.game_state.territory_owner(@territory_from)
     ).tap { |e| e.save!}
   end
 

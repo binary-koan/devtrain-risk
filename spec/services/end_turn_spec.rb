@@ -3,8 +3,8 @@ RSpec.describe EndTurn do
 
   context "#call" do
     let(:game) { games(:game) }
-    let(:game_state) { BuildGameState.new(game, game.events).call }
-    let(:service) { EndTurn.new(game_state) }
+    let(:turn) { BuildCurrentTurn.new(game.events).call }
+    let(:service) { EndTurn.new(turn) }
     let(:perform_reinforce) { instance_double(PerformReinforce) }
 
     before { service.call }

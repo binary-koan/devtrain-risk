@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe PerformAttack do
   def kill_on_territory(territory, player, count)
     create(
-      :mock_event,
+      :reinforce_event,
       game: game,
       player: player,
       territory: territory,
@@ -26,14 +26,16 @@ RSpec.describe PerformAttack do
 
   let(:events) { base_events }
 
-  let(:game_state) { BuildGameState.new(game, events).call }
+  let(:turn) { BuildCurrentTurn.new(events).call }
+  let(:game_state) { turn.game_state }
+
   let(:attacking_units) { 3 }
 
   let(:service) do
     PerformAttack.new(
       territory_from:  territory_from,
       territory_to:    territory_to,
-      game_state:      game_state,
+      turn:            turn,
       attacking_units: attacking_units
     )
   end

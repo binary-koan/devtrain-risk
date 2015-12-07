@@ -1,23 +1,13 @@
 class GameState
   TerritoryInfo = Struct.new(:owner, :units)
 
-  #TODO territory_info is only public to make == work - is that OK?
   attr_reader :game, :territory_info
 
-  def initialize(game, turns)
+  def initialize(game, actions)
     @game = game
-    @turns = turns
     @territory_info = Hash.new { |hash, key| hash[key] = TerritoryInfo.new(nil, 0) }
 
-    turns.each { |turn| apply_actions(turn.actions) }
-  end
-
-  def ==(other)
-    game == other.game && territory_info == other.territory_info
-  end
-
-  def current_player
-    @turns.last.player
+    apply_actions(actions)
   end
 
   def won?
@@ -25,19 +15,19 @@ class GameState
   end
 
   def winning_player
-    @game.players.detect { |player| owned_territories(player).size == @territory_info.size }
+    game.players.detect { |player| owned_territories(player).size == territory_info.size }
   end
 
   def owned_territories(player)
-    @territory_info.select { |territory, info| info.owner == player }.map(&:first)
+    territory_info.select { |territory, info| info.owner == player }.map(&:first)
   end
 
   def territory_owner(territory)
-    @territory_info[territory].owner
+    territory_info[territory].owner
   end
 
   def units_on_territory(territory)
-    @territory_info[territory].units
+    territory_info[territory].units
   end
 
   def territory_links
@@ -46,28 +36,12 @@ class GameState
     end
   end
 
-  def reinforcements_available
-    @turns.last.reinforcements_available
-  end
-
-  def can_reinforce?(unit_count)
-    @turns.last.can_reinforce?(unit_count)
-  end
-
-  def can_attack?
-    @turns.last.can_attack?
-  end
-
-  def can_fortify?
-    @turns.last.can_fortify?
-  end
-
   private
 
   def apply_actions(actions)
     actions.each do |action|
-      @territory_info[action.territory].owner = action.territory_owner
-      @territory_info[action.territory].units += action.units_difference
+      territory_info[action.territory].owner = action.territory_owner
+      territory_info[action.territory].units += action.units_difference
     end
   end
 end

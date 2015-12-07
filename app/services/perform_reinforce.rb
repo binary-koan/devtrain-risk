@@ -1,8 +1,8 @@
 class PerformReinforce
   attr_reader :errors, :reinforce_event
 
-  def initialize(game_state:, territory:, units_to_reinforce:)
-    @game_state         = game_state
+  def initialize(turn:, territory:, units_to_reinforce:)
+    @turn               = turn
     @territory          = territory
     @units_to_reinforce = units_to_reinforce
     @errors             = []
@@ -13,8 +13,8 @@ class PerformReinforce
       errors << :no_territories
     elsif !territory_owned_by_player?
       errors << :reinforcing_enemy_territory
-    elsif !@game_state.can_reinforce?(@units_to_reinforce)
-      errors << :wrong_phase
+    elsif !@turn.can_reinforce?(@units_to_reinforce)
+      errors << :cannot_reinforce
     else
       reinforce_players_territories
     end
@@ -25,22 +25,22 @@ class PerformReinforce
   private
 
   def player_has_no_territories?
-    @game_state.owned_territories(@game_state.current_player).length == 0
+    @turn.game_state.owned_territories(@turn.player).length == 0
   end
 
   def territory_owned_by_player?
-    @game_state.current_player == @game_state.territory_owner(@territory)
+    @turn.player == @turn.game_state.territory_owner(@territory)
   end
 
   def reinforce_players_territories
     ActiveRecord::Base.transaction do
       @reinforce_event = create_reinforce_event
-      create_action(@territory, @game_state.current_player, @units_to_reinforce)
+      create_action(@territory, @turn.player, @units_to_reinforce)
     end
   end
 
   def create_reinforce_event
-    Event.reinforce(game: @game_state.game, player: @game_state.current_player).tap do |event|
+    Event.reinforce(game: @turn.game, player: @turn.player).tap do |event|
       event.save!
     end
   end
