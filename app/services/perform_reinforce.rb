@@ -9,9 +9,7 @@ class PerformReinforce
   end
 
   def call
-    if player_has_no_territories?
-      errors << :no_territories
-    elsif !territory_owned_by_player?
+    if !territory_owned_by_player?
       errors << :reinforcing_enemy_territory
     elsif !@turn.can_reinforce?(@units_to_reinforce)
       errors << :cannot_reinforce
@@ -24,28 +22,24 @@ class PerformReinforce
 
   private
 
-  def player_has_no_territories?
-    @turn.game_state.owned_territories(@turn.player).length == 0
-  end
-
   def territory_owned_by_player?
     @turn.player == @turn.game_state.territory_owner(@territory)
   end
 
   def reinforce_players_territories
     ActiveRecord::Base.transaction do
-      @reinforce_event = create_reinforce_event
-      create_action(@territory, @turn.player, @units_to_reinforce)
+      @reinforce_event = create_reinforce_event!
+      create_action!(@territory, @turn.player, @units_to_reinforce)
     end
   end
 
-  def create_reinforce_event
+  def create_reinforce_event!
     Event.reinforce(game: @turn.game, player: @turn.player).tap do |event|
       event.save!
     end
   end
 
-  def create_action(territory, territory_owner, units_difference)
+  def create_action!(territory, territory_owner, units_difference)
     @reinforce_event.actions.create!(
       territory:        territory,
       territory_owner:  territory_owner,

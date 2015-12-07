@@ -10,7 +10,7 @@ RSpec.describe GameState do
 
   let(:events) { [create(:mock_event, game: game)] }
 
-  subject(:turn) { BuildCurrentTurn.new(events).call }
+  subject(:turn) { BuildTurn.new(events).call }
   subject(:game_state) { turn.game_state }
 
   describe "#won?" do

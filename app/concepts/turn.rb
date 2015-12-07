@@ -1,4 +1,6 @@
 class Turn
+  MINIMUM_REINFORCEMENTS = 1
+
   PHASE_REINFORCING = :reinforcing
   PHASE_ATTACKING   = :attacking
   PHASE_ENDING      = :ending
@@ -29,15 +31,10 @@ class Turn
   end
 
   def game_state
-    @game_state ||= GameState.new(@events.first.game, actions)
+    @game_state ||= GameState.new(game, actions)
   end
 
-  def actions
-    previous_actions = @previous_turn ? @previous_turn.actions : []
-    @events.map(&:actions).flatten + previous_actions
-  end
-
-  def can_reinforce?(unit_count)
+  def can_reinforce?(unit_count = MINIMUM_REINFORCEMENTS)
     @phase == PHASE_REINFORCING && @reinforcements.remaining?(unit_count)
   end
 
@@ -46,6 +43,11 @@ class Turn
   end
 
   alias_method :can_fortify?, :can_attack?
+
+  def actions
+    previous_actions = @previous_turn ? @previous_turn.actions : []
+    previous_actions + @events.map(&:actions).flatten
+  end
 
   private
 

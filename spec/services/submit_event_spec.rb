@@ -20,7 +20,7 @@ RSpec.describe SubmitEvent do
     end
 
     let(:game) { games(:game) }
-    let(:turn) { BuildCurrentTurn.new(game.events).call }
+    let(:turn) { BuildTurn.new(game.events).call }
     let(:game_state) { turn.game_state }
 
     subject(:service) { SubmitEvent.new(game, params) }
@@ -34,7 +34,7 @@ RSpec.describe SubmitEvent do
         expect(PerformAttack).to receive(:new).with(
           territory_from:  game.territories[from_index],
           territory_to:    game.territories[to_index],
-          turn:            BuildCurrentTurn.new(game.events).call,
+          turn:            BuildTurn.new(game.events).call,
           attacking_units: units
         ).and_return(attack_service)
 

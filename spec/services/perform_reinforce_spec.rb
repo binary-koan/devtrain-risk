@@ -12,7 +12,7 @@ RSpec.describe PerformReinforce do
   let!(:jupiter) { create(:territory, game: game) }
   let!(:mars)    { create(:territory, game: game) }
 
-  let(:turn) { BuildCurrentTurn.new(game.events).call }
+  let(:turn) { BuildTurn.new(game.events).call }
   let(:game_state) { turn.game_state }
   let(:reinforcements) { turn.reinforcements }
 
@@ -29,23 +29,6 @@ RSpec.describe PerformReinforce do
   end
 
   describe "#call" do
-    context "with no territories owned" do
-      before do
-        start_turn(player1)
-        service.call
-      end
-
-      it "returns a no territory error for player 1" do
-        expect(service.errors).to contain_exactly :no_territories
-      end
-
-      let(:player) { player2 }
-
-      it "returns a no territory error for player 2" do
-        expect(service.errors).to contain_exactly :no_territories
-      end
-    end
-
     context "with a territory owned" do
       let(:reinforce_event) { service.reinforce_event }
       let(:territory) { mars }

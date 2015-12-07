@@ -1,8 +1,8 @@
 class PerformAttack
-  MIN_UNITS_ON_TERRITORY  = 1
-  MIN_ATTACKING_UNITS     = 1
-  MAX_ATTACKING_UNITS     = 3
-  MAX_DEFENDING_UNITS     = 2
+  MIN_UNITS_ON_TERRITORY = 1
+  MIN_ATTACKING_UNITS    = 1
+  MAX_ATTACKING_UNITS    = 3
+  MAX_DEFENDING_UNITS    = 2
 
   attr_reader :errors, :attack_event
 
@@ -32,14 +32,6 @@ class PerformAttack
 
   private
 
-  def too_many_units?
-     @attacking_units > 3 || @attacking_units > number_of_attackers
-  end
-
-  def too_few_units?
-    @attacking_units < MIN_ATTACKING_UNITS
-  end
-
   def valid_link?
     @territory_from.connected_territories.include?(@territory_to)
   end
@@ -57,7 +49,7 @@ class PerformAttack
   end
 
   def perform_attack
-    if number_of_attackers < MIN_ATTACKING_UNITS
+    if available_attackers < MIN_ATTACKING_UNITS
       errors << :cannot_attack_with_one_unit
       @attack_event = nil
     elsif too_many_units?
@@ -66,39 +58,36 @@ class PerformAttack
       errors << :too_few_units
     else
       ActiveRecord::Base.transaction do
-        @attack_event = create_attack_event
+        @attack_event = create_attack_event!
 
-        paired_rolls = units_roll_dice
-
-        create_attack_actions(paired_rolls)
+        create_attack_actions!(dice_rolls_for_units)
       end
     end
   end
 
-  def create_attack_event
+  def too_many_units?
+     @attacking_units > 3 || @attacking_units > available_attackers
+  end
+
+  def too_few_units?
+    @attacking_units < MIN_ATTACKING_UNITS
+  end
+
+  def create_attack_event!
     Event.attack(
       game: @turn.game,
       player: @turn.game_state.territory_owner(@territory_from)
-    ).tap { |e| e.save!}
+    ).tap { |e| e.save! }
   end
 
-  def units_roll_dice
-    defender_rolls = roll_dice(number_of_defenders)
-    attacker_rolls = roll_dice(@attacking_units)
-
-    defender_rolls.zip(attacker_rolls).reject do |(defender, attacker)|
-      defender.nil? || attacker.nil?
-    end
-  end
-
-  def create_attack_actions(paired_rolls)
+  def create_attack_actions!(paired_rolls)
     defenders_lost, attackers_lost = attack_result(paired_rolls)
 
     if territory_taken?(defenders_lost)
-      take_over_territory(defenders_lost, paired_rolls.length)
+      take_over_territory!(defenders_lost, paired_rolls.length)
     else
-      create_action(@territory_to, find_owner(@territory_to), -defenders_lost) if defenders_lost > 0
-      create_action(@territory_from, find_owner(@territory_from), -attackers_lost) if attackers_lost > 0
+      create_action!(@territory_to, find_owner(@territory_to), -defenders_lost) if defenders_lost > 0
+      create_action!(@territory_from, find_owner(@territory_from), -attackers_lost) if attackers_lost > 0
     end
   end
 
@@ -108,7 +97,7 @@ class PerformAttack
     defenders_lost == remaining_defenders
   end
 
-  def number_of_attackers
+  def available_attackers
     units = @turn.game_state.units_on_territory(@territory_from) - MIN_UNITS_ON_TERRITORY
     if units > MAX_ATTACKING_UNITS
       MAX_ATTACKING_UNITS
@@ -126,6 +115,15 @@ class PerformAttack
     end
   end
 
+  def dice_rolls_for_units
+    defender_rolls = roll_dice(number_of_defenders)
+    attacker_rolls = roll_dice(@attacking_units)
+
+    defender_rolls.zip(attacker_rolls).reject do |(defender, attacker)|
+      defender.nil? || attacker.nil?
+    end
+  end
+
   def roll_dice(rolls)
     rolls.times.map { rand(1..6) }.sort.reverse
   end
@@ -139,13 +137,13 @@ class PerformAttack
     [defenders_lost, attackers_lost]
   end
 
-  def take_over_territory(defenders_lost, attackers_count)
-    create_action(@territory_to, find_owner(@territory_to), -defenders_lost)
-    create_action(@territory_to, find_owner(@territory_from), attackers_count)
-    create_action(@territory_from, find_owner(@territory_from), -attackers_count)
+  def take_over_territory!(defenders_lost, attackers_count)
+    create_action!(@territory_to, find_owner(@territory_to), -defenders_lost)
+    create_action!(@territory_to, find_owner(@territory_from), attackers_count)
+    create_action!(@territory_from, find_owner(@territory_from), -attackers_count)
   end
 
-  def create_action(territory, territory_owner, units_difference)
+  def create_action!(territory, territory_owner, units_difference)
     @attack_event.actions.create!(
       territory:        territory,
       territory_owner:  territory_owner,

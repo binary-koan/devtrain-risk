@@ -1,4 +1,4 @@
-class BuildCurrentTurn
+class BuildTurn
   def initialize(events)
     @events = events
   end
@@ -14,7 +14,7 @@ class BuildCurrentTurn
 
     current_turn = nil
     turn_groups.each do |events|
-      next if events.empty?
+      next if events.empty? #TODO why is something empty?
       current_turn = Turn.new(events, current_turn)
     end
 

@@ -26,7 +26,7 @@ RSpec.describe PerformAttack do
 
   let(:events) { base_events }
 
-  let(:turn) { BuildCurrentTurn.new(events).call }
+  let(:turn) { BuildTurn.new(events).call }
   let(:game_state) { turn.game_state }
 
   let(:attacking_units) { 3 }

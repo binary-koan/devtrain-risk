@@ -4,9 +4,7 @@ class EventsController < ApplicationController
   def create
     service = SubmitEvent.new(@game, params)
 
-    unless service.call
-      flash.alert = service.errors
-    end
+    flash.alert = service.errors unless service.call
 
     redirect_to @game
   end

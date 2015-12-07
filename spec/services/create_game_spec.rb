@@ -5,7 +5,7 @@ RSpec.describe CreateGame do
     let(:service) { CreateGame.new }
 
     subject(:game) { service.call }
-    let(:turn) { BuildCurrentTurn.new(game.events).call }
+    let(:turn) { BuildTurn.new(game.events).call }
     let(:game_state) { turn.game_state }
 
     it "returns a saved game instance" do

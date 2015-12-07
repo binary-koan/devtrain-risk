@@ -27,7 +27,7 @@ RSpec.describe PerformFortify do
 
   let(:events) { base_events }
 
-  let(:turn) { BuildCurrentTurn.new(events).call }
+  let(:turn) { BuildTurn.new(events).call }
   let(:game_state) { turn.game_state }
 
   let(:service) do
@@ -90,9 +90,9 @@ RSpec.describe PerformFortify do
       let(:territory_to) { territories(:territory_top_right) }
       let(:fortifying_units) { 0 }
 
-      it "returns a minimum_number_of_units error" do
+      it "returns a not_enough_fortifying_units error" do
         expect(service.call).to be false
-        expect(service.errors).to contain_exactly :minimum_number_of_units
+        expect(service.errors).to contain_exactly :not_enough_fortifying_units
       end
     end
 
@@ -100,10 +100,10 @@ RSpec.describe PerformFortify do
       let(:territory_from) { territories(:territory_top_left) }
       let(:territory_to) { territories(:territory_top_right) }
 
-      it "returns a fortify_with_one_unit error" do
+      it "returns a fortifying_too_many_units error" do
         remove_units_from_territory(player1, territory_from, 7)
         expect(service.call).to be false
-        expect(service.errors).to contain_exactly :fortify_with_one_unit
+        expect(service.errors).to contain_exactly :fortifying_too_many_units
       end
     end
 
