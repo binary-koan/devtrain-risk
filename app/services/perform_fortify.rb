@@ -60,6 +60,8 @@ class PerformFortify
   def perform_fortify
     if number_of_units <= 1
       errors << :fortify_with_one_unit
+    elsif number_of_units - 1 < @fortifying_units
+      errors << :fortifying_too_many_units  
     else
       ActiveRecord::Base.transaction do
         @fortify_event = create_fortify_event

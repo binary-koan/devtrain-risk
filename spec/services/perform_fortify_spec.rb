@@ -106,6 +106,28 @@ RSpec.describe PerformFortify do
       end
     end
 
+    context "fortifying with more units than territory has" do
+      let(:territory_from) { territories(:territory_top_left) }
+      let(:territory_to) { territories(:territory_top_right) }
+      let(:fortifying_units) { 10 }
+
+      it "returns a fortifying_too_many_units error" do
+        expect(service.call).to be false
+        expect(service.errors).to contain_exactly :fortifying_too_many_units
+      end
+    end
+
+    context "fortifying all the units on a territory" do
+      let(:territory_from) { territories(:territory_top_left) }
+      let(:territory_to) { territories(:territory_top_right) }
+      let(:fortifying_units) { 8 }
+
+      it "returns a fortifying_too_many_units error" do
+        expect(service.call).to be false
+        expect(service.errors).to contain_exactly :fortifying_too_many_units
+      end
+    end
+
     context "fortifying a valid territory" do
       let(:territory_from) { territories(:territory_top_left) }
       let(:territory_to) { territories(:territory_top_right) }
