@@ -46,7 +46,7 @@ RSpec.describe PerformReinforce do
 
     context "with a territory owned" do
       let(:reinforce_event) { service.reinforce_event }
-      let(:territory) { mars}
+      let(:territory) { mars }
 
       before do
         create(:reinforce_event, player: player1, game: game, territory: mars)
@@ -87,7 +87,7 @@ RSpec.describe PerformReinforce do
 
     context "player1 reinforces a single unit" do
       let(:units_to_reinforce) { 1 }
-      let(:territory) { mars}
+      let(:territory) { mars }
 
       before do
         create(:reinforce_event, player: player1, game: game, territory: mars)
@@ -104,6 +104,21 @@ RSpec.describe PerformReinforce do
 
       it "adds units to the player's territory" do
         expect(reinforce_event.actions[0].territory_owner).to eq player1
+      end
+    end
+
+    context "player 1 tries to reinforce an enemy territory" do
+      let(:territory) { jupiter }
+
+      before do
+        create(:reinforce_event, player: player1, game: game, territory: mars)
+        create(:reinforce_event, player: player2, game: game, territory: jupiter)
+        start_turn(player1)
+        service.call
+      end
+
+      it "returns a reinforcing_enemy_territory error" do
+        expect(service.errors).to contain_exactly :reinforcing_enemy_territory
       end
     end
   end
