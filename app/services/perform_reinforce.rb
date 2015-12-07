@@ -11,7 +11,8 @@ class PerformReinforce
   def call
     if player_has_no_territories?
       errors << :no_territories
-      #TODO check @territory is owned by the player
+    elsif !territory_owned_by_player?
+      errors << :reinforcing_enemy_territory
     elsif !@game_state.can_reinforce?(@units_to_reinforce)
       errors << :wrong_phase
     else
@@ -25,6 +26,10 @@ class PerformReinforce
 
   def player_has_no_territories?
     @game_state.owned_territories(@game_state.current_player).length == 0
+  end
+
+  def territory_owned_by_player?
+    @game_state.current_player == @game_state.territory_owner(@territory)
   end
 
   def reinforce_players_territories

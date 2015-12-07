@@ -46,6 +46,7 @@ RSpec.describe PerformReinforce do
 
     context "with a territory owned" do
       let(:reinforce_event) { service.reinforce_event }
+      let(:territory) { mars}
 
       before do
         create(:reinforce_event, player: player1, game: game, territory: mars)
@@ -86,6 +87,7 @@ RSpec.describe PerformReinforce do
 
     context "player1 reinforces a single unit" do
       let(:units_to_reinforce) { 1 }
+      let(:territory) { mars}
 
       before do
         create(:reinforce_event, player: player1, game: game, territory: mars)
