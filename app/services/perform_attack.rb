@@ -63,11 +63,13 @@ class PerformAttack
     elsif too_many_units?
         errors << :too_many_units
     else
-      @attack_event = create_attack_event
+      ActiveRecord::Base.transaction do
+        @attack_event = create_attack_event
 
-      paired_rolls = units_roll_dice
+        paired_rolls = units_roll_dice
 
-      create_attack_actions(paired_rolls)
+        create_attack_actions(paired_rolls)
+      end
     end
   end
 

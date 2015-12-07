@@ -28,8 +28,10 @@ class PerformReinforce
   end
 
   def reinforce_players_territories
-    @reinforce_event = create_reinforce_event
-    create_action(@territory, @game_state.current_player, @units_to_reinforce)
+    ActiveRecord::Base.transaction do
+      @reinforce_event = create_reinforce_event
+      create_action(@territory, @game_state.current_player, @units_to_reinforce)
+    end
   end
 
   def create_reinforce_event
