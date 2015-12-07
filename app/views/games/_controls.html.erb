@@ -1,5 +1,5 @@
 <div class="controls">
-  <% if @game_state.can_attack? %>
+  <% if @turn.can_attack? %>
     <%= form_for [@game, Event.attack] do |f| %>
       <div class="content">
         <%= f.hidden_field :event_type %>
@@ -11,7 +11,7 @@
     <% end %>
   <% end %>
 
-  <% if @game_state.can_fortify? %>
+  <% if @turn.can_fortify? %>
     <%= form_for [@game, Event.fortify] do |f| %>
       <div class="content">
         <%= f.hidden_field :event_type %>
@@ -23,10 +23,10 @@
     <% end %>
   <% end %>
 
-  <% if @game_state.can_reinforce?(1) %>
+  <% if @turn.can_reinforce?(1) %>
     <%= form_for [@game, Event.reinforce] do |f| %>
       <div class="content">
-        <div><%= @game_state.reinforcements_available %> reinforcements available.</div>
+        <div><%= @turn.reinforcements.remaining_units %> reinforcements available.</div>
         <%= f.hidden_field :event_type %>
         Place <%= text_field_tag :units, "" %> units
         on <%= text_field_tag :to %>

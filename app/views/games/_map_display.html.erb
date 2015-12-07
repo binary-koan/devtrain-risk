@@ -1,14 +1,14 @@
 <svg class="map-display" width="450" height="250">
   <g transform="translate(50,50)">
-    <% @game_state.territory_links.each do |(from_territory, to_territory)| %>
+    <% @turn.game_state.territory_links.each do |(from_territory, to_territory)| %>
       <line class="link" x1="<%= from_territory.x %>" x2="<%= to_territory.x %>"
          y1="<%= from_territory.y %>" y2="<%= to_territory.y %>" />
     <% end %>
     <% @game.territories.each.with_index do |territory, index| %>
       <g class="node" transform="translate(<%= territory.x %>,<%= territory.y %>)">
-        <circle r="30" fill="<%= player_color(@game, @game_state.territory_owner(territory)) %>" />
+        <circle r="30" fill="<%= player_color(@game, @turn.game_state.territory_owner(territory)) %>" />
         <text text-anchor="middle" dy="-4px"><%= index %></text>
-        <text text-anchor="middle" dy="10px"><%= @game_state.units_on_territory(territory) %> unit(s)</text>
+        <text text-anchor="middle" dy="10px"><%= @turn.game_state.units_on_territory(territory) %> unit(s)</text>
       </g>
     <% end %>
   </g>

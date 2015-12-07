@@ -2,8 +2,8 @@
 
 <%= render "map_display" %>
 
-<% if @game_state.won? %>
-  <div><%= @game_state.winning_player.name %> won the game!</div>
+<% if @turn.game_state.won? %>
+  <div><%= @turn.game_state.winning_player.name %> won the game!</div>
 <% else %>
   <%= render "player_display" %>
   <%= render "controls" %>

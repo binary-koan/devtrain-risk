@@ -37,10 +37,6 @@ class Turn
     @events.map(&:actions).flatten + previous_actions
   end
 
-  def reinforcements_available
-    @reinforcements.remaining_units
-  end
-
   def can_reinforce?(unit_count)
     @phase == PHASE_REINFORCING && @reinforcements.remaining?(unit_count)
   end

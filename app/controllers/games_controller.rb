@@ -10,7 +10,7 @@ class GamesController < ApplicationController
   end
 
   def show
-    @game_state = BuildCurrentTurn.new(@game.events).call
+    @turn = BuildCurrentTurn.new(@game.events).call
   end
 
   private
