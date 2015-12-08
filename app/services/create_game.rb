@@ -43,13 +43,15 @@ class CreateGame
     @players = [@game.players.create!(name: "Player 1"), @game.players.create!(name: "Player 2")]
   end
 
+  #TODO method doing two things
   def assign_players_to_territories!
     player_territories = @territories.shuffle.group_by.with_index do |_, index|
       @players[index % @players.size]
     end
 
     player_territories.each do |player, territories|
-      event = player.events.reinforce(game: player.game).tap { |e| e.save! }
+      #TODO tap&:save!
+      event = player.events.reinforce.create!
       territories.each do |territory|
         event.actions.create!(territory: territory, territory_owner: player, units_difference: INITIAL_UNITS)
       end
@@ -57,6 +59,6 @@ class CreateGame
   end
 
   def start_game!
-    @game.events.start_turn(player: @game.players.first).save!
+    @game.players.first.events.start_turn.create!
   end
 end

@@ -31,7 +31,7 @@ RSpec.describe Turn do
       let(:events) do
         [create(
           :reinforce_event,
-          game: game,
+
           player: player,
           territory: territories(:territory_top_left)
         )]
@@ -44,7 +44,7 @@ RSpec.describe Turn do
       let(:events) do
         [create(
           :reinforce_event,
-          game: game,
+
           player: player,
           territory: territories(:territory_top_left),
           units_difference: 1
@@ -58,7 +58,7 @@ RSpec.describe Turn do
       let(:events) do
         [create(
           :takeover_event,
-          game: game,
+
           player: player,
           territory: territories(:territory_top_left)
         )]
@@ -79,7 +79,7 @@ RSpec.describe Turn do
       let(:events) do
         [create(
           :reinforce_event,
-          game: game,
+
           player: player,
           territory: territories(:territory_top_left)
         )]
@@ -92,7 +92,7 @@ RSpec.describe Turn do
       let(:events) do
         [create(
           :reinforce_event,
-          game: game,
+
           player: player,
           territory: territories(:territory_top_left),
           units_difference: 1
@@ -108,7 +108,7 @@ RSpec.describe Turn do
       let(:events) do
         [create(
           :takeover_event,
-          game: game,
+
           player: player,
           territory: territories(:territory_top_left)
         )]
@@ -129,7 +129,7 @@ RSpec.describe Turn do
       let(:events) do
         [create(
           :reinforce_event,
-          game: game,
+
           player: player,
           territory: territories(:territory_top_left)
         )]
@@ -142,7 +142,7 @@ RSpec.describe Turn do
       let(:events) do
         [create(
           :takeover_event,
-          game: game,
+
           player: player,
           territory: territories(:territory_top_left)
         )]

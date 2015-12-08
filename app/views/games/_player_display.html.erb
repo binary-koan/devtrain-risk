@@ -3,9 +3,7 @@
     <div>
       <span class="player-icon"
         style="background-color: <%= player_color(@game, player) %>"></span>
-      <% if @turn.player == player %>
-        *
-      <% end %>
+      <%= "*" if @turn.player == player %>
       <%= player.name %>
     </div>
   <% end %>

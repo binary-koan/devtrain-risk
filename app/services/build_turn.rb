@@ -1,21 +1,17 @@
 class BuildTurn
   def initialize(events)
     @events = events
-    @turns = []
   end
 
   def call
-    all_turns.last
+    turn_groups.inject(nil) do |previous_turn, events|
+      Turn.new(events, previous_turn)
+    end
   end
 
   private
 
-  def all_turns
-    current_turn = nil
-    turn_groups.map do |events|
-      current_turn = Turn.new(events, current_turn)
-    end
-  end
+  #TODO events.chunk(start_turn)
 
   def turn_groups
     [0, *start_turn_indexes, @events.length].each_cons(2).map do |start_index, next_index|

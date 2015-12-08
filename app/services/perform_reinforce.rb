@@ -26,6 +26,7 @@ class PerformReinforce
     @turn.player == @turn.game_state.territory_owner(@territory)
   end
 
+  #TODO player_territories no 's
   def reinforce_players_territories
     ActiveRecord::Base.transaction do
       @reinforce_event = create_reinforce_event!
@@ -34,9 +35,7 @@ class PerformReinforce
   end
 
   def create_reinforce_event!
-    Event.reinforce(game: @turn.game, player: @turn.player).tap do |event|
-      event.save!
-    end
+    Event.reinforce.create!(player: @turn.player)
   end
 
   def create_action!(territory, territory_owner, units_difference)

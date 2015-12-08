@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe PerformReinforce do
   def start_turn(player)
-    create(:start_turn_event, player: player, game: game)
+    create(:start_turn_event, player: player, )
   end
 
   let(:game) { create(:game) }
@@ -34,8 +34,8 @@ RSpec.describe PerformReinforce do
       let(:territory) { mars }
 
       before do
-        create(:reinforce_event, player: player1, game: game, territory: mars)
-        create(:reinforce_event, player: player2, game: game, territory: jupiter)
+        create(:reinforce_event, player: player1, territory: mars)
+        create(:reinforce_event, player: player2, territory: jupiter)
         start_turn(player1)
         service.call
       end
@@ -54,8 +54,8 @@ RSpec.describe PerformReinforce do
       let(:reinforce_event) { service.reinforce_event }
 
       before do
-        create(:reinforce_event, player: player1, game: game, territory: mars)
-        create(:reinforce_event, player: player2, game: game, territory: jupiter)
+        create(:reinforce_event, player: player1, territory: mars)
+        create(:reinforce_event, player: player2, territory: jupiter)
         start_turn(player1)
         start_turn(player2)
         service.call
@@ -75,8 +75,8 @@ RSpec.describe PerformReinforce do
       let(:territory) { mars }
 
       before do
-        create(:reinforce_event, player: player1, game: game, territory: mars)
-        create(:reinforce_event, player: player2, game: game, territory: jupiter)
+        create(:reinforce_event, player: player1, territory: mars)
+        create(:reinforce_event, player: player2, territory: jupiter)
         start_turn(player1)
         service.call
       end
@@ -96,8 +96,8 @@ RSpec.describe PerformReinforce do
       let(:territory) { jupiter }
 
       before do
-        create(:reinforce_event, player: player1, game: game, territory: mars)
-        create(:reinforce_event, player: player2, game: game, territory: jupiter)
+        create(:reinforce_event, player: player1, territory: mars)
+        create(:reinforce_event, player: player2, territory: jupiter)
         start_turn(player1)
         service.call
       end

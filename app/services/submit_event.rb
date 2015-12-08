@@ -18,13 +18,14 @@ class SubmitEvent
   def call
     service = service_for_event_type
 
-    if !service
+    if !service #TODO .nil?
       errors << :unknown_event_type
     elsif player_has_no_territories?
       errors << :no_territories
     elsif !service.call
+      #TODO concat not +=
       @errors += service.errors
-      return false
+      return false #TODO remove
     end
 
     errors.none?
@@ -32,6 +33,7 @@ class SubmitEvent
 
   private
 
+  #TODO change to case statement
   def service_for_event_type
     event_type = @params[:event][:event_type]
 
@@ -39,7 +41,7 @@ class SubmitEvent
   end
 
   def player_has_no_territories?
-    @turn.game_state.owned_territories(@turn.player).length == 0
+    @turn.game_state.owned_territories(@turn.player).length == 0#TODO empty?|none?
   end
 
   def perform_attack

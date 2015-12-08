@@ -1,4 +1,5 @@
 class PerformAttack
+  #TODO break this service up
   MIN_UNITS_ON_TERRITORY = 1
   MIN_ATTACKING_UNITS    = 1
   MAX_ATTACKING_UNITS    = 3
@@ -49,9 +50,10 @@ class PerformAttack
   end
 
   def perform_attack
+    #TODO conditionals as methods
     if available_attackers < MIN_ATTACKING_UNITS
       errors << :cannot_attack_with_one_unit
-      @attack_event = nil
+      @attack_event = nil #TODO remove
     elsif too_many_units?
       errors << :too_many_units
     elsif too_few_units?
@@ -66,6 +68,7 @@ class PerformAttack
   end
 
   def too_many_units?
+    #TODO constant + combine these two into concept
      @attacking_units > 3 || @attacking_units > available_attackers
   end
 
@@ -74,10 +77,10 @@ class PerformAttack
   end
 
   def create_attack_event!
-    Event.attack(
-      game: @turn.game,
+    #TODO scope
+    Event.attack.create!(
       player: @turn.game_state.territory_owner(@territory_from)
-    ).tap { |e| e.save! }
+    )
   end
 
   def create_attack_actions!(paired_rolls)
@@ -99,6 +102,7 @@ class PerformAttack
 
   def available_attackers
     units = @turn.game_state.units_on_territory(@territory_from) - MIN_UNITS_ON_TERRITORY
+    #TODO array + min
     if units > MAX_ATTACKING_UNITS
       MAX_ATTACKING_UNITS
     else
@@ -108,6 +112,7 @@ class PerformAttack
 
   def number_of_defenders
     units = @turn.game_state.units_on_territory(@territory_to)
+    #TODO array + min
     if units > MAX_DEFENDING_UNITS
       MAX_DEFENDING_UNITS
     else
@@ -116,19 +121,23 @@ class PerformAttack
   end
 
   def dice_rolls_for_units
+    #TODO make obvious the sorting
     defender_rolls = roll_dice(number_of_defenders)
     attacker_rolls = roll_dice(@attacking_units)
 
+    #TODO remove parens on block
     defender_rolls.zip(attacker_rolls).reject do |(defender, attacker)|
       defender.nil? || attacker.nil?
     end
   end
 
   def roll_dice(rolls)
+    #TODO make range constant
     rolls.times.map { rand(1..6) }.sort.reverse
   end
 
   def attack_result(paired_rolls)
+    #TODO count not select
     attackers_lost = paired_rolls.select do |(defender_roll, attacker_roll)|
       defender_roll >= attacker_roll
     end.length

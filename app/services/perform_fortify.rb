@@ -59,6 +59,7 @@ class PerformFortify
   end
 
   def perform_fortify
+    #TODO method
     if @fortifying_units > available_fortifying_units
       errors << :fortifying_too_many_units
     else
@@ -74,10 +75,9 @@ class PerformFortify
   end
 
   def create_fortify_event!
-    Event.fortify(
-      game: @turn.game,
+    Event.fortify.create!(
       player: @turn.game_state.territory_owner(@territory_from)
-    ).tap { |e| e.save! }
+    )
   end
 
   def create_fortify_actions!

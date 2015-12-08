@@ -4,7 +4,6 @@ RSpec.describe PerformAttack do
   def kill_on_territory(territory, player, count)
     create(
       :reinforce_event,
-      game: game,
       player: player,
       territory: territory,
       units_difference: -count
@@ -15,16 +14,16 @@ RSpec.describe PerformAttack do
 
   let(:game) { games(:game) }
 
-  let(:base_events) do
-    game.events << create(
+  # let(:base_events) do
+  before do
+    create(
       :reinforce_event,
-      game: game,
       player: players(:player1),
       territory: territories(:territory_top_left)
     )
   end
 
-  let(:events) { base_events }
+  let(:events) { game.events }
 
   let(:turn) { BuildTurn.new(events).call }
   let(:game_state) { turn.game_state }
@@ -88,8 +87,8 @@ RSpec.describe PerformAttack do
         let(:territory_from) { territories(:territory_top_left) }
         let(:territory_to) { territories(:territory_bottom_left) }
 
-        let(:events) do
-          base_events << kill_on_territory(territory_from, players(:player1), 7)
+        before do
+          kill_on_territory(territory_from, players(:player1), 7)
         end
 
         it "returns a cannot attack with one unit error" do
@@ -223,8 +222,8 @@ RSpec.describe PerformAttack do
         end
 
         context "the defender has lost all their units" do
-          let(:events) do
-            base_events << kill_on_territory(territory_to, players(:player2), 4)
+          before do
+            kill_on_territory(territory_to, players(:player2), 4)
           end
 
           before do

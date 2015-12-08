@@ -2,10 +2,9 @@ require "rails_helper"
 
 RSpec.describe PerformFortify do
   def remove_units_from_territory(player, territory, units)
-    event = Event.attack(
-      game: game,
+    event = Event.attack.create!(
       player: player
-    ).tap { |e| e.save!}
+    )
 
     event.actions.create!(
       territory:        territory,
@@ -16,16 +15,15 @@ RSpec.describe PerformFortify do
 
   let(:game) { games(:game) }
 
-  let(:base_events) do
-    game.events << create(
+  before do
+    create(
       :reinforce_event,
-      game: game,
       player: players(:player1),
       territory: territories(:territory_top_left)
     )
   end
 
-  let(:events) { base_events }
+  let(:events) { game.events }
 
   let(:turn) { BuildTurn.new(events).call }
   let(:game_state) { turn.game_state }

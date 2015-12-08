@@ -1,32 +1,17 @@
 class Event < ActiveRecord::Base
   EVENT_TYPES = %w{reinforce attack fortify start_turn}
 
-  belongs_to :game
+  EVENT_TYPES.each do |event_type|
+    scope event_type, -> { where(event_type: event_type) }
+
+    define_method(event_type + "?") { self.event_type == event_type }
+  end
+
   belongs_to :player
   has_many :actions, dependent: :destroy
 
+  delegate :game, to: :player
+
   validates :event_type, inclusion: { in: EVENT_TYPES }
-  validates :event_type, :game, :player, presence: true
-
-  def self.reinforce(attrs={})
-    new(attrs.merge(event_type: "reinforce"))
-  end
-
-  def self.start_turn(attrs={})
-    new(attrs.merge(event_type: "start_turn"))
-  end
-
-  def self.attack(attrs={})
-    new(attrs.merge(event_type: "attack"))
-  end
-
-  def self.fortify(attrs={})
-    new(attrs.merge(event_type: "fortify"))
-  end
-
-  EVENT_TYPES.each do |type|
-    define_method((type + "?").to_sym) do
-      event_type == type
-    end
-  end
+  validates :event_type, :player, presence: true
 end

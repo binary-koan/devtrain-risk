@@ -8,7 +8,7 @@ RSpec.describe GameState do
   let!(:jupiter) { create(:territory, game: game) }
   let!(:mars)    { create(:territory, game: game) }
 
-  let(:events) { [create(:mock_event, game: game)] }
+  let(:events) { [create(:mock_event, player: player1)] }
 
   subject(:turn) { BuildTurn.new(events).call }
   subject(:game_state) { turn.game_state }
@@ -19,8 +19,8 @@ RSpec.describe GameState do
     context "when each player owns one territory" do
       let(:events) do
         [
-          create(:reinforce_event, player: player1, game: game, territory: mars),
-          create(:reinforce_event, player: player2, game: game, territory: jupiter)
+          create(:reinforce_event, player: player1, territory: mars),
+          create(:reinforce_event, player: player2, territory: jupiter)
         ]
       end
 
@@ -30,8 +30,8 @@ RSpec.describe GameState do
     context "when player 1 owns both territories" do
       let(:events) do
         [
-          create(:reinforce_event, player: player1, game: game, territory: mars),
-          create(:reinforce_event, player: player1, game: game, territory: jupiter)
+          create(:reinforce_event, player: player1, territory: mars),
+          create(:reinforce_event, player: player1, territory: jupiter)
         ]
       end
 
@@ -41,8 +41,8 @@ RSpec.describe GameState do
     context "when player 2 owns both territories" do
       let(:events) do
         [
-          create(:reinforce_event, player: player2, game: game, territory: mars),
-          create(:reinforce_event, player: player2, game: game, territory: jupiter)
+          create(:reinforce_event, player: player2, territory: mars),
+          create(:reinforce_event, player: player2, territory: jupiter)
         ]
       end
 
@@ -56,8 +56,8 @@ RSpec.describe GameState do
     context "when each player owns one territory" do
       let(:events) do
         [
-          create(:reinforce_event, player: player1, game: game, territory: mars),
-          create(:reinforce_event, player: player2, game: game, territory: jupiter)
+          create(:reinforce_event, player: player1, territory: mars),
+          create(:reinforce_event, player: player2, territory: jupiter)
         ]
       end
 
@@ -67,8 +67,8 @@ RSpec.describe GameState do
     context "when player 1 owns both territories" do
       let(:events) do
         [
-          create(:reinforce_event, player: player1, game: game, territory: mars),
-          create(:reinforce_event, player: player1, game: game, territory: jupiter)
+          create(:reinforce_event, player: player1, territory: mars),
+          create(:reinforce_event, player: player1, territory: jupiter)
         ]
       end
 
@@ -78,8 +78,8 @@ RSpec.describe GameState do
     context "when player 2 owns both territories" do
       let(:events) do
         [
-          create(:reinforce_event, player: player2, game: game, territory: mars),
-          create(:reinforce_event, player: player2, game: game, territory: jupiter)
+          create(:reinforce_event, player: player2, territory: mars),
+          create(:reinforce_event, player: player2, territory: jupiter)
         ]
       end
 
@@ -97,7 +97,7 @@ RSpec.describe GameState do
 
     context "when one player owns one territory" do
       let(:events) do
-        [create(:reinforce_event, player: player1, game: game, territory: jupiter)]
+        [create(:reinforce_event, player: player1, territory: jupiter)]
       end
 
       it "contains the territory for the owning player" do
@@ -112,8 +112,8 @@ RSpec.describe GameState do
     context "when both players own one territory" do
       let(:base_events) do
         [
-          create(:reinforce_event, player: player1, game: game, territory: mars),
-          create(:reinforce_event, player: player2, game: game, territory: jupiter)
+          create(:reinforce_event, player: player1, territory: mars),
+          create(:reinforce_event, player: player2, territory: jupiter)
         ]
       end
 
@@ -130,7 +130,7 @@ RSpec.describe GameState do
       context "when one player has taken over the other one's territory" do
         let(:events) do
           base_events + [
-            create(:takeover_event, player: player1, game: game, territory: jupiter)
+            create(:takeover_event, player: player1, territory: jupiter)
           ]
         end
 
@@ -148,8 +148,8 @@ RSpec.describe GameState do
   describe "#territory_owner" do
     let(:events) do
       [
-        create(:reinforce_event, player: player1, game: game, territory: mars),
-        create(:reinforce_event, player: player2, game: game, territory: jupiter)
+        create(:reinforce_event, player: player1, territory: mars),
+        create(:reinforce_event, player: player2, territory: jupiter)
       ]
     end
 
