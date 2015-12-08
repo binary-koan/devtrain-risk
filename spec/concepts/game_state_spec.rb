@@ -166,7 +166,7 @@ RSpec.describe GameState do
 
   describe "#units_on_territory" do
     let(:base_events) do
-      [create(:reinforce_event, player: player1, game: game, territory: jupiter, units_difference: 3)]
+      [create(:reinforce_event, player: player1, territory: jupiter, units_difference: 3)]
     end
 
     let(:events) { base_events }
@@ -180,8 +180,8 @@ RSpec.describe GameState do
     context "when multiple events have affected the territory" do
       let(:events) do
         base_events + [
-          create(:attack_event, player: player2, game: game, territory: jupiter, units_difference: -2),
-          create(:reinforce_event, player: player1, game: game, territory: jupiter, units_difference: 1)
+          create(:attack_event, player: player2, territory: jupiter, units_difference: -2),
+          create(:reinforce_event, player: player1, territory: jupiter, units_difference: 1)
         ]
       end
 
