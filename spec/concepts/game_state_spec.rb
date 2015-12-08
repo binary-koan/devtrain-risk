@@ -165,7 +165,28 @@ RSpec.describe GameState do
   end
 
   describe "#units_on_territory" do
-    pending "TODO"
+    let(:base_events) do
+      [create(:reinforce_event, player: player1, game: game, territory: jupiter, units_difference: 3)]
+    end
+
+    let(:events) { base_events }
+
+    subject { game_state.units_on_territory(jupiter) }
+
+    context "when one event has affected the territory" do
+      it { is_expected.to eq 3 }
+    end
+
+    context "when multiple events have affected the territory" do
+      let(:events) do
+        base_events + [
+          create(:attack_event, player: player2, game: game, territory: jupiter, units_difference: -2),
+          create(:reinforce_event, player: player1, game: game, territory: jupiter, units_difference: 1)
+        ]
+      end
+
+      it { is_expected.to eq 3 - 2 + 1 }
+    end
   end
 
   describe "#territory_links" do
