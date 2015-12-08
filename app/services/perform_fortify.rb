@@ -59,8 +59,7 @@ class PerformFortify
   end
 
   def perform_fortify
-    #TODO method
-    if @fortifying_units > available_fortifying_units
+    if fortifying_too_many_units?
       errors << :fortifying_too_many_units
     else
       ActiveRecord::Base.transaction do
@@ -68,6 +67,10 @@ class PerformFortify
         create_fortify_actions!
       end
     end
+  end
+
+  def fortifying_too_many_units?
+    @fortifying_units > available_fortifying_units
   end
 
   def available_fortifying_units

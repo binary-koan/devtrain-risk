@@ -5,6 +5,8 @@ class PerformAttack
   MAX_ATTACKING_UNITS    = 3
   MAX_DEFENDING_UNITS    = 2
 
+  DICE_RANGE = 1..6
+
   attr_reader :errors, :attack_event
 
   def initialize(territory_from:, territory_to:, turn:, attacking_units:)
@@ -50,10 +52,8 @@ class PerformAttack
   end
 
   def perform_attack
-    #TODO conditionals as methods
-    if available_attackers < MIN_ATTACKING_UNITS
-      errors << :cannot_attack_with_one_unit
-      @attack_event = nil #TODO remove
+    if too_few_available_attackers?
+      errors << :too_few_available_attackers
     elsif too_many_units?
       errors << :too_many_units
     elsif too_few_units?
@@ -67,9 +67,13 @@ class PerformAttack
     end
   end
 
+  def too_few_available_attackers?
+    available_attackers < MIN_ATTACKING_UNITS
+  end
+
   def too_many_units?
-    #TODO constant + combine these two into concept
-     @attacking_units > 3 || @attacking_units > available_attackers
+    #TODO combine these two into method
+    @attacking_units > MAX_ATTACKING_UNITS || @attacking_units > available_attackers
   end
 
   def too_few_units?
@@ -77,10 +81,7 @@ class PerformAttack
   end
 
   def create_attack_event!
-    #TODO scope
-    Event.attack.create!(
-      player: @turn.game_state.territory_owner(@territory_from)
-    )
+    from_territory_owner.events.attack.create!
   end
 
   def create_attack_actions!(paired_rolls)
@@ -100,47 +101,37 @@ class PerformAttack
     defenders_lost == remaining_defenders
   end
 
+  def from_territory_owner
+    @turn.game_state.territory_owner(@territory_from)
+  end
+
   def available_attackers
     units = @turn.game_state.units_on_territory(@territory_from) - MIN_UNITS_ON_TERRITORY
-    #TODO array + min
-    if units > MAX_ATTACKING_UNITS
-      MAX_ATTACKING_UNITS
-    else
-      units
-    end
+    [units, MAX_ATTACKING_UNITS].min
   end
 
   def number_of_defenders
     units = @turn.game_state.units_on_territory(@territory_to)
-    #TODO array + min
-    if units > MAX_DEFENDING_UNITS
-      MAX_DEFENDING_UNITS
-    else
-      units
-    end
+    [units, MAX_DEFENDING_UNITS].min
   end
 
   def dice_rolls_for_units
-    #TODO make obvious the sorting
-    defender_rolls = roll_dice(number_of_defenders)
-    attacker_rolls = roll_dice(@attacking_units)
+    defender_rolls = sorted_dice_rolls(number_of_defenders)
+    attacker_rolls = sorted_dice_rolls(@attacking_units)
 
-    #TODO remove parens on block
-    defender_rolls.zip(attacker_rolls).reject do |(defender, attacker)|
+    defender_rolls.zip(attacker_rolls).reject do |defender, attacker|
       defender.nil? || attacker.nil?
     end
   end
 
-  def roll_dice(rolls)
-    #TODO make range constant
-    rolls.times.map { rand(1..6) }.sort.reverse
+  def sorted_dice_rolls(rolls)
+    rolls.times.map { rand(DICE_RANGE) }.sort.reverse
   end
 
   def attack_result(paired_rolls)
-    #TODO count not select
-    attackers_lost = paired_rolls.select do |(defender_roll, attacker_roll)|
+    attackers_lost = paired_rolls.count do |defender_roll, attacker_roll|
       defender_roll >= attacker_roll
-    end.length
+    end
 
     defenders_lost = paired_rolls.length - attackers_lost
     [defenders_lost, attackers_lost]

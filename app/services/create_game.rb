@@ -49,11 +49,11 @@ class CreateGame
   def assign_players_to_territories!
     territories_by_player.each do |player, territories|
       event = player.events.reinforce.create!
-      populate_territories!(territories, event)
+      populate_territories!(territories, player, event)
     end
   end
 
-  def populate_territories!(territories, event)
+  def populate_territories!(territories, player, event)
     territories.each do |territory|
       event.actions.create!(territory: territory, territory_owner: player, units_difference: INITIAL_UNITS)
     end

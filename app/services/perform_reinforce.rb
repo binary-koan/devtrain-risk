@@ -14,7 +14,7 @@ class PerformReinforce
     elsif !@turn.can_reinforce?(@units_to_reinforce)
       errors << :cannot_reinforce
     else
-      reinforce_players_territories
+      reinforce_territory!
     end
 
     @reinforce_event.present?
@@ -26,8 +26,7 @@ class PerformReinforce
     @turn.player == @turn.game_state.territory_owner(@territory)
   end
 
-  #TODO player_territories no 's
-  def reinforce_players_territories
+  def reinforce_territory!
     ActiveRecord::Base.transaction do
       @reinforce_event = create_reinforce_event!
       create_action!(@territory, @turn.player, @units_to_reinforce)

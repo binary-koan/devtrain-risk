@@ -52,6 +52,7 @@ RSpec.describe SubmitEvent do
       it "fails if the PerformAttack service fails" do
         expect(PerformAttack).to receive(:new).and_return(attack_service)
         expect(attack_service).to receive(:call).and_return(false)
+        expect(attack_service).to receive(:errors).and_return([:error])
 
         expect(service.call).to eq false
       end
@@ -91,6 +92,7 @@ RSpec.describe SubmitEvent do
       it "fails if the PerformFortify service fails" do
         expect(PerformFortify).to receive(:new).and_return(fortify_service)
         expect(fortify_service).to receive(:call).and_return(false)
+        expect(fortify_service).to receive(:errors).and_return([:error])
 
         expect(service.call).to eq false
       end
@@ -147,6 +149,7 @@ RSpec.describe SubmitEvent do
       it "fails if the PerformReinforce service fails" do
         expect(PerformReinforce).to receive(:new).and_return(reinforce_service)
         expect(reinforce_service).to receive(:call).and_return(false)
+        expect(reinforce_service).to receive(:errors).and_return([:error])
 
         expect(service.call).to eq false
       end

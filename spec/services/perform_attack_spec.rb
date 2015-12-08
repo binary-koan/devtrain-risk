@@ -93,7 +93,7 @@ RSpec.describe PerformAttack do
 
         it "returns a cannot attack with one unit error" do
           expect(service.call).to be false
-          expect(service.errors).to contain_exactly :cannot_attack_with_one_unit
+          expect(service.errors).to contain_exactly :too_few_available_attackers
         end
       end
 

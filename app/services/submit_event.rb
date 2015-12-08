@@ -1,13 +1,6 @@
 class SubmitEvent
   attr_reader :errors
 
-  EVENT_TYPE_SERVICES = {
-    "attack" => :perform_attack,
-    "fortify" => :perform_fortify,
-    "reinforce" => :perform_reinforce,
-    "start_turn" => :end_turn
-  }
-
   def initialize(game, params)
     @game = game
     @turn = BuildTurn.new(@game.events).call
@@ -18,14 +11,12 @@ class SubmitEvent
   def call
     service = service_for_event_type
 
-    if !service #TODO .nil?
+    if service.nil?
       errors << :unknown_event_type
     elsif player_has_no_territories?
       errors << :no_territories
     elsif !service.call
-      #TODO concat not +=
-      @errors += service.errors
-      return false #TODO remove
+      errors.concat(service.errors)
     end
 
     errors.none?
@@ -33,15 +24,17 @@ class SubmitEvent
 
   private
 
-  #TODO change to case statement
   def service_for_event_type
-    event_type = @params[:event][:event_type]
-
-    send(EVENT_TYPE_SERVICES[event_type]) if EVENT_TYPE_SERVICES.has_key?(event_type)
+    case @params[:event][:event_type]
+    when "attack" then perform_attack
+    when "fortify" then perform_fortify
+    when "reinforce" then perform_reinforce
+    when "start_turn" then end_turn
+    end
   end
 
   def player_has_no_territories?
-    @turn.game_state.owned_territories(@turn.player).length == 0#TODO empty?|none?
+    @turn.game_state.owned_territories(@turn.player).none?
   end
 
   def perform_attack

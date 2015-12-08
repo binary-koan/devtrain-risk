@@ -5,12 +5,19 @@ class EndTurn
   end
 
   def call
-    #TODO method + modulo
-    next_player_index = @game.players.find_index(@turn.player) + 1
-    next_player_index = 0 if next_player_index == @game.players.size
-
-    @game.players[next_player_index].events.start_turn.create!
+    next_player = @game.players[next_player_index]
+    next_player.events.start_turn.create!
 
     true
+  end
+
+  private
+
+  def next_player_index
+    (current_player_index + 1) % @game.players.size
+  end
+
+  def current_player_index
+    @game.players.find_index(@turn.player)
   end
 end
