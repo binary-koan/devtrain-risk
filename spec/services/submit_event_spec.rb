@@ -25,7 +25,19 @@ RSpec.describe SubmitEvent do
 
     subject(:service) { SubmitEvent.new(game, params) }
 
-    pending "TODO test when the player has no territories"
+    context "when the game is already won" do
+      let(:event_type) { "fortify" }
+
+      let(:game_state) { instance_double(GameState, won?: true) }
+      let(:turn) { instance_double(Turn, game_state: game_state) }
+
+      it "fails with an error" do
+        expect(BuildTurn).to receive(:new).and_return -> { turn }
+
+        expect(service.call).to eq false
+        expect(service.errors).to contain_exactly :game_finished
+      end
+    end
 
     context "with an attack event" do
       let(:event_type) { "attack" }
@@ -49,21 +61,13 @@ RSpec.describe SubmitEvent do
         expect(service.call).to eq true
       end
 
-      it "fails if the PerformAttack service fails" do
+      it "fails and adds errors if the PerformAttack service fails" do
         expect(PerformAttack).to receive(:new).and_return(attack_service)
         expect(attack_service).to receive(:call).and_return(false)
         expect(attack_service).to receive(:errors).and_return([:error])
 
         expect(service.call).to eq false
-      end
-
-      it "has the same errors as the service if it fails" do
-        expect(PerformAttack).to receive(:new).and_return(attack_service)
-        expect(attack_service).to receive(:call).and_return(false)
-        expect(attack_service).to receive(:errors).and_return([:error])
-
-        service.call
-        expect(service.errors).to eq [:error]
+        expect(service.errors).to contain_exactly :error
       end
     end
 
@@ -89,21 +93,13 @@ RSpec.describe SubmitEvent do
         expect(service.call).to eq true
       end
 
-      it "fails if the PerformFortify service fails" do
+      it "fails and adds errors if the PerformFortify service fails" do
         expect(PerformFortify).to receive(:new).and_return(fortify_service)
         expect(fortify_service).to receive(:call).and_return(false)
         expect(fortify_service).to receive(:errors).and_return([:error])
 
         expect(service.call).to eq false
-      end
-
-      it "has the same errors as the service if it fails" do
-        expect(PerformFortify).to receive(:new).and_return(fortify_service)
-        expect(fortify_service).to receive(:call).and_return(false)
-        expect(fortify_service).to receive(:errors).and_return([:error])
-
-        service.call
-        expect(service.errors).to eq [:error]
+        expect(service.errors).to contain_exactly :error
       end
     end
 
@@ -146,21 +142,13 @@ RSpec.describe SubmitEvent do
         expect(service.call).to eq true
       end
 
-      it "fails if the PerformReinforce service fails" do
+      it "fails and adds errors if the PerformReinforce service fails" do
         expect(PerformReinforce).to receive(:new).and_return(reinforce_service)
         expect(reinforce_service).to receive(:call).and_return(false)
         expect(reinforce_service).to receive(:errors).and_return([:error])
 
         expect(service.call).to eq false
-      end
-
-      it "has the same errors as the service if it fails" do
-        expect(PerformReinforce).to receive(:new).and_return(reinforce_service)
-        expect(reinforce_service).to receive(:call).and_return(false)
-        expect(reinforce_service).to receive(:errors).and_return([:error])
-
-        service.call
-        expect(service.errors).to eq [:error]
+        expect(service.errors).to contain_exactly :error
       end
     end
 

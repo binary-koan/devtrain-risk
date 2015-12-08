@@ -13,8 +13,8 @@ class SubmitEvent
 
     if service.nil?
       errors << :unknown_event_type
-    elsif player_has_no_territories?
-      errors << :no_territories
+    elsif @turn.game_state.won?
+      errors << :game_finished
     elsif !service.call
       errors.concat(service.errors)
     end
