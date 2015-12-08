@@ -1,19 +1,23 @@
 territory_top_left:
   game: game
+  name: "Jupiter"
   x: 0
   y: 0
 
 territory_top_right:
   game: game
+  name: "Mars"
   x: 100
   y: 0
 
 territory_bottom_right:
   game: game
+  name: "Saturn"
   x: 100
   y: 100
 
 territory_bottom_left:
   game: game
+  name: "Mercury"
   x: 0
   y: 100

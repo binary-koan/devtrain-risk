@@ -29,7 +29,11 @@ class CreateGame
 
   def create_territories!
     TERRITORY_COUNT.times do |i|
-      @game.territories.create!(x: TERRITORY_POSITIONS[i][0], y: TERRITORY_POSITIONS[i][1])
+      @game.territories.create!(
+        x: TERRITORY_POSITIONS[i][0],
+        y: TERRITORY_POSITIONS[i][1],
+        name: "Planet #{i}"
+      )
     end
   end
 
