@@ -8,6 +8,10 @@ FactoryGirl.define do
       units_difference Reinforcement::MINIMUM_UNIT_COUNT
     end
 
+    factory :fortify_event, traits: [:assigns_units_to_territory] do
+      event_type "fortify"
+    end
+
     factory :attack_event, aliases: [:takeover_event], traits: [:assigns_units_to_territory] do
       event_type "attack"
     end

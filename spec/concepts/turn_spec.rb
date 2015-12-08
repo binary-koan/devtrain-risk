@@ -92,8 +92,6 @@ RSpec.describe Turn do
         )
       end
 
-      pending "TODO test when fortified"
-
       it { is_expected.to eq false }
     end
 
@@ -107,6 +105,18 @@ RSpec.describe Turn do
       end
 
       it { is_expected.to eq true }
+    end
+
+    context "when a fortify move has been made" do
+      before do
+        create(
+          :fortify_event,
+          player: player,
+          territory: territories(:territory_top_left)
+        )
+      end
+
+      it { is_expected.to eq false }
     end
   end
 
@@ -140,9 +150,25 @@ RSpec.describe Turn do
 
       it { is_expected.to eq true }
     end
+
+    context "when a fortify move has already been made" do
+      before do
+        create(
+          :fortify_event,
+          player: player,
+          territory: territories(:territory_top_left)
+        )
+      end
+
+      it { is_expected.to eq false }
+    end
   end
 
   describe "#actions" do
-    pending "TODO"
+    let(:actions) { game.events.map(&:actions).flatten }
+
+    it "contains all actions in the turn's events" do
+      expect(turn.actions).to eq actions
+    end
   end
 end
