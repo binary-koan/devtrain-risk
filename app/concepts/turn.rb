@@ -12,7 +12,7 @@ class Turn
     @previous_turn = previous_turn
 
     @phase = PHASE_REINFORCING
-    @reinforcements = Reinforcement.new(events.first.player, game_state)
+    @reinforcements = Reinforcement.new(self)
     @fortified = false
 
     @events.each { |event| apply_event(event) }
