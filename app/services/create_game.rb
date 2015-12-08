@@ -14,6 +14,7 @@ class CreateGame
     ActiveRecord::Base.transaction do
       create_game!
       create_territories!
+      create_territory_links!
       create_players!
       assign_players_to_territories!
       start_game!
@@ -30,12 +31,14 @@ class CreateGame
     TERRITORY_COUNT.times do |i|
       @game.territories.create!(x: TERRITORY_POSITIONS[i][0], y: TERRITORY_POSITIONS[i][1])
     end
+  end
 
-    @territories = @game.territories
-
+  def create_territory_links!
     TERRITORY_EDGES.each do |edge|
-      TerritoryLink.create!(from_territory: @game.territories[edge[0]],
-                            to_territory: @game.territories[edge[1]])
+      TerritoryLink.create!(
+        from_territory: @game.territories[edge[0]],
+        to_territory: @game.territories[edge[1]]
+      )
     end
   end
 
@@ -43,22 +46,26 @@ class CreateGame
     @players = [@game.players.create!(name: "Player 1"), @game.players.create!(name: "Player 2")]
   end
 
-  #TODO method doing two things
   def assign_players_to_territories!
-    player_territories = @territories.shuffle.group_by.with_index do |_, index|
-      @players[index % @players.size]
-    end
-
-    player_territories.each do |player, territories|
-      #TODO tap&:save!
+    territories_by_player.each do |player, territories|
       event = player.events.reinforce.create!
-      territories.each do |territory|
-        event.actions.create!(territory: territory, territory_owner: player, units_difference: INITIAL_UNITS)
-      end
+      populate_territories!(territories, event)
+    end
+  end
+
+  def populate_territories!(territories, event)
+    territories.each do |territory|
+      event.actions.create!(territory: territory, territory_owner: player, units_difference: INITIAL_UNITS)
     end
   end
 
   def start_game!
     @game.players.first.events.start_turn.create!
+  end
+
+  def territories_by_player
+    @game.territories.shuffle.group_by.with_index do |_, index|
+      @players[index % @players.size]
+    end
   end
 end
