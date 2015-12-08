@@ -11,17 +11,13 @@ class BuildTurn
 
   private
 
-  #TODO events.chunk(start_turn)
-
   def turn_groups
-    [0, *start_turn_indexes, @events.length].each_cons(2).map do |start_index, next_index|
-      @events[start_index..next_index]
+    @events.inject([[]]) do |groups, event|
+      if event.start_turn?
+        groups << [event]
+      else
+        groups.tap { |g| g.last << event }
+      end
     end
-  end
-
-  def start_turn_indexes
-    @events.each.with_index
-      .select { |event, i| event.start_turn? }
-      .map { |event, i| i }
   end
 end
