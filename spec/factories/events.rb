@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :event, aliases: [:start_turn_event, :mock_event] do
+  factory :event, aliases: [:start_turn_event] do
     player
     event_type "start_turn"
 

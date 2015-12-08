@@ -6,9 +6,7 @@ RSpec.describe Turn do
   let(:game) { games(:game) }
   let(:player) { players(:player1) }
 
-  let(:events) { [create(:mock_event)] }
-
-  let(:turn) { Turn.new(events) }
+  let(:turn) { Turn.new(game.events) }
 
   describe "#can_reinforce?" do
     let(:reinforcement_units) { 1 }
@@ -28,40 +26,37 @@ RSpec.describe Turn do
     end
 
     context "when a complete reinforcement has already been made" do
-      let(:events) do
-        [create(
+      before do
+        create(
           :reinforce_event,
-
           player: player,
           territory: territories(:territory_top_left)
-        )]
+        )
       end
 
       it { is_expected.to eq false }
     end
 
     context "when an incomplete reinforcement has been made" do
-      let(:events) do
-        [create(
+      before do
+        create(
           :reinforce_event,
-
           player: player,
           territory: territories(:territory_top_left),
           units_difference: 1
-        )]
+        )
       end
 
       it { is_expected.to eq true }
     end
 
     context "when an attack has been made" do
-      let(:events) do
-        [create(
+      before do
+        create(
           :takeover_event,
-
           player: player,
           territory: territories(:territory_top_left)
-        )]
+        )
       end
 
       it { is_expected.to eq false }
@@ -76,27 +71,25 @@ RSpec.describe Turn do
     end
 
     context "when a complete reinforcement has been made" do
-      let(:events) do
-        [create(
+      before do
+        create(
           :reinforce_event,
-
           player: player,
           territory: territories(:territory_top_left)
-        )]
+        )
       end
 
       it { is_expected.to eq true }
     end
 
     context "when an incomplete reinforcement has been made" do
-      let(:events) do
-        [create(
+      before do
+        create(
           :reinforce_event,
-
           player: player,
           territory: territories(:territory_top_left),
           units_difference: 1
-        )]
+        )
       end
 
       pending "TODO test when fortified"
@@ -105,13 +98,12 @@ RSpec.describe Turn do
     end
 
     context "when an attack has been made" do
-      let(:events) do
-        [create(
+      before do
+        create(
           :takeover_event,
-
           player: player,
           territory: territories(:territory_top_left)
-        )]
+        )
       end
 
       it { is_expected.to eq true }
@@ -126,26 +118,24 @@ RSpec.describe Turn do
     end
 
     context "when a complete reinforcement has been made" do
-      let(:events) do
-        [create(
+      before do
+        create(
           :reinforce_event,
-
           player: player,
           territory: territories(:territory_top_left)
-        )]
+        )
       end
 
       it { is_expected.to eq true }
     end
 
     context "when an attack has been made" do
-      let(:events) do
-        [create(
+      before do
+        create(
           :takeover_event,
-
           player: player,
           territory: territories(:territory_top_left)
-        )]
+        )
       end
 
       it { is_expected.to eq true }
