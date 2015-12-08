@@ -10,10 +10,6 @@ RSpec.describe Turn do
 
   let(:turn) { Turn.new(events) }
 
-  describe "#reinforcements_available" do
-    pending "Test it!"
-  end
-
   describe "#can_reinforce?" do
     let(:reinforcement_units) { 1 }
 
@@ -103,6 +99,8 @@ RSpec.describe Turn do
         )]
       end
 
+      pending "TODO test when fortified"
+
       it { is_expected.to eq false }
     end
 
@@ -152,5 +150,9 @@ RSpec.describe Turn do
 
       it { is_expected.to eq true }
     end
+  end
+
+  describe "#actions" do
+    pending "TODO"
   end
 end

@@ -25,6 +25,8 @@ RSpec.describe SubmitEvent do
 
     subject(:service) { SubmitEvent.new(game, params) }
 
+    pending "TODO test when the player has no territories"
+
     context "with an attack event" do
       let(:event_type) { "attack" }
       let(:units) { 1 }

@@ -106,5 +106,7 @@ RSpec.describe PerformReinforce do
         expect(service.errors).to contain_exactly :reinforcing_enemy_territory
       end
     end
+
+    pending "TODO try reinforcing with too many units"
   end
 end

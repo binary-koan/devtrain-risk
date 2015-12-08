@@ -40,6 +40,8 @@ RSpec.describe PerformAttack do
     )
   end
 
+  pending "TODO test attacking after fortify"
+
   describe "#call" do
     context "attacking from territory that is not current players" do
       let(:territory_from) { territories(:territory_bottom_left) }

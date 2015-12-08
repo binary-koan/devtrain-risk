@@ -87,28 +87,6 @@ RSpec.describe GameState do
     end
   end
 
-  # describe "#current_player" do
-  #   subject { game_state.current_player }
-  #
-  #   let(:base_event) do
-  #     [create(:start_turn_event, game: game, player: player1)]
-  #   end
-  #
-  #   let(:events) { base_event }
-  #
-  #   context "when one player has started their turn" do
-  #     it { is_expected.to eq player1 }
-  #   end
-  #
-  #   context "when the other player has also started their turn" do
-  #     let(:events) do
-  #       base_event + [create(:start_turn_event, game: game, player: player2)]
-  #     end
-  #
-  #     it { is_expected.to eq player2 }
-  #   end
-  # end
-
   describe "#owned_territories" do
     context "with no territories owned" do
       it "is empty for both players" do
@@ -184,6 +162,10 @@ RSpec.describe GameState do
       owned_territories = game_state.owned_territories(player2)
       expect(owned_territories).to be_all { |t| game_state.territory_owner(t) == player2 }
     end
+  end
+
+  describe "#units_on_territory" do
+    pending "TODO"
   end
 
   describe "#territory_links" do

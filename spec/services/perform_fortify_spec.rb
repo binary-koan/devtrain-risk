@@ -169,5 +169,7 @@ RSpec.describe PerformFortify do
         expect(sending_action.territory_owner).to eq player1
       end
     end
+
+    pending "TODO test submitting when already fortified"
   end
 end
