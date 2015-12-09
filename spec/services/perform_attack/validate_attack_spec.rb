@@ -102,6 +102,34 @@ RSpec.describe PerformAttack::ValidateAttack do
         end
       end
 
+      context "when trying to attack with more than the remaining number of units" do
+        let(:territory_from) { territories(:territory_top_left) }
+        let(:territory_to) { territories(:territory_bottom_left) }
+
+        let(:attacking_units) { 3 }
+
+        before do
+          kill_on_territory(territory_from, players(:player1), 6)
+        end
+
+        it "fails with an error" do
+          expect(service.call).to be false
+          expect(service.errors).to contain_exactly :too_many_units
+        end
+      end
+
+      context "when trying to attack with too many units" do
+        let(:territory_from) { territories(:territory_top_left) }
+        let(:territory_to) { territories(:territory_bottom_left) }
+
+        let(:attacking_units) { 4 }
+
+        it "fails with an error" do
+          expect(service.call).to be false
+          expect(service.errors).to contain_exactly :too_many_units
+        end
+      end
+
       context "when the attacker tries to attack with no units" do
         let(:attacking_units) { 0 }
 

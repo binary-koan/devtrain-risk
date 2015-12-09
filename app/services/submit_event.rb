@@ -33,10 +33,6 @@ class SubmitEvent
     end
   end
 
-  def player_has_no_territories?
-    @turn.game_state.owned_territories(@turn.player).none?
-  end
-
   def perform_attack
     PerformAttack.new(
       territory_from: @game.territories[@params[:from].to_i],
