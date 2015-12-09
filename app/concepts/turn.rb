@@ -5,29 +5,32 @@ class Turn
   PHASE_ATTACKING   = :attacking
   PHASE_ENDING      = :ending
 
-  attr_reader :events, :reinforcements
+  attr_reader :events
 
   def initialize(events, previous_turn = nil)
     @events = events
     @previous_turn = previous_turn
 
     @phase = PHASE_REINFORCING
-    @reinforcements = Reinforcement.new(self)
     @fortified = false
 
     @events.each { |event| apply_event(event) }
   end
 
   def ==(other)
-    @events == other.events
+    events == other.events
   end
 
   def player
-    @events.first.player
+    events.first.player
   end
 
   def game
-    @events.first.game
+    events.first.game
+  end
+
+  def reinforcements
+    @reinforcements ||= Reinforcement.new(self)
   end
 
   def game_state
@@ -35,7 +38,7 @@ class Turn
   end
 
   def can_reinforce?(unit_count = MINIMUM_REINFORCEMENTS)
-    @phase == PHASE_REINFORCING && @reinforcements.remaining?(unit_count)
+    @phase == PHASE_REINFORCING && reinforcements.remaining?(unit_count)
   end
 
   def can_attack?
@@ -53,8 +56,8 @@ class Turn
 
   def apply_event(event)
     if event.reinforce?
-      @reinforcements.remove(event.actions.first.units_difference)
-      @phase = PHASE_ATTACKING if @reinforcements.none?
+      reinforcements.remove(event.actions.first.units_difference)
+      @phase = PHASE_ATTACKING if reinforcements.none?
     elsif event.attack?
       @phase = PHASE_ATTACKING
     elsif event.fortify?

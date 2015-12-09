@@ -6,7 +6,9 @@ RSpec.describe Turn do
   let(:game) { games(:game) }
   let(:player) { players(:player1) }
 
-  let(:turn) { Turn.new(game.events) }
+  let(:events) { game.events }
+
+  let(:turn) { Turn.new(events) }
 
   describe "#can_reinforce?" do
     let(:reinforcement_units) { 1 }
@@ -169,6 +171,24 @@ RSpec.describe Turn do
 
     it "contains all actions in the turn's events" do
       expect(turn.actions).to eq actions
+    end
+  end
+
+  describe "#game_state" do
+    let(:events) do
+      [
+        create(:attack_event, player: player, territory: territories(:territory_top_left)),
+        create(:fortify_event, player: player, territory: territories(:territory_top_right))
+      ]
+    end
+
+    let(:actions) { events.map(&:actions).flatten }
+
+    let(:game_state) { instance_double(GameState) }
+
+    it "passes the turn's actions to a new game state" do
+      expect(GameState).to receive(:new).with(game, actions).and_return(game_state)
+      expect(turn.game_state).to eq game_state
     end
   end
 end
