@@ -4,14 +4,14 @@ RSpec.describe SubmitEvent do
   describe "#call" do
     fixtures :games, :territories
 
-    let(:from_index) { 0 }
-    let(:to_index) { 1 }
+    let(:from_territory) { territories(:territory_top_left) }
+    let(:to_territory) { territories(:territory_top_right) }
     let(:units) { nil }
 
     let(:params) do
       {
-        from: from_index,
-        to: to_index,
+        from: from_territory.name,
+        to: to_territory.name,
         units: units,
         event: {
           event_type: event_type
@@ -46,8 +46,8 @@ RSpec.describe SubmitEvent do
 
       it "calls the PerformAttack service with correct parameters" do
         expect(PerformAttack).to receive(:new).with(
-          territory_from:  game.territories[from_index],
-          territory_to:    game.territories[to_index],
+          territory_from:  from_territory,
+          territory_to:    to_territory,
           turn:            BuildTurn.new(game.events).call,
           attacking_units: units
         ).and_return(attack_service)
@@ -78,8 +78,8 @@ RSpec.describe SubmitEvent do
 
       it "calls the PerformFortify service with correct parameters" do
         expect(PerformFortify).to receive(:new).with(
-          territory_from:   game.territories[from_index],
-          territory_to:     game.territories[to_index],
+          territory_from:   from_territory,
+          territory_to:     to_territory,
           turn:             turn,
           fortifying_units: 5
         ).and_return(fortify_service)
@@ -128,7 +128,7 @@ RSpec.describe SubmitEvent do
 
       it "calls the PerformReinforce service with correct parameters" do
         expect(PerformReinforce).to receive(:new).with(
-          territory:          game.territories[to_index],
+          territory:          to_territory,
           turn:               turn,
           units_to_reinforce: 5
         ).and_return(reinforce_service)
