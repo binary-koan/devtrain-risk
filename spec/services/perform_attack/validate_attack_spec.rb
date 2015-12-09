@@ -35,8 +35,6 @@ RSpec.describe PerformAttack::ValidateAttack do
     )
   end
 
-  pending "TODO test attacking after fortify"
-
   describe "#call" do
     context "attacking from territory that is not current players" do
       let(:territory_from) { territories(:territory_bottom_left) }
@@ -81,6 +79,14 @@ RSpec.describe PerformAttack::ValidateAttack do
     context "when the territory is a neighbour" do
       let(:territory_from) { territories(:territory_top_left) }
       let(:territory_to) { territories(:territory_bottom_left) }
+
+      context "when the turn state disallows attacking" do
+        it "returns a wrong phase error" do
+          expect(turn).to receive(:can_attack?).and_return false
+          expect(service.call).to eq false
+          expect(service.errors).to contain_exactly :wrong_phase
+        end
+      end
 
       context "when the attacker only has one unit left" do
         let(:territory_from) { territories(:territory_top_left) }
