@@ -1,6 +1,6 @@
 <h1>Game <%= @game.id %></h1>
 
-<%= render "map_display" %>
+<%= map_display(@turn) %>
 
 <% if @turn.game_state.won? %>
   <div><%= @turn.game_state.winning_player.name %> won the game!</div>
