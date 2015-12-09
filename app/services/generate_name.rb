@@ -7,14 +7,17 @@
 # the Mote project (http://mote.sourceforge.net/)
 
 class GenerateName
-  DIGRAPHS =
-    %w(a ac ad ar as at ax ba bi bo ce ci co de di e ed en es ex fa fo ga ge gi
-      gu ha he in is it ju ka ky la le le lo mi mo na ne ne ni no o ob oi ol on
-      or or os ou pe pi po qt re ro sa se so ta te ti to tu ud um un us ut va
-      ve ve za zi)
+  MIN_SYLLABLES = 2
+  MAX_SYLLABLES = 3
 
-  TRIGRAPHS =
-    %w(cla clu cra cre dre dro pha phi pho sha she sta stu tha the thi thy tri)
+  VOWELS = %w{a i u e o a i u ei ou ai oi}
+  STARTING_CONSONANTS = %w{k s sh t ch n h f m y r w}
+  CONTINUING_CONSONANTS = %w{ssh cch nn rr}
+  ENDING_CONSONANTS = %w{n m t k}
+
+  THREE_CONSECUTIVE_VOWELS = /[aeiou]{3,}/i
+  TWO_PAIRED_LETTERS = /.*(.)\1.*(.)\2/
+  OU_PLUS_PAIR = /ou(.)\1/i
 
   def initialize
     @syllables = random_syllable_count
@@ -29,17 +32,34 @@ class GenerateName
   private
 
   def generate_name
-    name_syllables = (1...@syllables).map { DIGRAPHS.sample }
-    name_syllables << (DIGRAPHS + TRIGRAPHS).sample
+    name = starting_syllables.sample
 
-    name_syllables.join
+    (@syllables - 2).times { name += continuing_syllables.sample }
+
+    name + ending_syllables.sample
   end
 
   def sensible_name?(name)
-    name !~ /[aeiou]{3,}/i
+    name !~ THREE_CONSECUTIVE_VOWELS && name !~ TWO_PAIRED_LETTERS && name !~ OU_PLUS_PAIR
+  end
+
+  def starting_syllables
+    VOWELS + basic_syllables
+  end
+
+  def continuing_syllables
+    basic_syllables + CONTINUING_CONSONANTS.product(VOWELS).map(&:join)
+  end
+
+  def ending_syllables
+    continuing_syllables + ENDING_CONSONANTS
+  end
+
+  def basic_syllables
+    STARTING_CONSONANTS.product(VOWELS).map(&:join)
   end
 
   def random_syllable_count
-    [2, 3, 4].sample
+    [MIN_SYLLABLES, MAX_SYLLABLES].sample
   end
 end
