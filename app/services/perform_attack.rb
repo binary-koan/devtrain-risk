@@ -1,5 +1,5 @@
 class PerformAttack
-  attr_reader :validator, :attack_event
+  attr_reader :validator, :attack_events
 
   delegate :errors, to: :validator
 
@@ -11,9 +11,9 @@ class PerformAttack
 
   def call
     if @validator.call
-      @attack_event = @creator.call
+      @attack_events = @creator.call
     end
 
-    @attack_event.present?
+    @attack_events.present? && @attack_events.any?
   end
 end

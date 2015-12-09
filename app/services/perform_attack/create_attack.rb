@@ -10,6 +10,7 @@ class PerformAttack
       @attacking_units = attacking_units
       @attackers_lost  = 0
       @defenders_lost  = 0
+      @attack_events   = []
       @errors          = []
     end
 
@@ -28,13 +29,13 @@ class PerformAttack
         end
       end
 
-      @attack_event
+      @attack_events
     end
 
     private
 
     def create_attack_event!
-      @attack_event = find_owner(@territory_from).events.attack.create!
+      @attack_events << find_owner(@territory_from).events.attack.create!
     end
 
     def roll_dice(number_of_defenders, number_of_attackers)
@@ -88,7 +89,7 @@ class PerformAttack
     end
 
     def create_action!(type, territory, territory_owner, units_difference)
-      @attack_event.actions.create!(
+      @attack_events.last.actions.create!(
         action_type:      type,
         territory:        territory,
         territory_owner:  territory_owner,

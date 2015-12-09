@@ -19,8 +19,8 @@ RSpec.describe PerformAttack do
     PerformAttack.new(**service_args)
   end
 
-  let(:attack_event) { instance_double(Event) }
-  let(:attack_creator) { -> { attack_event } }
+  let(:attack_events) { [instance_double(Event)] }
+  let(:attack_creator) { -> { attack_events } }
   let(:attack_validator) { instance_double(PerformAttack::ValidateAttack) }
 
   describe "#call" do
@@ -52,7 +52,7 @@ RSpec.describe PerformAttack do
 
       it "allows access to the event returned by the creation service" do
         service.call
-        expect(service.attack_event).to eq attack_event
+        expect(service.attack_events).to eq attack_events
       end
     end
   end

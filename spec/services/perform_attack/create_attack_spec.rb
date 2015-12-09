@@ -31,7 +31,7 @@ RSpec.describe PerformAttack::CreateAttack do
     let(:territory_from) { territories(:territory_top_left) }
     let(:territory_to) { territories(:territory_bottom_left) }
 
-    subject(:attack_event) { service.call }
+    subject(:attack_events) { service.call }
 
     context "when attacking with one unit" do
       let(:attacking_units) { 1 }
@@ -42,8 +42,8 @@ RSpec.describe PerformAttack::CreateAttack do
         end
 
         it "removes the one attacking unit" do
-          expect(attack_event.actions[0].territory).to eq territory_from
-          expect(attack_event.actions[0].units_difference).to eq -1
+          expect(attack_events[0].actions[0].territory).to eq territory_from
+          expect(attack_events[0].actions[0].units_difference).to eq -1
         end
       end
 
@@ -53,8 +53,8 @@ RSpec.describe PerformAttack::CreateAttack do
         end
 
         it "removes the one defending unit" do
-          expect(attack_event.actions[0].territory).to eq territory_to
-          expect(attack_event.actions[0].units_difference).to eq -1
+          expect(attack_events[0].actions[0].territory).to eq territory_to
+          expect(attack_events[0].actions[0].units_difference).to eq -1
         end
       end
     end
@@ -68,8 +68,8 @@ RSpec.describe PerformAttack::CreateAttack do
         end
 
         it "removes both of the attacking units" do
-          expect(attack_event.actions[0].territory).to eq territory_from
-          expect(attack_event.actions[0].units_difference).to be -2
+          expect(attack_events[0].actions[0].territory).to eq territory_from
+          expect(attack_events[0].actions[0].units_difference).to be -2
         end
       end
 
@@ -79,8 +79,8 @@ RSpec.describe PerformAttack::CreateAttack do
         end
 
         it "removes both of the defending units" do
-          expect(attack_event.actions[0].territory).to eq territory_to
-          expect(attack_event.actions[0].units_difference).to be -2
+          expect(attack_events[0].actions[0].territory).to eq territory_to
+          expect(attack_events[0].actions[0].units_difference).to be -2
         end
       end
 
@@ -90,10 +90,10 @@ RSpec.describe PerformAttack::CreateAttack do
         end
 
         it "removes one attacking unit and one defending unit" do
-          expect(attack_event.actions[0].territory).to eq territory_to
-          expect(attack_event.actions[0].units_difference).to be -1
-          expect(attack_event.actions[1].territory).to eq territory_from
-          expect(attack_event.actions[1].units_difference).to be -1
+          expect(attack_events[0].actions[0].territory).to eq territory_to
+          expect(attack_events[0].actions[0].units_difference).to be -1
+          expect(attack_events[0].actions[1].territory).to eq territory_from
+          expect(attack_events[0].actions[1].units_difference).to be -1
         end
       end
     end
@@ -104,12 +104,12 @@ RSpec.describe PerformAttack::CreateAttack do
       end
 
       it "removes both attackers" do
-        expect(attack_event.actions[0].units_difference).to eq -2
-        expect(attack_event.actions[0].territory).to eq territory_from
+        expect(attack_events[0].actions[0].units_difference).to eq -2
+        expect(attack_events[0].actions[0].territory).to eq territory_from
       end
 
       it "doesn't change the ownership of the territory" do
-        territory_owner = attack_event.actions[0].territory_owner
+        territory_owner = attack_events[0].actions[0].territory_owner
         expect(territory_owner).to eq players(:player1)
       end
     end
@@ -121,9 +121,9 @@ RSpec.describe PerformAttack::CreateAttack do
         expect(PerformAttack::RollDice).to receive(:new).and_return -> { [[1, 6]] }
       end
 
-      let(:remove_defenders_event) { attack_event.actions[0] }
-      let(:add_attackers_event) { attack_event.actions[1] }
-      let(:remove_attackers_event) { attack_event.actions[2] }
+      let(:remove_defenders_event) { attack_events[0].actions[0] }
+      let(:add_attackers_event) { attack_events[0].actions[1] }
+      let(:remove_attackers_event) { attack_events[0].actions[2] }
 
       it "removes all defenders from defeated territory" do
         expect(remove_defenders_event.units_difference).to eq -1
@@ -141,6 +141,20 @@ RSpec.describe PerformAttack::CreateAttack do
         expect(remove_attackers_event.units_difference).to eq -3
         expect(remove_attackers_event.territory).to eq territories(:territory_top_left)
         expect(remove_attackers_event.territory_owner).to eq players(:player1)
+      end
+    end
+
+    context "when performing multiple attacks at once" do
+      let(:attacking_units) { 4 }
+
+      before do
+        2.times { expect(PerformAttack::RollDice).to receive(:new).and_return -> { [[3, 3], [2, 2]] } }
+      end
+
+      let(:attack_actions) { attack_events.flat_map(&:actions) }
+
+      it "takes over the territory" do
+        pending "IMPLEMENT"
       end
     end
   end
