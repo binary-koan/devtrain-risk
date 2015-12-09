@@ -14,11 +14,12 @@ RSpec.describe PerformFortify do
   end
 
   let(:game) { games(:game) }
+  let(:player) { players(:player1) }
 
   before do
     create(
       :reinforce_event,
-      player: players(:player1),
+      player: player,
       territory: territories(:territory_top_left)
     )
   end
@@ -40,8 +41,6 @@ RSpec.describe PerformFortify do
   describe "#call" do
     fixtures :games, :players, :territories
     let(:fortifying_units) { 1 }
-    let(:player1) { players(:player1) }
-    let(:player2) { players(:player2) }
 
     context "fortifying from territory that is not current players" do
       let(:territory_from) { territories(:territory_bottom_left) }
@@ -99,7 +98,7 @@ RSpec.describe PerformFortify do
       let(:territory_to) { territories(:territory_top_right) }
 
       it "returns a fortifying_too_many_units error" do
-        remove_units_from_territory(player1, territory_from, 7)
+        remove_units_from_territory(player, territory_from, 7)
         expect(service.call).to be false
         expect(service.errors).to contain_exactly :fortifying_too_many_units
       end
@@ -132,42 +131,49 @@ RSpec.describe PerformFortify do
       let(:territory_to) { territories(:territory_top_right) }
       let(:fortifying_units) { 3 }
 
-      it "has no errors" do
-        expect(service.call).to be true
-        expect(service.errors).to be_none
+      context "when there has already been a fortify event" do
+        before { create(:fortify_event, player: player, territory: territory_to) }
+
+        it "fails with an error" do
+          expect(service.call).to eq false
+          expect(service.errors).to contain_exactly :wrong_phase
+        end
       end
 
-      before { service.call }
+      context "when there has not yet been a fortify event" do
+        let!(:result) { service.call }
 
-      let(:receiving_action) { service.fortify_event.actions[0] }
+        it "has no errors" do
+          expect(result).to eq true
+          expect(service.errors).to be_none
+        end
 
-      it "adds units to the fortified territory" do
-        expect(receiving_action.units_difference).to be 3
-      end
+        describe "the receiving action" do
+          subject(:action) { service.fortify_event.actions[0] }
 
-      it "adds the units to the correct territory" do
-        expect(receiving_action.territory).to be territory_to
-      end
+          it "adds units to the fortified territory" do
+            expect(action.units_difference).to be 3
+            expect(action.territory).to eq territory_to
+          end
 
-      it "doesn't change the ownership of the receiving territory" do
-        expect(receiving_action.territory_owner).to eq player1
-      end
+          it "doesn't change the ownership of the receiving territory" do
+            expect(action.territory_owner).to eq player
+          end
+        end
 
-      let(:sending_action) { service.fortify_event.actions[1] }
+        describe "the sending action" do
+          subject(:action) { service.fortify_event.actions[1] }
 
-      it "removes units from the fortifying territory" do
-        expect(sending_action.units_difference).to be -3
-      end
+          it "removes units from the fortifying territory" do
+            expect(action.units_difference).to be -3
+            expect(action.territory).to be territory_from
+          end
 
-      it "removes the units from the correct territory" do
-        expect(sending_action.territory).to be territory_from
-      end
-
-      it "doesn't change the ownership of the sending territory" do
-        expect(sending_action.territory_owner).to eq player1
+          it "doesn't change the ownership of the sending territory" do
+            expect(action.territory_owner).to eq player
+          end
+        end
       end
     end
-
-    pending "TODO test submitting when already fortified"
   end
 end

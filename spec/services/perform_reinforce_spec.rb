@@ -18,8 +18,6 @@ RSpec.describe PerformReinforce do
 
   let(:units_to_reinforce) { 3 }
 
-  let(:territory) { jupiter }
-
   let(:service) do
     PerformReinforce.new(
       turn:               turn,
@@ -28,85 +26,91 @@ RSpec.describe PerformReinforce do
     )
   end
 
+  let(:reinforce_action) { service.reinforce_event.actions[0] }
+
   describe "#call" do
+    let(:territory) { mars }
+
+    before do
+      create(:reinforce_event, player: player1, territory: mars)
+      create(:reinforce_event, player: player2, territory: jupiter)
+      start_turn(player1)
+    end
+
     context "with a territory owned" do
       let(:reinforce_event) { service.reinforce_event }
-      let(:territory) { mars }
 
-      before do
-        create(:reinforce_event, player: player1, territory: mars)
-        create(:reinforce_event, player: player2, territory: jupiter)
-        start_turn(player1)
-        service.call
+      let!(:result) { service.call }
+
+      it "succeeds" do
+        expect(result).to eq true
       end
 
       it "adds units to the territory" do
-        expect(reinforce_event.actions[0].units_difference).to eq reinforcements.remaining_units
+        expect(reinforce_action.units_difference).to eq reinforcements.remaining_units
       end
 
-      it "adds units to the player's territory" do
-        expect(reinforce_event.actions[0].territory_owner).to eq player1
+      it "keeps the correct territory owner" do
+        expect(reinforce_action.territory_owner).to eq player1
       end
     end
 
-    context "player1 ends their turn" do
+    context "when player 1 has ended their turn" do
       let(:player) { player2 }
-      let(:reinforce_event) { service.reinforce_event }
+      let(:territory) { jupiter }
 
-      before do
-        create(:reinforce_event, player: player1, territory: mars)
-        create(:reinforce_event, player: player2, territory: jupiter)
-        start_turn(player1)
-        start_turn(player2)
-        service.call
+      before { start_turn(player2) }
+
+      let!(:result) { service.call }
+
+      it "succeeds" do
+        expect(result).to eq true
       end
 
       it "adds units to the territory" do
-        expect(reinforce_event.actions[0].units_difference).to eq reinforcements.remaining_units
+        expect(reinforce_action.units_difference).to eq reinforcements.remaining_units
       end
 
-      it "adds units to the player's territory" do
-        expect(reinforce_event.actions[0].territory_owner).to eq player2
+      it "keeps the correct territory owner" do
+        expect(reinforce_action.territory_owner).to eq player2
       end
     end
 
     context "player1 reinforces a single unit" do
       let(:units_to_reinforce) { 1 }
-      let(:territory) { mars }
-
-      before do
-        create(:reinforce_event, player: player1, territory: mars)
-        create(:reinforce_event, player: player2, territory: jupiter)
-        start_turn(player1)
-        service.call
-      end
-
       let(:reinforce_event) { service.reinforce_event }
 
-      it "adds units to the territory" do
-        expect(reinforce_event.actions[0].units_difference).to eq 1
+      let!(:result) { service.call }
+
+      it "succeeds" do
+        expect(result).to eq true
       end
 
-      it "adds units to the player's territory" do
-        expect(reinforce_event.actions[0].territory_owner).to eq player1
+      it "adds units to the territory" do
+        expect(reinforce_action.units_difference).to eq 1
+      end
+
+      it "keeps the correct territory owner" do
+        expect(reinforce_action.territory_owner).to eq player1
       end
     end
 
-    context "player 1 tries to reinforce an enemy territory" do
+    context "when trying to reinforce an enemy territory" do
       let(:territory) { jupiter }
 
-      before do
-        create(:reinforce_event, player: player1, territory: mars)
-        create(:reinforce_event, player: player2, territory: jupiter)
-        start_turn(player1)
-        service.call
-      end
-
-      it "returns a reinforcing_enemy_territory error" do
+      it "fails with an error" do
+        expect(service.call).to eq false
         expect(service.errors).to contain_exactly :reinforcing_enemy_territory
       end
     end
 
-    pending "TODO try reinforcing with too many units"
+    context "when trying to reinforce with too many units" do
+      let(:units_to_reinforce) { 100 }
+
+      it "fails with an error" do
+        expect(service.call).to eq false
+        expect(service.errors).to contain_exactly :cannot_reinforce
+      end
+    end
   end
 end
