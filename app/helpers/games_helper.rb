@@ -1,8 +1,8 @@
 module GamesHelper
   PLAYER_COLORS = %w{#4F2EC9 #63242E}
 
-  MAP_WIDTH = 450
-  MAP_HEIGHT = 350
+  MAP_WIDTH = 400
+  MAP_HEIGHT = 250
   MAP_OFFSET = 50
   TERRITORY_NODE_SIZE = 30
 
@@ -11,7 +11,7 @@ module GamesHelper
   end
 
   def map_display(turn)
-    content_tag("svg", class: "map-display", width: MAP_WIDTH, height: MAP_HEIGHT) do
+    content_tag("svg", class: "map-display", viewbox: "0 0 #{MAP_WIDTH} #{MAP_HEIGHT}") do
       content_tag("g", map_display_content(turn), transform: translate(MAP_OFFSET))
     end
   end
@@ -48,8 +48,8 @@ module GamesHelper
 
     [
       content_tag("circle", "", r: TERRITORY_NODE_SIZE, fill: color),
-      content_tag("text", territory.name, :"text-anchor" => "middle", :dy => -4),
-      content_tag("text", "#{units} units", :"text-anchor" => "middle", :dy => 10)
+      content_tag("text", territory.name, "text-anchor" => "middle", :dy => -4),
+      content_tag("text", "#{units} units", "text-anchor" => "middle", :dy => 10)
     ].join.html_safe
   end
 
