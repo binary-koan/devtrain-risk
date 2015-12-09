@@ -3,10 +3,10 @@ require "rails_helper"
 RSpec.describe PerformAttack::CreateAttack do
   def kill_on_territory(territory, player, count)
     create(
-      :reinforce_event,
+      :attack_event,
       player: player,
       territory: territory,
-      units_difference: -count
+      units_killed: count
     )
   end
 

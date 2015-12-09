@@ -3,10 +3,10 @@ require "rails_helper"
 RSpec.describe PerformFortify do
   def kill_on_territory(territory, player, count)
     create(
-      :reinforce_event,
+      :attack_event,
       player: player,
       territory: territory,
-      units_difference: -count
+      units_killed: count
     )
   end
 
@@ -129,7 +129,9 @@ RSpec.describe PerformFortify do
       let(:fortifying_units) { 3 }
 
       context "when there has already been a fortify event" do
-        before { create(:fortify_event, player: player, territory: territory_to) }
+        before do
+          create(:fortify_event, player: player, territory_from: territory_from, territory_to: territory_to)
+        end
 
         it "fails with an error" do
           expect(service.call).to eq false

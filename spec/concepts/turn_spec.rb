@@ -45,7 +45,7 @@ RSpec.describe Turn do
           :reinforce_event,
           player: player,
           territory: territories(:territory_top_left),
-          units_difference: 1
+          units: 1
         )
       end
 
@@ -55,7 +55,7 @@ RSpec.describe Turn do
     context "when an attack has been made" do
       before do
         create(
-          :takeover_event,
+          :attack_event,
           player: player,
           territory: territories(:territory_top_left)
         )
@@ -90,7 +90,7 @@ RSpec.describe Turn do
           :reinforce_event,
           player: player,
           territory: territories(:territory_top_left),
-          units_difference: 1
+          units: 1
         )
       end
 
@@ -100,7 +100,7 @@ RSpec.describe Turn do
     context "when an attack has been made" do
       before do
         create(
-          :takeover_event,
+          :attack_event,
           player: player,
           territory: territories(:territory_top_left)
         )
@@ -114,7 +114,8 @@ RSpec.describe Turn do
         create(
           :fortify_event,
           player: player,
-          territory: territories(:territory_top_left)
+          territory_from: territories(:territory_top_right),
+          territory_to: territories(:territory_top_left)
         )
       end
 
@@ -144,7 +145,7 @@ RSpec.describe Turn do
     context "when an attack has been made" do
       before do
         create(
-          :takeover_event,
+          :attack_event,
           player: player,
           territory: territories(:territory_top_left)
         )
@@ -158,7 +159,8 @@ RSpec.describe Turn do
         create(
           :fortify_event,
           player: player,
-          territory: territories(:territory_top_left)
+          territory_from: territories(:territory_top_right),
+          territory_to: territories(:territory_top_left)
         )
       end
 
@@ -178,7 +180,7 @@ RSpec.describe Turn do
     let(:events) do
       [
         create(:attack_event, player: player, territory: territories(:territory_top_left)),
-        create(:fortify_event, player: player, territory: territories(:territory_top_right))
+        create(:attack_event, player: player, territory: territories(:territory_top_right))
       ]
     end
 

@@ -106,7 +106,7 @@ RSpec.describe GameState do
 
       context "when one player has taken over the other one's territory" do
         before do
-          create(:takeover_event, player: player1, territory: jupiter)
+          create(:takeover_event, player: player1, territory_from: mars, territory_taken: jupiter)
         end
 
         it "contains both territories for player 1" do
@@ -139,7 +139,7 @@ RSpec.describe GameState do
 
   describe "#units_on_territory" do
     before do
-      create(:reinforce_event, player: player1, territory: jupiter, units_difference: 3)
+      create(:reinforce_event, player: player1, territory: jupiter, units: 3)
     end
 
     subject { game_state.units_on_territory(jupiter) }
@@ -150,8 +150,8 @@ RSpec.describe GameState do
 
     context "when multiple events have affected the territory" do
       before do
-        create(:attack_event, player: player2, territory: jupiter, units_difference: -2)
-        create(:reinforce_event, player: player1, territory: jupiter, units_difference: 1)
+        create(:attack_event, player: player2, territory: jupiter, units_killed: 2)
+        create(:reinforce_event, player: player1, territory: jupiter, units: 1)
       end
 
       it { is_expected.to eq 3 - 2 + 1 }
