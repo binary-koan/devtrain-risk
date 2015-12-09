@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe Turn do
-  fixtures :games, :players, :territories
+  fixtures :games, :players, :territories, :events, :actions
 
   let(:game) { games(:game) }
   let(:player) { players(:player1) }

@@ -14,13 +14,16 @@
 ActiveRecord::Schema.define(version: 20151208205302) do
 
   create_table "actions", force: :cascade do |t|
-    t.integer  "event_id"
-    t.integer  "territory_id"
-    t.integer  "territory_owner_id"
-    t.integer  "units_difference"
+    t.integer  "event_id",           null: false
+    t.integer  "territory_id",       null: false
+    t.integer  "action_type",        null: false
+    t.integer  "territory_owner_id", null: false
+    t.integer  "units_difference",   null: false
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
   end
+
+  add_index "actions", ["event_id"], name: "index_actions_on_event_id"
 
   create_table "events", force: :cascade do |t|
     t.string   "event_type", null: false
@@ -28,6 +31,8 @@ ActiveRecord::Schema.define(version: 20151208205302) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  add_index "events", ["player_id"], name: "index_events_on_player_id"
 
   create_table "games", force: :cascade do |t|
     t.datetime "created_at", null: false

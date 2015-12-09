@@ -41,8 +41,8 @@ class PerformAttack
       if territory_taken?(defenders_lost)
         take_over_territory!(defenders_lost, paired_rolls.length)
       else
-        create_action!(@territory_to, find_owner(@territory_to), -defenders_lost) if defenders_lost > 0
-        create_action!(@territory_from, find_owner(@territory_from), -attackers_lost) if attackers_lost > 0
+        create_action!(:kill, @territory_to, find_owner(@territory_to), -defenders_lost) if defenders_lost > 0
+        create_action!(:kill, @territory_from, find_owner(@territory_from), -attackers_lost) if attackers_lost > 0
       end
     end
 
@@ -66,13 +66,14 @@ class PerformAttack
     end
 
     def take_over_territory!(defenders_lost, attackers_count)
-      create_action!(@territory_to, find_owner(@territory_to), -defenders_lost)
-      create_action!(@territory_to, find_owner(@territory_from), attackers_count)
-      create_action!(@territory_from, find_owner(@territory_from), -attackers_count)
+      create_action!(:kill, @territory_to, find_owner(@territory_to), -defenders_lost)
+      create_action!(:move_to, @territory_to, find_owner(@territory_from), attackers_count)
+      create_action!(:move_from, @territory_from, find_owner(@territory_from), -attackers_count)
     end
 
-    def create_action!(territory, territory_owner, units_difference)
+    def create_action!(type, territory, territory_owner, units_difference)
       @attack_event.actions.create!(
+        action_type:      type,
         territory:        territory,
         territory_owner:  territory_owner,
         units_difference: units_difference

@@ -25,8 +25,8 @@ FactoryGirl.define do
       after(:create) do |e, attrs|
         e.actions << create(
           :action,
-          territory_owner: e.player,
-          territory: attrs.territory,
+          territory_owner:  e.player,
+          territory:        attrs.territory,
           units_difference: attrs.units_difference
         )
       end

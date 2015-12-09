@@ -25,12 +25,13 @@ class PerformFortify
 
     def create_fortify_actions!
       player = find_owner(@territory_from)
-      create_action!(@territory_to, player, @fortifying_units)
-      create_action!(@territory_from, player, -@fortifying_units)
+      create_action!(:move_to, @territory_to, player, @fortifying_units)
+      create_action!(:move_from, @territory_from, player, -@fortifying_units)
     end
 
-    def create_action!(territory, territory_owner, units_difference)
+    def create_action!(type, territory, territory_owner, units_difference)
       @fortify_event.actions.create!(
+        action_type:      type,
         territory:        territory,
         territory_owner:  territory_owner,
         units_difference: units_difference

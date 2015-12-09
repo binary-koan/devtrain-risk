@@ -29,16 +29,17 @@ class PerformReinforce
   def reinforce_territory!
     ActiveRecord::Base.transaction do
       @reinforce_event = create_reinforce_event!
-      create_action!(@territory, @turn.player, @units_to_reinforce)
+      create_action!(:add, @territory, @turn.player, @units_to_reinforce)
     end
   end
 
   def create_reinforce_event!
-    Event.reinforce.create!(player: @turn.player)
+    @turn.player.events.reinforce.create!
   end
 
-  def create_action!(territory, territory_owner, units_difference)
+  def create_action!(type, territory, territory_owner, units_difference)
     @reinforce_event.actions.create!(
+      action_type:      type,
       territory:        territory,
       territory_owner:  territory_owner,
       units_difference: units_difference

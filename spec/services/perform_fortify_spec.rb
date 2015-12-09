@@ -1,15 +1,12 @@
 require "rails_helper"
 
 RSpec.describe PerformFortify do
-  def remove_units_from_territory(player, territory, units)
-    event = Event.attack.create!(
-      player: player
-    )
-
-    event.actions.create!(
-      territory:        territory,
-      territory_owner:  player,
-      units_difference: -units
+  def kill_on_territory(territory, player, count)
+    create(
+      :reinforce_event,
+      player: player,
+      territory: territory,
+      units_difference: -count
     )
   end
 
@@ -98,7 +95,7 @@ RSpec.describe PerformFortify do
       let(:territory_to) { territories(:territory_top_right) }
 
       it "returns a fortifying_too_many_units error" do
-        remove_units_from_territory(player, territory_from, 7)
+        kill_on_territory(territory_from, player, 7)
         expect(service.call).to be false
         expect(service.errors).to contain_exactly :fortifying_too_many_units
       end

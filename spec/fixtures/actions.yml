@@ -1,23 +1,27 @@
 reinforce_top_left:
   event_id: 1
+  action_type: <%= Action.action_types[:add] %>
   territory: territory_top_left
   territory_owner: player1
   units_difference: 5
 
 reinforce_top_right:
   event_id: 2
+  action_type: <%= Action.action_types[:add] %>
   territory: territory_top_right
   territory_owner: player1
   units_difference: 5
 
 reinforce_bottom_right:
   event_id: 3
+  action_type: <%= Action.action_types[:add] %>
   territory: territory_bottom_right
   territory_owner: player2
   units_difference: 5
 
 reinforce_bottom_left:
   event_id: 4
+  action_type: <%= Action.action_types[:add] %>
   territory: territory_bottom_left
   territory_owner: player2
   units_difference: 5
