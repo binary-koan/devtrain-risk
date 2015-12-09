@@ -132,13 +132,13 @@ RSpec.describe PerformAttack::CreateAttack do
       end
 
       it "adds attacking units to the defeated territory" do
-        expect(add_attackers_event.units_difference).to eq 1
+        expect(add_attackers_event.units_difference).to eq 3
         expect(add_attackers_event.territory).to eq territories(:territory_bottom_left)
         expect(add_attackers_event.territory_owner).to eq players(:player1)
       end
 
       it "removes attackers from the attacking territory" do
-        expect(remove_attackers_event.units_difference).to eq -1
+        expect(remove_attackers_event.units_difference).to eq -3
         expect(remove_attackers_event.territory).to eq territories(:territory_top_left)
         expect(remove_attackers_event.territory_owner).to eq players(:player1)
       end

@@ -14,16 +14,15 @@ class PerformAttack
     end
 
     def call
-      defenders = @turn.game_state.units_on_territory(@territory_to)
+      @initial_defenders = @turn.game_state.units_on_territory(@territory_to)
       ActiveRecord::Base.transaction do
         while @attacking_units > 0
           create_attack_event!
-          attackers = number_of_attackers
-          dice_rolls = roll_dice(number_of_attackers)
+          dice_rolls = roll_dice(number_of_defenders(@initial_defenders - @defenders_lost), number_of_attackers)
           create_attack_actions!(dice_rolls)
 
           @attacking_units -= @attackers_lost
-          if @defenders_lost >= defenders
+          if @defenders_lost >= @initial_defenders
             break
           end
         end
@@ -38,7 +37,7 @@ class PerformAttack
       @attack_event = find_owner(@territory_from).events.attack.create!
     end
 
-    def roll_dice(number_of_attackers)
+    def roll_dice(number_of_defenders, number_of_attackers)
       die_rolls = RollDice.new(number_of_defenders, number_of_attackers)
       die_rolls.call
     end
@@ -47,9 +46,8 @@ class PerformAttack
       [@attacking_units, MAX_ATTACKING_UNITS].min
     end
 
-    def number_of_defenders
-      units = @turn.game_state.units_on_territory(@territory_to)
-      [units, MAX_DEFENDING_UNITS].min
+    def number_of_defenders(units_on_territory)
+      [units_on_territory, MAX_DEFENDING_UNITS].min
     end
 
     def create_attack_actions!(paired_rolls)
@@ -58,8 +56,8 @@ class PerformAttack
       @attackers_lost = attackers_lost
       @defenders_lost += defenders_lost
 
-      if territory_taken?(defenders_lost)
-        take_over_territory!(defenders_lost, paired_rolls.length)
+      if territory_taken?
+        take_over_territory!(defenders_lost, @attacking_units)
       else
         create_action!(:kill, @territory_to, find_owner(@territory_to), -defenders_lost) if defenders_lost > 0
         create_action!(:kill, @territory_from, find_owner(@territory_from), -attackers_lost) if attackers_lost > 0
@@ -75,10 +73,8 @@ class PerformAttack
       [defenders_lost, attackers_lost]
     end
 
-    def territory_taken?(defenders_lost)
-      remaining_defenders = @turn.game_state.units_on_territory(@territory_to)
-
-      defenders_lost == remaining_defenders
+    def territory_taken?
+      @defenders_lost == @initial_defenders
     end
 
     def find_owner(territory)
