@@ -1,11 +1,13 @@
 <div class="controls">
+  <% territory_select_options = options_for_select(@game.territories.pluck(:name)) %>
+
   <% if @turn.can_attack? %>
     <%= form_for [@game, Event.attack.new] do |f| %>
       <div class="content">
         <%= f.hidden_field :event_type %>
-        Attack <%= text_field_tag :units, "" %> units
-        from <%= text_field_tag :from, "" %>
-        to <%= text_field_tag :to %>
+        Attack with <%= number_field_tag :units, "" %> units
+        from <%= select_tag :from, territory_select_options %>
+        to <%= select_tag :to, territory_select_options %>
         <%= f.submit "Attack" %>
       </div>
     <% end %>
@@ -15,9 +17,9 @@
     <%= form_for [@game, Event.fortify.new] do |f| %>
       <div class="content">
         <%= f.hidden_field :event_type %>
-        Move <%= text_field_tag :units, "" %> units
-        from <%= text_field_tag :from, "" %>
-        to <%= text_field_tag :to %>
+        Move <%= number_field_tag :units, "" %> units
+        from <%= select_tag :from, territory_select_options %>
+        to <%= select_tag :to, territory_select_options %>
         <%= f.submit "Fortify" %>
       </div>
     <% end %>
@@ -28,8 +30,8 @@
       <div class="content">
         <div><%= @turn.reinforcements.remaining_units %> reinforcements available.</div>
         <%= f.hidden_field :event_type %>
-        Place <%= text_field_tag :units, "" %> units
-        on <%= text_field_tag :to %>
+        Place <%= number_field_tag :units, "" %> units
+        on <%= select_tag :to, territory_select_options %>
         <%= f.submit "Reinforce" %>
       </div>
     <% end %>

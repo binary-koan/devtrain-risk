@@ -35,21 +35,21 @@ module GamesHelper
   end
 
   def territory_nodes(turn)
-    turn.game.territories.map.with_index do |territory, index|
-      children = territory_node_content(territory, index, turn)
+    turn.game.territories.map do |territory|
+      children = territory_node_content(territory, turn)
 
       content_tag("g", children, class: "node", transform: translate(territory.x, territory.y))
     end
   end
 
-  def territory_node_content(territory, index, turn)
+  def territory_node_content(territory, turn)
     color = player_color(turn.game.players, turn.game_state.territory_owner(territory))
     units = turn.game_state.units_on_territory(territory)
 
     [
       content_tag("circle", "", r: TERRITORY_NODE_SIZE, fill: color),
-      content_tag("text", index, :"text-anchor" => "middle", :dy => -4),
-      content_tag("text", "Units: #{units}", :"text-anchor" => "middle", :dy => 10)
+      content_tag("text", territory.name, :"text-anchor" => "middle", :dy => -4),
+      content_tag("text", "#{units} units", :"text-anchor" => "middle", :dy => 10)
     ].join.html_safe
   end
 

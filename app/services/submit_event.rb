@@ -35,8 +35,8 @@ class SubmitEvent
 
   def perform_attack
     PerformAttack.new(
-      territory_from: @game.territories[@params[:from].to_i],
-      territory_to: @game.territories[@params[:to].to_i],
+      territory_from: @game.territories.find_by(name: @params[:from]),
+      territory_to: @game.territories.find_by(name: @params[:to]),
       turn: @turn,
       attacking_units: @params[:units].to_i
     )
@@ -44,8 +44,8 @@ class SubmitEvent
 
   def perform_fortify
     PerformFortify.new(
-      territory_from: @game.territories[@params[:from].to_i],
-      territory_to: @game.territories[@params[:to].to_i],
+      territory_from: @game.territories.find_by(name: @params[:from]),
+      territory_to: @game.territories.find_by(name: @params[:to]),
       turn: @turn,
       fortifying_units: @params[:units].to_i
     )
@@ -54,7 +54,7 @@ class SubmitEvent
   def perform_reinforce
     PerformReinforce.new(
       turn: @turn,
-      territory: @game.territories[@params[:to].to_i],
+      territory: @game.territories.find_by(name: @params[:to]),
       units_to_reinforce: @params[:units].to_i
     )
   end
