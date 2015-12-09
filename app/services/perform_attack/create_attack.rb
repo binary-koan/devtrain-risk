@@ -12,7 +12,7 @@ class PerformAttack
 
     def call
       ActiveRecord::Base.transaction do
-        @attack_event = create_attack_event!
+        create_attack_event!
         create_attack_actions!(roll_dice)
       end
 
@@ -22,7 +22,7 @@ class PerformAttack
     private
 
     def create_attack_event!
-      find_owner(@territory_from).events.attack.create!
+      @attack_event = find_owner(@territory_from).events.attack.create!
     end
 
     def roll_dice

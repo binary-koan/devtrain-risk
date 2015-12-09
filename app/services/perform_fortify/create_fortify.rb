@@ -10,7 +10,7 @@ class PerformFortify
 
     def call
       ActiveRecord::Base.transaction do
-        @fortify_event = create_fortify_event!
+        create_fortify_event!
         create_fortify_actions!
       end
 
@@ -20,9 +20,7 @@ class PerformFortify
     private
 
     def create_fortify_event!
-      Event.fortify.create!(
-        player: @turn.game_state.territory_owner(@territory_from)
-      )
+      @fortify_event = find_owner(@territory_from).events.fortify.create!
     end
 
     def create_fortify_actions!
