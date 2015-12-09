@@ -32,7 +32,7 @@ class CreateGame
       @game.territories.create!(
         x: TERRITORY_POSITIONS[i][0],
         y: TERRITORY_POSITIONS[i][1],
-        name: "Planet #{i}"
+        name: GenerateName.new.call
       )
     end
   end
