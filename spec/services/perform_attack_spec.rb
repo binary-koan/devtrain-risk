@@ -14,7 +14,6 @@ RSpec.describe PerformAttack do
 
   let(:game) { games(:game) }
 
-  # let(:base_events) do
   before do
     create(
       :reinforce_event,
@@ -24,6 +23,8 @@ RSpec.describe PerformAttack do
   end
 
   let(:events) { game.events }
+
+  let(:die_rolls) { instance_double(PerformAttack::RollDice) }
 
   let(:turn) { BuildTurn.new(events).call }
   let(:game_state) { turn.game_state }
@@ -124,7 +125,7 @@ RSpec.describe PerformAttack do
           end
 
           it "only lets the attacker rolls one attacking dice" do
-            expect(service).to receive(:rand).and_return 1, 6, 6
+            expect(PerformAttack::RollDice).to receive(:new).and_return -> { [[6, 1]] }
             expect(service.call).to be true
           end
 
@@ -148,13 +149,13 @@ RSpec.describe PerformAttack do
           end
 
           it "only lets the attack role 2 dice" do
-            expect(service).to receive(:rand).exactly(4).times.and_return 1, 1, 6, 6
+            expect(PerformAttack::RollDice).to receive(:new).and_return -> { [[6, 1], [6, 1]] }
             expect(service.call).to be true
           end
 
           context "the attacker loses both dice rolls" do
             before do
-              expect(service).to receive(:rand).exactly(4).times.and_return 1, 1, 6, 6
+              expect(PerformAttack::RollDice).to receive(:new).and_return -> { [[6, 1], [6, 1]] }
               service.call
             end
 
@@ -177,7 +178,7 @@ RSpec.describe PerformAttack do
 
         context "the attackers and defenders rolls match" do
           before do
-            allow(service).to receive(:rand).and_return 6
+            expect(PerformAttack::RollDice).to receive(:new).and_return -> { [[6, 1], [6, 1]] }
           end
 
           before { service.call }
@@ -200,7 +201,7 @@ RSpec.describe PerformAttack do
 
         context "the defender loses units" do
           before do
-            expect(service).to receive(:rand).and_return 1, 1, 6, 6, 6
+            expect(PerformAttack::RollDice).to receive(:new).and_return -> { [[1, 6], [1, 6]] }
           end
 
           before { service.call }
@@ -227,7 +228,7 @@ RSpec.describe PerformAttack do
           end
 
           before do
-            expect(service).to receive(:rand).and_return 1, 6, 6, 6
+            expect(PerformAttack::RollDice).to receive(:new).and_return -> { [[1, 6]] }
             service.call
           end
 
