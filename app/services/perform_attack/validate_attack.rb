@@ -53,7 +53,7 @@ class PerformAttack
     end
 
     def too_many_units?
-      @attacking_units > MAX_ATTACKING_UNITS || @attacking_units > available_attackers
+      @attacking_units > available_attackers
     end
 
     def too_few_units?
@@ -66,7 +66,6 @@ class PerformAttack
 
     def available_attackers
       units = @turn.game_state.units_on_territory(@territory_from) - MIN_UNITS_ON_TERRITORY
-      [units, MAX_ATTACKING_UNITS].min
     end
   end
 end

@@ -1,19 +1,32 @@
 class PerformAttack
   class CreateAttack
     MAX_DEFENDING_UNITS = 2
+    MAX_ATTACKING_UNITS = 3
 
     def initialize(territory_from:, territory_to:, turn:, attacking_units:)
       @territory_from  = territory_from
       @territory_to    = territory_to
       @turn            = turn
       @attacking_units = attacking_units
+      @attackers_lost  = 0
+      @defenders_lost  = 0
       @errors          = []
     end
 
     def call
+      defenders = @turn.game_state.units_on_territory(@territory_to)
       ActiveRecord::Base.transaction do
-        create_attack_event!
-        create_attack_actions!(roll_dice)
+        while @attacking_units > 0
+          create_attack_event!
+          attackers = number_of_attackers
+          dice_rolls = roll_dice(number_of_attackers)
+          create_attack_actions!(dice_rolls)
+
+          @attacking_units -= @attackers_lost
+          if @defenders_lost >= defenders
+            break
+          end
+        end
       end
 
       @attack_event
@@ -25,9 +38,13 @@ class PerformAttack
       @attack_event = find_owner(@territory_from).events.attack.create!
     end
 
-    def roll_dice
-      die_rolls = RollDice.new(number_of_defenders, @attacking_units)
+    def roll_dice(number_of_attackers)
+      die_rolls = RollDice.new(number_of_defenders, number_of_attackers)
       die_rolls.call
+    end
+
+    def number_of_attackers
+      [@attacking_units, MAX_ATTACKING_UNITS].min
     end
 
     def number_of_defenders
@@ -37,6 +54,9 @@ class PerformAttack
 
     def create_attack_actions!(paired_rolls)
       defenders_lost, attackers_lost = attack_result(paired_rolls)
+
+      @attackers_lost = attackers_lost
+      @defenders_lost += defenders_lost
 
       if territory_taken?(defenders_lost)
         take_over_territory!(defenders_lost, paired_rolls.length)

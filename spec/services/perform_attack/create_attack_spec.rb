@@ -47,9 +47,9 @@ RSpec.describe PerformAttack::CreateAttack do
         end
       end
 
-      context "the attacker wins the dice roll" do
+      context "the attacker wins every die roll" do
         before do
-          expect(PerformAttack::RollDice).to receive(:new).and_return -> { [[1, 6]] }
+          5.times { expect(PerformAttack::RollDice).to receive(:new).and_return -> { [[1, 6]] } }
         end
 
         it "removes the one defending unit" do
@@ -73,9 +73,9 @@ RSpec.describe PerformAttack::CreateAttack do
         end
       end
 
-      context "when the attacker wins both dice rolls" do
+      context "when the attacker always wins both dice rolls" do
         before do
-          expect(PerformAttack::RollDice).to receive(:new).and_return -> { [[1, 6], [1, 6]] }
+          3.times { expect(PerformAttack::RollDice).to receive(:new).and_return -> { [[1, 6], [1, 6]] } }
         end
 
         it "removes both of the defending units" do
@@ -86,7 +86,7 @@ RSpec.describe PerformAttack::CreateAttack do
 
       context "when each player loses one die roll" do
         before do
-          expect(PerformAttack::RollDice).to receive(:new).and_return -> { [[6, 1], [1, 6]] }
+          2.times { expect(PerformAttack::RollDice).to receive(:new).and_return -> { [[6, 1], [1, 6]] } }
         end
 
         it "removes one attacking unit and one defending unit" do
@@ -100,7 +100,7 @@ RSpec.describe PerformAttack::CreateAttack do
 
     context "when the attackers' and defenders' rolls match" do
       before do
-        expect(PerformAttack::RollDice).to receive(:new).and_return -> { [[3, 3], [2, 2]] }
+        2.times { expect(PerformAttack::RollDice).to receive(:new).and_return -> { [[3, 3], [2, 2]] } }
       end
 
       it "removes both attackers" do
