@@ -1,3 +1,7 @@
+* {
+	box-sizing: border-box;
+}
+
 @keyframes animatedBackground {
 	from { background-position: 0 0; }
 	to { background-position: 1024px 1024px; }
@@ -11,6 +15,7 @@ body {
 body {
   color: $text-color;
   font-family: $font-family-base;
+	font-size: $font-size-base;
 }
 
 .container {

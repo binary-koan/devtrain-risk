@@ -1,7 +1,12 @@
 @import url(https://fonts.googleapis.com/css?family=Audiowide|Roboto+Condensed:400,700,400italic);
 
-$page-background: image-url("background.jpg");
-
+$font-size-base: 16px;
 $font-family-base: "Roboto Condensed", sans-serif;
 $font-family-headings: "Audiowide", sans-serif;
 $text-color: white;
+
+$spacing-base: 10px;
+$border-radius-base: $spacing-base / 2;
+
+$page-background: image-url("background.jpg");
+$active-background: #333;

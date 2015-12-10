@@ -1,8 +1,9 @@
 <div class="player-display">
   <% @game.players.each do |player| %>
-    <span class="player-icon"
-      style="background-color: <%= player_color(@game.players, player) %>"></span>
-    <%= "*" if @turn.player == player %>
-    <%= player.name %>
+    <div class="<%= "current" if @turn.player == player %>">
+      <span class="player-icon"
+        style="background-color: <%= player_color(@game.players, player) %>"></span>
+      <%= player.name %>
+    </div>
   <% end %>
 </div>

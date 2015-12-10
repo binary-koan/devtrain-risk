@@ -1,24 +1,3 @@
-.player-display {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-
-  margin-bottom: 10px;
-
-  .player-icon {
-    display: inline-block;
-    width: 32px;
-    height: 32px;
-    margin: 0 5px 0 20px;
-    border-radius: 16px;
-
-    &:first-child {
-      margin-left: 0;
-    }
-  }
-}
-
 svg.map-display {
   margin: 30px;
 
@@ -44,7 +23,37 @@ svg.map-display {
   }
 }
 
+.player-display {
+  text-align: center;
+
+  > div {
+    display: inline-block;
+    padding: ($spacing-base / 2) $spacing-base;
+    line-height: $font-size-base * 2;
+
+    &.current {
+      background: $active-background;
+      border-top-left-radius: $border-radius-base;
+      border-top-right-radius: $border-radius-base;
+    }
+
+    .player-icon {
+      display: block;
+      float: left;
+      width: $font-size-base * 2;
+      height: $font-size-base * 2;
+      margin-right: $spacing-base / 2;
+      border-radius: $font-size-base;
+    }
+  }
+}
+
 .controls {
+  width: 100%;
+  background: $active-background;
+  padding: $spacing-base;
+  border-radius: $border-radius-base;
+
   > form > .content {
     display: inline-block;
     padding: 5px;
