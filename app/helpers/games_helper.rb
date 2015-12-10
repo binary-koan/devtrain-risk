@@ -11,12 +11,23 @@ module GamesHelper
   end
 
   def map_display(turn)
-    content_tag("svg", class: "map-display", viewbox: "0 0 #{MAP_WIDTH} #{MAP_HEIGHT}") do
-      content_tag("g", map_display_content(turn), transform: translate(MAP_OFFSET))
-    end
+    content_tag(
+      "svg",
+      map_display_content(turn),
+      class: "map-display",
+      viewbox: map_viewbox(turn.game.territories)
+    )
   end
 
   private
+
+  def map_viewbox(territories)
+    x_min, x_max = territories.map(&:x).minmax
+    y_min, y_max = territories.map(&:y).minmax
+    offset = TERRITORY_NODE_SIZE
+
+    "#{x_min - offset} #{y_min - offset} #{x_max + offset * 2} #{y_max + offset * 2}"
+  end
 
   def map_display_content(turn)
     (territory_link_lines(turn) + territory_nodes(turn)).join.html_safe
@@ -48,8 +59,8 @@ module GamesHelper
 
     [
       content_tag("circle", "", r: TERRITORY_NODE_SIZE, fill: color),
-      content_tag("text", territory.name, "text-anchor" => "middle", :dy => -3),
-      content_tag("text", "#{units} units", "text-anchor" => "middle", :dy => 12)
+      content_tag("text", territory.name, "text-anchor" => "middle", "dy" => -3),
+      content_tag("text", "#{units} units", "text-anchor" => "middle", "dy" => 12)
     ].join.html_safe
   end
 

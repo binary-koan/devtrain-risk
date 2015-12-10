@@ -20,7 +20,7 @@
 }
 
 svg.map-display {
-  width: 550px;
+  margin: 30px;
 
   .link {
     stroke: #000;
@@ -35,7 +35,7 @@ svg.map-display {
 
     text {
       fill: #fff;
-      font-size: 12px;
+      font-size: 10px;
     }
 
     &.active circle {
