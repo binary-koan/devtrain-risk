@@ -1,19 +1,18 @@
 svg.map-display {
-  margin: 30px;
+  margin: $spacing-base * 3;
 
   .link {
-    stroke: #000;
+    stroke: $territory-link-color;
     stroke-width: 1.5px;
   }
 
   .node {
     circle {
-      stroke: #000;
-      stroke-width: 1.5px;
+      opacity: 0.75;
     }
 
     text {
-      fill: #fff;
+      fill: $text-color;
       font-size: 10px;
     }
 
@@ -24,6 +23,7 @@ svg.map-display {
 }
 
 .player-display {
+  margin-top: $spacing-base * 2;
   text-align: center;
 
   > div {

@@ -57,7 +57,16 @@ module GamesHelper
     color = player_color(turn.game.players, turn.game_state.territory_owner(territory))
     units = turn.game_state.units_on_territory(territory)
 
+    image = content_tag("image", "",
+      "xlink:href" => image_path("planet.png"),
+      "x"          => -TERRITORY_NODE_SIZE,
+      "y"          => -TERRITORY_NODE_SIZE,
+      "width"      => TERRITORY_NODE_SIZE * 2,
+      "height"     => TERRITORY_NODE_SIZE * 2
+    )
+
     [
+      image,
       content_tag("circle", "", r: TERRITORY_NODE_SIZE, fill: color),
       content_tag("text", territory.name, "text-anchor" => "middle", "dy" => -3),
       content_tag("text", "#{units} units", "text-anchor" => "middle", "dy" => 12)
