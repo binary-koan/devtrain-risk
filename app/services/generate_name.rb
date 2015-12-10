@@ -7,9 +7,6 @@
 # the Mote project (http://mote.sourceforge.net/)
 
 class GenerateName
-  MIN_SYLLABLES = 2
-  MAX_SYLLABLES = 3
-
   VOWELS = %w{a i u e o a i u ei ou ai oi}
   STARTING_CONSONANTS = %w{k s sh t ch n h f m y r w}
   CONTINUING_CONSONANTS = %w{ssh cch nn rr}
@@ -20,7 +17,6 @@ class GenerateName
   OU_PLUS_PAIR = /ou(.)\1/i
 
   def initialize
-    @syllables = random_syllable_count
   end
 
   def call
@@ -32,11 +28,7 @@ class GenerateName
   private
 
   def generate_name
-    name = starting_syllables.sample
-
-    (@syllables - 2).times { name += continuing_syllables.sample }
-
-    name + ending_syllables.sample
+    starting_syllables.sample + ending_syllables.sample
   end
 
   def sensible_name?(name)
@@ -47,19 +39,15 @@ class GenerateName
     VOWELS + basic_syllables
   end
 
+  def ending_syllables
+    continuing_syllables + continuing_syllables.product(ENDING_CONSONANTS).map(&:join)
+  end
+
   def continuing_syllables
     basic_syllables + CONTINUING_CONSONANTS.product(VOWELS).map(&:join)
   end
 
-  def ending_syllables
-    continuing_syllables + ENDING_CONSONANTS
-  end
-
   def basic_syllables
     STARTING_CONSONANTS.product(VOWELS).map(&:join)
-  end
-
-  def random_syllable_count
-    [MIN_SYLLABLES, MAX_SYLLABLES].sample
   end
 end
