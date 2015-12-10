@@ -7,7 +7,9 @@
       Attack with <%= number_field_tag :units, "" %> units
       from <%= select_tag :from, options_for_select(owned_territories) %>
       to <%= select_tag :to, options_for_select(@game.territories.pluck(:name) - owned_territories) %>
-      <%= f.submit "Attack" %>
+      <%= button_tag type: "submit", class: "icon-button" do %>
+        <span class="icon attack"></span> Attack
+      <% end %>
     <% end %>
   <% end %>
 
@@ -17,7 +19,9 @@
       Move <%= number_field_tag :units, "" %> units
       from <%= select_tag :from, options_for_select(owned_territories) %>
       to <%= select_tag :to, options_for_select(owned_territories) %>
-      <%= f.submit "Fortify" %>
+      <%= button_tag type: "submit", class: "icon-button" do %>
+        <span class="icon fortify"></span> Fortify
+      <% end %>
     <% end %>
   <% end %>
 
@@ -28,12 +32,16 @@
       <%= f.hidden_field :event_type %>
       Place <%= number_field_tag :units, "" %> units
       on <%= select_tag :to, options_for_select(owned_territories) %>
-      <%= f.submit "Reinforce" %>
+      <%= button_tag type: "submit", class: "icon-button" do %>
+        <span class="icon reinforce"></span> Reinforce
+      <% end %>
     <% end %>
   <% end %>
 
   <%= form_for [@game, Event.start_turn.new] do |f| %>
     <%= f.hidden_field :event_type %>
-    <%= f.submit "End turn" %>
+    <%= button_tag type: "submit", class: "icon-button" do %>
+      <span class="icon end-turn"></span> End turn
+    <% end %>
   <% end %>
 </div>

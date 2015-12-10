@@ -24,4 +24,13 @@ button, input[type="submit"] {
     background-color: darken($button-background-color, 15%);
     border-color: darken(nth($button-border, 3), 20%);
   }
+
+  &.icon-button {
+    line-height: $font-size-base * 1.5;
+
+    .icon {
+      float: left;
+      margin-right: $spacing-base / 2;
+    }
+  }
 }
