@@ -6,12 +6,14 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
-  <div class="messages">
-    <% if flash.alert %>
-      <% flash.alert.each do |error| %>
-        <div class="error"><%= t(error) %></div>
+  <div class="container">
+    <div class="messages">
+      <% if flash.alert %>
+        <% flash.alert.each do |error| %>
+          <div class="error"><%= t(error) %></div>
+        <% end %>
       <% end %>
-    <% end %>
+    </div>
 
     <%= yield %>
   </div>
