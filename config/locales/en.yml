@@ -20,4 +20,23 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+  # General Messages
+  no_link: "There is no link between the two territories."
+  wrong_player: "It is not currently this players turn."
+  wrong_phase: "You cannot perform this action right now."
+
+  # Attack Messages
+  own_territory: "You cannot attack your own territory."
+  too_few_available_attackers: "You cannot attack with only one unit."
+  too_many_units: "You must leave one unit on the attacking territory."
+  too_few_units: "You must attack with at least one unit."
+
+  # Fortify Messages
+  same_territory: "You cannot fortify to the same territory."
+  fortifying_enemy_territory: "You cannot fortify an enemy territory."
+  not_enough_fortifying_units: "You must fortify at least one unit"
+  fortifying_too_many_units: "You have insufficient units to perform the fortify."
+
+  # Reinforce Messages
+  reinforcing_enemy_territory: "You cannot reinforce an enemies territory."
+  cannot_reinforce: "Cannot perform the reinforcement."
