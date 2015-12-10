@@ -6,5 +6,10 @@
   <div><%= @turn.game_state.winning_player.name %> won the game!</div>
 <% else %>
   <%= render "player_display" %>
-  <%= render "controls" %>
+
+  <div class="controls">
+    <% @turn.allowed_events.each do |event| %>
+      <%= render "form_#{event.event_type}", event: event %>
+    <% end %>
+  </div>
 <% end %>

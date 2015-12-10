@@ -43,6 +43,16 @@ class Turn
     @game_state ||= GameState.new(game, events)
   end
 
+  def allowed_events
+    if @phase == PHASE_REINFORCING
+      [player.events.reinforce.new]
+    elsif @phase == PHASE_ATTACKING
+      [player.events.attack.new, player.events.fortify.new, player.events.start_turn.new]
+    elsif @phase == PHASE_ENDING
+      [player.events.start_turn.new]
+    end
+  end
+
   def can_reinforce?(unit_count = MINIMUM_REINFORCEMENTS)
     @phase == PHASE_REINFORCING && reinforcements.remaining?(unit_count)
   end

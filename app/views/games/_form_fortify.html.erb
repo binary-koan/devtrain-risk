@@ -1,0 +1,11 @@
+<% owned_territories = @turn.game_state.owned_territories(@turn.player).map(&:name) %>
+
+<%= form_for [@game, event] do |f| %>
+  <%= f.hidden_field :event_type %>
+  Move <%= number_field_tag :units, "" %> units
+  from <%= select_tag :from, options_for_select(owned_territories) %>
+  to <%= select_tag :to, options_for_select(owned_territories) %>
+  <%= button_tag type: "submit", class: "icon-button" do %>
+    <span class="icon fortify"></span> Fortify
+  <% end %>
+<% end %>
