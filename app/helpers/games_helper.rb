@@ -48,8 +48,8 @@ module GamesHelper
 
     [
       content_tag("circle", "", r: TERRITORY_NODE_SIZE, fill: color),
-      content_tag("text", territory.name, "text-anchor" => "middle", :dy => -4),
-      content_tag("text", "#{units} units", "text-anchor" => "middle", :dy => 10)
+      content_tag("text", territory.name, "text-anchor" => "middle", :dy => -3),
+      content_tag("text", "#{units} units", "text-anchor" => "middle", :dy => 12)
     ].join.html_safe
   end
 

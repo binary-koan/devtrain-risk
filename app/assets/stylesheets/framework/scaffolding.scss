@@ -1,0 +1,27 @@
+@keyframes animatedBackground {
+	from { background-position: 0 0; }
+	to { background-position: 1024px 1024px; }
+}
+
+body {
+  background: $page-background;
+  // animation: animatedBackground 40s linear infinite;
+}
+
+body {
+  color: $text-color;
+  font-family: $font-family-base;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-family-headings;
+}

@@ -1,9 +1,21 @@
 .player-display {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 10px;
+
   .player-icon {
     display: inline-block;
     width: 32px;
     height: 32px;
+    margin: 0 5px 0 20px;
     border-radius: 16px;
+
+    &:first-child {
+      margin-left: 0;
+    }
   }
 }
 
@@ -38,6 +50,6 @@ svg.map-display {
     padding: 5px;
     margin-bottom: 5px;
     border-radius: 5px;
-    background-color: #eee;
+    background-color: #333;
   }
 }

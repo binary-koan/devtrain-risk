@@ -1,1 +1,7 @@
-$player-colors: #4F2EC9, #63242E;
+@import url(https://fonts.googleapis.com/css?family=Audiowide|Roboto+Condensed:400,700,400italic);
+
+$page-background: image-url("background.jpg");
+
+$font-family-base: "Roboto Condensed", sans-serif;
+$font-family-headings: "Audiowide", sans-serif;
+$text-color: white;
