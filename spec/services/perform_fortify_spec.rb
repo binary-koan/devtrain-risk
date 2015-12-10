@@ -148,28 +148,16 @@ RSpec.describe PerformFortify do
         end
 
         describe "the receiving action" do
-          subject(:action) { service.fortify_event.actions[0] }
+          subject(:action) { service.fortify_event.action }
 
           it "adds units to the fortified territory" do
-            expect(action.units_difference).to be 3
-            expect(action.territory).to eq territory_to
+            expect(action.units).to be 3
+            expect(action.territory_to).to eq territory_to
+            expect(action.territory_from).to eq territory_from
           end
 
-          it "doesn't change the ownership of the receiving territory" do
-            expect(action.territory_owner).to eq player
-          end
-        end
-
-        describe "the sending action" do
-          subject(:action) { service.fortify_event.actions[1] }
-
-          it "removes units from the fortifying territory" do
-            expect(action.units_difference).to be -3
-            expect(action.territory).to be territory_from
-          end
-
-          it "doesn't change the ownership of the sending territory" do
-            expect(action.territory_owner).to eq player
+          it "doesn't change the ownership of the territories" do
+            expect(service.fortify_event.player).to eq player
           end
         end
       end

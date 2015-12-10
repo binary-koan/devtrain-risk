@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe GamesController, type: :controller do
-  fixtures :games, :events, :actions
+  fixtures :games, :events
 
   describe "#new" do
     before { get :new }

@@ -11,14 +11,14 @@ FactoryGirl.define do
         units Reinforcement::MINIMUM_UNIT_COUNT
       end
 
-      after(:create) do |e, attrs|
-        e.actions << create(:action,
-          action_type: :add,
-          territory_owner: e.player,
+      after(:build) do |e, attrs|
+        e.action = build(:action_add,
           territory: attrs.territory,
-          units_difference: attrs.units
+          units: attrs.units
         )
       end
+
+      after(:create) { |e| e.action.save! }
     end
 
     factory :fortify_event do
@@ -30,21 +30,15 @@ FactoryGirl.define do
         units 2
       end
 
-      after(:create) do |e, attrs|
-        e.actions << create(:action,
-          action_type: :move_from,
-          territory_owner: e.player,
-          territory: attrs.territory_from,
-          units_difference: -attrs.units
-        )
-
-        e.actions << create(:action,
-          action_type: :move_to,
-          territory_owner: e.player,
-          territory: attrs.territory_to,
-          units_difference: attrs.units
+      after(:build) do |e, attrs|
+        e.action = build(:action_move,
+          territory_from: attrs.territory_from,
+          territory_to: attrs.territory_to,
+          units: attrs.units
         )
       end
+
+      after(:create) { |e| e.action.save! }
     end
 
     factory :attack_event do
@@ -55,48 +49,14 @@ FactoryGirl.define do
         units_killed 2
       end
 
-      after(:create) do |e, attrs|
-        e.actions << create(:action,
-          action_type: :kill,
-          territory_owner: e.player,
+      after(:build) do |e, attrs|
+        e.action = build(:action_kill,
           territory: attrs.territory,
-          units_difference: -attrs.units_killed
+          units: attrs.units_killed
         )
       end
-    end
 
-    factory :takeover_event do
-      event_type "attack"
-
-      transient do
-        territory_from nil
-        territory_taken nil
-        units_killed 2
-        units_moved 2
-      end
-
-      after(:create) do |e, attrs|
-        e.actions << create(:action,
-          action_type: :kill,
-          territory_owner: e.player,
-          territory: attrs.territory_taken,
-          units_difference: -attrs.units_killed
-        )
-
-        e.actions << create(:action,
-          action_type: :move_to,
-          territory_owner: e.player,
-          territory: attrs.territory_taken,
-          units_difference: attrs.units_moved
-        )
-
-        e.actions << create(:action,
-          action_type: :move_from,
-          territory_owner: e.player,
-          territory: attrs.territory_from,
-          units_difference: -attrs.units_moved
-        )
-      end
+      after(:create) { |e| e.action.save! }
     end
   end
 end

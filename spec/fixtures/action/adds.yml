@@ -1,0 +1,15 @@
+reinforce_top_left:
+  territory: territory_top_left
+  units: 5
+
+reinforce_top_right:
+  territory: territory_top_right
+  units: 5
+
+reinforce_bottom_right:
+  territory: territory_bottom_right
+  units: 5
+
+reinforce_bottom_left:
+  territory: territory_bottom_left
+  units: 5

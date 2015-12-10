@@ -26,7 +26,8 @@ RSpec.describe PerformReinforce do
     )
   end
 
-  let(:reinforce_action) { service.reinforce_event.actions[0] }
+  let(:reinforce_event) { service.reinforce_event }
+  let(:reinforce_action) { reinforce_event.action }
 
   describe "#call" do
     let(:territory) { mars }
@@ -38,8 +39,6 @@ RSpec.describe PerformReinforce do
     end
 
     context "with a territory owned" do
-      let(:reinforce_event) { service.reinforce_event }
-
       let!(:result) { service.call }
 
       it "succeeds" do
@@ -47,11 +46,11 @@ RSpec.describe PerformReinforce do
       end
 
       it "adds units to the territory" do
-        expect(reinforce_action.units_difference).to eq reinforcements.remaining_units
+        expect(reinforce_action.units).to eq reinforcements.remaining_units
       end
 
       it "keeps the correct territory owner" do
-        expect(reinforce_action.territory_owner).to eq player1
+        expect(reinforce_event.player).to eq player1
       end
     end
 
@@ -68,11 +67,11 @@ RSpec.describe PerformReinforce do
       end
 
       it "adds units to the territory" do
-        expect(reinforce_action.units_difference).to eq reinforcements.remaining_units
+        expect(reinforce_action.units).to eq reinforcements.remaining_units
       end
 
       it "keeps the correct territory owner" do
-        expect(reinforce_action.territory_owner).to eq player2
+        expect(reinforce_event.player).to eq player2
       end
     end
 
@@ -87,11 +86,11 @@ RSpec.describe PerformReinforce do
       end
 
       it "adds units to the territory" do
-        expect(reinforce_action.units_difference).to eq 1
+        expect(reinforce_action.units).to eq 1
       end
 
       it "keeps the correct territory owner" do
-        expect(reinforce_action.territory_owner).to eq player1
+        expect(reinforce_event.player).to eq player1
       end
     end
 

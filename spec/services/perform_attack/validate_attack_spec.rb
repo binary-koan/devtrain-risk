@@ -10,7 +10,7 @@ RSpec.describe PerformAttack::ValidateAttack do
     )
   end
 
-  fixtures :games, :players, :territories, :territory_links, :events, :actions
+  fixtures :games, :players, :territories, :territory_links, :events
 
   let(:game) { games(:game) }
 

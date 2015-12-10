@@ -3,11 +3,11 @@ class GameState
 
   attr_reader :game, :territory_info
 
-  def initialize(game, actions)
+  def initialize(game, events)
     @game = game
     @territory_info = Hash.new { |hash, key| hash[key] = TerritoryInfo.new(nil, 0) }
 
-    apply_actions(actions)
+    apply_events(events)
   end
 
   def won?
@@ -38,10 +38,22 @@ class GameState
 
   private
 
-  def apply_actions(actions)
-    actions.each do |action|
-      territory_info[action.territory].owner = action.territory_owner
-      territory_info[action.territory].units += action.units_difference
+  def apply_events(events)
+    events.each do |event|
+      case event.action
+      when Action::Kill
+        update_territory(event.action.territory, event.player, -event.action.units)
+      when Action::Add
+        update_territory(event.action.territory, event.player, event.action.units)
+      when Action::Move
+        update_territory(event.action.territory_from, event.player, -event.action.units)
+        update_territory(event.action.territory_to, event.player, event.action.units)
+      end
     end
+  end
+
+  def update_territory(territory, owner, units)
+    @territory_info[territory].owner = owner
+    @territory_info[territory].units += units
   end
 end

@@ -106,7 +106,7 @@ RSpec.describe GameState do
 
       context "when one player has taken over the other one's territory" do
         before do
-          create(:takeover_event, player: player1, territory_from: mars, territory_taken: jupiter)
+          create(:fortify_event, player: player1, territory_from: mars, territory_to: jupiter)
         end
 
         it "contains both territories for player 1" do

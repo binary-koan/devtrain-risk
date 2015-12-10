@@ -11,7 +11,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151208205302) do
+ActiveRecord::Schema.define(version: 20151210030155) do
+
+  create_table "action_adds", force: :cascade do |t|
+    t.integer  "territory_id", null: false
+    t.integer  "units",        null: false
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
+  create_table "action_kills", force: :cascade do |t|
+    t.integer  "territory_id", null: false
+    t.integer  "units",        null: false
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
+  create_table "action_moves", force: :cascade do |t|
+    t.integer  "territory_from_id", null: false
+    t.integer  "territory_to_id",   null: false
+    t.integer  "units"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+  end
 
   create_table "actions", force: :cascade do |t|
     t.integer  "event_id",           null: false
@@ -26,10 +48,12 @@ ActiveRecord::Schema.define(version: 20151208205302) do
   add_index "actions", ["event_id"], name: "index_actions_on_event_id"
 
   create_table "events", force: :cascade do |t|
-    t.string   "event_type", null: false
-    t.integer  "player_id",  null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "action_id"
+    t.string   "action_type"
+    t.integer  "player_id",   null: false
+    t.string   "event_type",  null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
   end
 
   add_index "events", ["player_id"], name: "index_events_on_player_id"

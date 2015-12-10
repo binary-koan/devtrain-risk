@@ -19,9 +19,8 @@ class PerformAttack
     def call
       ActiveRecord::Base.transaction do
         while @attacking_units > 0
-          create_attack_event!
           dice_rolls = roll_dice(number_of_defenders, number_of_attackers)
-          create_attack_actions!(dice_rolls)
+          handle_attack!(dice_rolls)
 
           @attacking_units -= @attackers_lost
           break if territory_taken?
@@ -32,10 +31,6 @@ class PerformAttack
     end
 
     private
-
-    def create_attack_event!
-      @attack_events << find_owner(@territory_from).events.attack.create!
-    end
 
     def roll_dice(number_of_defenders, number_of_attackers)
       die_rolls = RollDice.new(number_of_defenders, number_of_attackers)
@@ -50,18 +45,16 @@ class PerformAttack
       [@initial_defenders - @defenders_lost, MAX_DEFENDING_UNITS].min
     end
 
-    def create_attack_actions!(paired_rolls)
+    def handle_attack!(paired_rolls)
       defenders_lost, attackers_lost = attack_result(paired_rolls)
 
       @attackers_lost = attackers_lost
       @defenders_lost += defenders_lost
 
-      if territory_taken?
-        take_over_territory!(defenders_lost, @attacking_units)
-      else
-        create_action!(:kill, @territory_to, find_owner(@territory_to), -defenders_lost) if defenders_lost > 0
-        create_action!(:kill, @territory_from, find_owner(@territory_from), -attackers_lost) if attackers_lost > 0
-      end
+      create_attack_event!(@territory_to, defenders_lost) if defenders_lost > 0
+      create_attack_event!(@territory_from, attackers_lost) if attackers_lost > 0
+
+      take_over_territory!(@attacking_units) if territory_taken?
     end
 
     def attack_result(paired_rolls)
@@ -77,14 +70,24 @@ class PerformAttack
       @defenders_lost == @initial_defenders
     end
 
-    def find_owner(territory)
-      @turn.game_state.territory_owner(territory)
+    def create_attack_event!(territory, units_lost)
+      @attack_events << find_owner(territory).events.attack.new
+      @attack_events.last.action = Action::Kill.create!(territory: territory, units: units_lost)
+      @attack_events.last.save!
     end
 
-    def take_over_territory!(defenders_lost, attackers_count)
-      create_action!(:kill, @territory_to, find_owner(@territory_to), -defenders_lost)
-      create_action!(:move_to, @territory_to, find_owner(@territory_from), attackers_count)
-      create_action!(:move_from, @territory_from, find_owner(@territory_from), -attackers_count)
+    def take_over_territory!(attackers_count)
+      @attack_events << find_owner(@territory_from).events.attack.new
+      @attack_events.last.action = Action::Move.create!(
+        territory_from: @territory_from,
+        territory_to: @territory_to,
+        units: attackers_count
+      )
+      @attack_events.last.save!
+    end
+
+    def find_owner(territory)
+      @turn.game_state.territory_owner(territory)
     end
 
     def create_action!(type, territory, territory_owner, units_difference)

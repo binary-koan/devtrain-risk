@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :territory do
+  factory :territory, aliases: [:territory_from, :territory_to] do
     game
     name "Planet X"
     x 0

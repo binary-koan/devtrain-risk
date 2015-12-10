@@ -8,7 +8,7 @@ class Event < ActiveRecord::Base
   end
 
   belongs_to :player
-  has_many :actions, -> { order(:created_at) }, dependent: :destroy
+  belongs_to :action, polymorphic: true
 
   delegate :game, to: :player
 
