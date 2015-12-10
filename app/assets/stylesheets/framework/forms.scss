@@ -1,0 +1,22 @@
+input[type="number"], select {
+  padding: $spacing-base / 2;
+  border: $form-control-border;
+  border-radius: $border-radius-base / 2;
+  background: $form-control-background;
+}
+
+button, input[type="submit"] {
+  cursor: pointer;
+
+  padding: ($spacing-base / 2) $spacing-base;
+  border: $button-border;
+  border-radius: $border-radius-base / 2;
+  background-color: $button-background-color;
+  background-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.15));
+
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: lighten($button-background-color, 15%);
+  }
+}

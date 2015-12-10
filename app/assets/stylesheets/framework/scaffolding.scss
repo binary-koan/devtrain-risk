@@ -12,7 +12,7 @@ body {
   // animation: animatedBackground 40s linear infinite;
 }
 
-body {
+body, input, select, button {
   color: $text-color;
   font-family: $font-family-base;
 	font-size: $font-size-base;

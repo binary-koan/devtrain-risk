@@ -56,9 +56,17 @@ svg.map-display {
 
   > form > .content {
     display: inline-block;
-    padding: 5px;
-    margin-bottom: 5px;
-    border-radius: 5px;
+    padding: $spacing-base / 2;
+    margin-bottom: $spacing-base;
+    border-radius: $border-radius-base;
     background-color: #333;
+
+    p {
+      margin: 0 0 ($font-size-base / 3) 0;
+    }
+  }
+
+  > form.end-turn {
+    text-align: center;
   }
 }

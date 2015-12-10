@@ -28,7 +28,7 @@
   <% if @turn.can_reinforce? %>
     <%= form_for [@game, Event.reinforce.new] do |f| %>
       <div class="content">
-        <div><%= @turn.reinforcements.remaining_units %> reinforcements available.</div>
+        <p><%= @turn.reinforcements.remaining_units %> reinforcements available.</p>
         <%= f.hidden_field :event_type %>
         Place <%= number_field_tag :units, "" %> units
         on <%= select_tag :to, options_for_select(owned_territories) %>
@@ -37,7 +37,7 @@
     <% end %>
   <% end %>
 
-  <%= form_for [@game, Event.start_turn.new] do |f| %>
+  <%= form_for [@game, Event.start_turn.new], html: { class: "end-turn" } do |f| %>
     <%= f.hidden_field :event_type %>
     <%= f.submit "End turn" %>
   <% end %>
