@@ -17,6 +17,11 @@ button, input[type="submit"] {
   transition: all 0.2s ease-in-out;
 
   &:hover {
-    background-color: lighten($button-background-color, 15%);
+    background-color: lighten($button-background-color, 10%);
+  }
+
+  &:active {
+    background-color: darken($button-background-color, 15%);
+    border-color: darken(nth($button-border, 3), 20%);
   }
 }
