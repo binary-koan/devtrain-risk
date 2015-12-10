@@ -73,17 +73,6 @@ RSpec.describe PerformAttack::CreateAttack do
         end
       end
 
-      context "when the attacker always wins both dice rolls" do
-        before do
-          3.times { expect(PerformAttack::RollDice).to receive(:new).and_return -> { [[1, 6], [1, 6]] } }
-        end
-
-        it "removes both of the defending units" do
-          expect(attack_events[0].actions[0].territory).to eq territory_to
-          expect(attack_events[0].actions[0].units_difference).to be -2
-        end
-      end
-
       context "when each player loses one die roll" do
         before do
           2.times { expect(PerformAttack::RollDice).to receive(:new).and_return -> { [[6, 1], [1, 6]] } }

@@ -7,7 +7,9 @@ class PerformAttack
       @territory_from  = territory_from
       @territory_to    = territory_to
       @turn            = turn
+
       @attacking_units = attacking_units
+      @initial_defenders = @turn.game_state.units_on_territory(@territory_to)
       @attackers_lost  = 0
       @defenders_lost  = 0
       @attack_events   = []
@@ -15,17 +17,14 @@ class PerformAttack
     end
 
     def call
-      @initial_defenders = @turn.game_state.units_on_territory(@territory_to)
       ActiveRecord::Base.transaction do
         while @attacking_units > 0
           create_attack_event!
-          dice_rolls = roll_dice(number_of_defenders(@initial_defenders - @defenders_lost), number_of_attackers)
+          dice_rolls = roll_dice(number_of_defenders, number_of_attackers)
           create_attack_actions!(dice_rolls)
 
           @attacking_units -= @attackers_lost
-          if @defenders_lost >= @initial_defenders
-            break
-          end
+          break if territory_taken?
         end
       end
 
@@ -47,8 +46,8 @@ class PerformAttack
       [@attacking_units, MAX_ATTACKING_UNITS].min
     end
 
-    def number_of_defenders(units_on_territory)
-      [units_on_territory, MAX_DEFENDING_UNITS].min
+    def number_of_defenders
+      [@initial_defenders - @defenders_lost, MAX_DEFENDING_UNITS].min
     end
 
     def create_attack_actions!(paired_rolls)
