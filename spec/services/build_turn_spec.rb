@@ -40,7 +40,7 @@ RSpec.describe BuildTurn do
     context "when actions have been performed in the latest turn" do
       before do
         create(:reinforce_event, territory: jupiter, player: player1)
-        create(:attack_event, player: player1, territory: mars, units_killed: 2)
+        create(:attack_event, player: player1, territory: mars, units: 2)
 
         expect(Turn).to receive(:new).with(
           game.events.last(3), pre_game_turn

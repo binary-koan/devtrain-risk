@@ -10,6 +10,7 @@ class Turn
     @previous_turn = previous_turn
 
     @phase = PHASE_REINFORCING
+    @reinforcements = Reinforcement.new(player, game_state)
     @fortified = false
 
     @events_in_turn.inject(nil) do |previous_event, event|
@@ -33,10 +34,6 @@ class Turn
 
   def game
     @events_in_turn.first.game
-  end
-
-  def reinforcements
-    @reinforcements ||= Reinforcement.new(self)
   end
 
   def game_state
@@ -63,6 +60,7 @@ class Turn
 
   def can_fortify?(territory_from, territory_to)
     fortify_event = allowed_fortify_event
+
     if !fortify_event.present?
       false
     elsif fortify_event.action
@@ -81,10 +79,10 @@ class Turn
   private
 
   def allowed_reinforce_event
-    return unless @phase == PHASE_REINFORCING && !reinforcements.none?
+    return unless @phase == PHASE_REINFORCING && !@reinforcements.none?
 
     player.events.reinforce.new(action: Action::Add.new(
-      units: reinforcements.remaining_units
+      units: @reinforcements.remaining_units
     ))
   end
 
@@ -119,8 +117,8 @@ class Turn
 
   def apply_event(event, previous_event)
     if event.reinforce?
-      reinforcements.remove(event.action.units)
-      @phase = PHASE_ATTACKING if reinforcements.none?
+      @reinforcements.remove(event.action.units)
+      @phase = PHASE_ATTACKING if @reinforcements.none?
     elsif event.attack?
       @phase = PHASE_ATTACKING
     elsif event.fortify? && !fortifying_after_attack?(event, previous_event)

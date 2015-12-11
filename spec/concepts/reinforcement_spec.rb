@@ -5,13 +5,12 @@ RSpec.describe Reinforcement do
 
   let(:game_state) { instance_double(GameState) }
   let(:player) { instance_double(Player) }
-  let(:turn) { instance_double(Turn, game_state: game_state, player: player) }
 
   let(:owned_territories) do
     [territories(:territory_top_left), territories(:territory_top_right)]
   end
 
-  subject(:reinforcement) { Reinforcement.new(turn) }
+  subject(:reinforcement) { Reinforcement.new(player, game_state) }
 
   before do
     expect(game_state).to receive(:owned_territories).with(player).and_return(owned_territories)

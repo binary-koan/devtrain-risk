@@ -6,7 +6,7 @@ RSpec.describe PerformFortify do
       :attack_event,
       player: player,
       territory: territory,
-      units_killed: count
+      units: count
     )
   end
 

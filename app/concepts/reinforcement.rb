@@ -3,8 +3,9 @@ class Reinforcement
 
   attr_reader :remaining_units
 
-  def initialize(turn)
-    @turn = turn
+  def initialize(player, game_state)
+    @player = player
+    @game_state = game_state
     @remaining_units = calculate_reinforcement_count
   end
 
@@ -28,7 +29,7 @@ class Reinforcement
   private
 
   def calculate_reinforcement_count
-    calculated_count = @turn.game_state.owned_territories(@turn.player).size
+    calculated_count = @game_state.owned_territories(@player).size
 
     [calculated_count, MINIMUM_UNIT_COUNT].max
   end

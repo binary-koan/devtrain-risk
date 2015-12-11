@@ -6,7 +6,7 @@ RSpec.describe PerformAttack::ValidateAttack do
       :attack_event,
       player: player,
       territory: territory,
-      units_killed: count
+      units: count
     )
   end
 

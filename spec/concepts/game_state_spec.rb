@@ -150,7 +150,7 @@ RSpec.describe GameState do
 
     context "when multiple events have affected the territory" do
       before do
-        create(:attack_event, player: player2, territory: jupiter, units_killed: 2)
+        create(:attack_event, player: player2, territory: jupiter, units: 2)
         create(:reinforce_event, player: player1, territory: jupiter, units: 1)
       end
 

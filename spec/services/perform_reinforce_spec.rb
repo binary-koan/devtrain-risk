@@ -14,7 +14,6 @@ RSpec.describe PerformReinforce do
 
   let(:turn) { BuildTurn.new(game.events).call }
   let(:game_state) { turn.game_state }
-  let(:reinforcements) { turn.reinforcements }
 
   let(:units_to_reinforce) { 3 }
 
@@ -46,7 +45,7 @@ RSpec.describe PerformReinforce do
       end
 
       it "adds units to the territory" do
-        expect(reinforce_action.units).to eq reinforcements.remaining_units
+        expect(reinforce_action.units).to eq 3
       end
 
       it "keeps the correct territory owner" do
@@ -67,7 +66,7 @@ RSpec.describe PerformReinforce do
       end
 
       it "adds units to the territory" do
-        expect(reinforce_action.units).to eq reinforcements.remaining_units
+        expect(reinforce_action.units).to eq 3
       end
 
       it "keeps the correct territory owner" do

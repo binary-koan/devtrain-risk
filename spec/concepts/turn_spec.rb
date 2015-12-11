@@ -9,8 +9,11 @@ RSpec.describe Turn do
     create(:reinforce_event, player: player, territory: territories(:territory_top_left), units: 1)
   end
 
-  def create_attack
-    create(:attack_event, player: player, territory: territories(:territory_top_left))
+  def create_attack(
+      territory_from = territories(:territory_top_right),
+      territory = territories(:territory_top_left),
+      units = 2)
+    create(:attack_event, player: player, territory_from: territory_from, territory: territory, units: units)
   end
 
   def create_fortification
@@ -110,18 +113,30 @@ RSpec.describe Turn do
       before { create_complete_reinforcement }
 
       it { is_expected.to eq true }
-    end
 
-    context "when an attack has been made" do
-      before { create_attack }
+      context "when an attack has been made" do
+        before { create_attack }
 
-      it { is_expected.to eq true }
-    end
+        it { is_expected.to eq true }
+      end
 
-    context "when a fortify move has already been made" do
-      before { create_fortification }
+      context "when a fortify move has already been made" do
+        before { create_fortification }
 
-      it { is_expected.to eq false }
+        it { is_expected.to eq false }
+      end
+
+      context "with an invalid attempt to reinforce after a takeover" do
+        before { create_attack(territories(:territory_top_right), territories(:territory_bottom_left), 5) }
+
+        it { is_expected.to eq false }
+      end
+
+      context "with a valid attempt to reinforce after a takeover" do
+        before { create_attack(territories(:territory_top_left), territories(:territory_top_right), 8) }
+
+        it { is_expected.to eq true }
+      end
     end
   end
 
@@ -152,7 +167,7 @@ RSpec.describe Turn do
   end
 
   describe "#game_state" do
-    let(:game_state) { instance_double(GameState) }
+    let(:game_state) { instance_double(GameState, owned_territories: []) }
 
     context "with a single turn" do
       let(:events) do
@@ -182,6 +197,7 @@ RSpec.describe Turn do
       let(:events) { all_events.last(2) }
 
       it "passes all events in order to the game state" do
+        expect(GameState).to receive(:new).with(game, all_events.first(2)).and_return(game_state)
         expect(GameState).to receive(:new).with(game, all_events).and_return(game_state)
         expect(turn.game_state).to eq game_state
       end

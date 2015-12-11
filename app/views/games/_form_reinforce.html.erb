@@ -1,8 +1,8 @@
 <% owned_territories = @turn.game_state.owned_territories(@turn.player).map(&:name) %>
 
-<p><%= @turn.reinforcements.remaining_units %> reinforcements available.</p>
+<p><%= event.action.units %> reinforcements available.</p>
 
-<%= form_for [@game, Event.reinforce.new] do |f| %>
+<%= form_for [@game, event] do |f| %>
   <%= f.hidden_field :event_type %>
   Place <%= number_field_tag :units, "" %> units
   on <%= select_tag :to, options_for_select(owned_territories) %>
