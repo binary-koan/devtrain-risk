@@ -81,14 +81,5 @@ class PerformAttack
     def find_owner(territory)
       @turn.game_state.territory_owner(territory)
     end
-
-    def create_action!(type, territory, territory_owner, units_difference)
-      @attack_events.last.actions.create!(
-        action_type:      type,
-        territory:        territory,
-        territory_owner:  territory_owner,
-        units_difference: units_difference
-      )
-    end
   end
 end

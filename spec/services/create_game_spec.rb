@@ -2,10 +2,16 @@ require "rails_helper"
 
 RSpec.describe CreateGame do
   describe "#call" do
-    let(:service) { CreateGame.new }
+    let(:map_name) { "default" }
+    let(:create_map) { instance_double(CreateMap) }
+
+    let(:service) { CreateGame.new(map_name: map_name) }
 
     subject(:game) { service.call }
     let(:game_state) { GameState.new(game, game.events) }
+
+    before do
+    end
 
     it "returns a saved game instance" do
       expect(game).to be_a Game
@@ -21,8 +27,11 @@ RSpec.describe CreateGame do
       expect(game.players[1].name).to eq "Player 2"
     end
 
-    it "creates territories in the game" do
-      expect(game.territories.size).to eq 6
+    it "has errors with an invalid map name" do
+      expect(CreateMap).to receive(:new).and_return create_map
+      expect(create_map).to receive(:call).and_return []
+      expect(create_map).to receive(:errors).and_return [:not_valid_map_name]
+      service.call
     end
 
     #TODO

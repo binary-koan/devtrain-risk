@@ -1,20 +1,20 @@
 class CreateGame
   class Error < StandardError; end
 
-  TERRITORY_COUNT = 6
-  TERRITORY_POSITIONS = [
-    [0, 0], [0, 100], [100, 0], [100, 100], [200, 0], [200, 100]
-  ]
-  TERRITORY_EDGES = [[0,1],[0,2],[1,2],[2,4],[2,3],[4,5],[3,5]]
+  DEFAULT_MAP_NAME = "default"
   INITIAL_UNITS = 10
 
-  def initialize; end
+  attr_reader :errors
+
+  def initialize(map_name: nil)
+    @map_name = map_name || DEFAULT_MAP_NAME
+    @errors   = []
+  end
 
   def call
     ActiveRecord::Base.transaction do
       create_game!
-      create_territories!
-      create_territory_links!
+      create_map!
       create_players!
       assign_players_to_territories!
       start_game!
@@ -23,26 +23,20 @@ class CreateGame
     @game
   end
 
+  private
+
   def create_game!
     @game = Game.create!
   end
 
-  def create_territories!
-    TERRITORY_COUNT.times do |i|
-      @game.territories.create!(
-        x: TERRITORY_POSITIONS[i][0],
-        y: TERRITORY_POSITIONS[i][1],
-        name: GenerateName.new.call
-      )
-    end
-  end
+  def create_map!
+    service = CreateMap.new(game: @game, map_name: @map_name)
+    result = service.call
 
-  def create_territory_links!
-    TERRITORY_EDGES.each do |edge|
-      TerritoryLink.create!(
-        from_territory: @game.territories[edge[0]],
-        to_territory: @game.territories[edge[1]]
-      )
+    if result.empty?
+      @errors += service.errors
+    else
+      result
     end
   end
 
