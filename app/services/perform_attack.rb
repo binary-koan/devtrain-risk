@@ -14,6 +14,10 @@ class PerformAttack
       @attack_events = @creator.call
     end
 
+    unless @attack_events.present?
+      @errors << :unable_to_attack
+    end
+
     @attack_events.present? && @attack_events.any?
   end
 end

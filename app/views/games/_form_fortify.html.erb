@@ -3,8 +3,16 @@
 <%= form_for [@game, event] do |f| %>
   <%= f.hidden_field :event_type %>
   Move <%= number_field_tag :units, "" %> units
-  from <%= select_tag :from, options_for_select(owned_territories) %>
-  to <%= select_tag :to, options_for_select(owned_territories) %>
+
+  <% if event.action %>
+    <%= hidden_field_tag :from, event.action.territory_from.name %>
+    <%= hidden_field_tag :to, event.action.territory_to.name %>
+    from <%= event.action.territory_from.name %> to <%= event.action.territory_to.name %>
+  <% else %>
+    from <%= select_tag :from, options_for_select(owned_territories) %>
+    to <%= select_tag :to, options_for_select(owned_territories) %>
+  <% end %>
+
   <%= button_tag type: "submit", class: "icon-button" do %>
     <span class="icon fortify"></span> Fortify
   <% end %>

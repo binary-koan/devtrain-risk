@@ -51,10 +51,8 @@ class PerformAttack
       @attackers_lost = attackers_lost
       @defenders_lost += defenders_lost
 
-      create_attack_event!(@territory_to, defenders_lost) if defenders_lost > 0
-      create_attack_event!(@territory_from, attackers_lost) if attackers_lost > 0
-
-      take_over_territory!(@attacking_units) if territory_taken?
+      create_attack_event!(@territory_to, @territory_from, defenders_lost) if defenders_lost > 0
+      create_attack_event!(@territory_from, @territory_to, attackers_lost) if attackers_lost > 0
     end
 
     def attack_result(paired_rolls)
@@ -70,18 +68,12 @@ class PerformAttack
       @defenders_lost == @initial_defenders
     end
 
-    def create_attack_event!(territory, units_lost)
+    def create_attack_event!(territory, territory_from, units_lost)
       @attack_events << find_owner(territory).events.attack.new
-      @attack_events.last.action = Action::Kill.create!(territory: territory, units: units_lost)
-      @attack_events.last.save!
-    end
-
-    def take_over_territory!(attackers_count)
-      @attack_events << find_owner(@territory_from).events.attack.new
-      @attack_events.last.action = Action::Move.create!(
-        territory_from: @territory_from,
-        territory_to: @territory_to,
-        units: attackers_count
+      @attack_events.last.action = Action::Kill.create!(
+        territory_from: territory_from,
+        territory: territory,
+        units: units_lost
       )
       @attack_events.last.save!
     end

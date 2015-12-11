@@ -120,13 +120,6 @@ RSpec.describe PerformAttack::CreateAttack do
         expect(remove_defenders_event.action.territory).to eq territory_to
         expect(remove_defenders_event.player).to eq players(:player2)
       end
-
-      it "adds attacking units to the defeated territory" do
-        expect(move_attackers_event.action.units).to eq 3
-        expect(move_attackers_event.action.territory_from).to eq territory_from
-        expect(move_attackers_event.action.territory_to).to eq territory_to
-        expect(move_attackers_event.player).to eq players(:player1)
-      end
     end
 
     context "when performing multiple attacks at once" do
@@ -139,6 +132,11 @@ RSpec.describe PerformAttack::CreateAttack do
 
       let(:first_event) { attack_events[0] }
       let(:second_event) { attack_events[1] }
+      let(:third_event) { attack_events[2] }
+
+      it "takes the right number of actions" do
+        expect(attack_events.length).to eq 3
+      end
 
       it "kills 2 defenders in the first event" do
         expect(first_event.action.territory).to eq territory_to
@@ -152,26 +150,10 @@ RSpec.describe PerformAttack::CreateAttack do
         expect(second_event.action.units).to be 2
       end
 
-      context "killing the last defend and takes over the territory" do
-        it "contains the correct number of actions" do
-          expect(attack_events.length).to eq 4
-        end
-
-        let(:kill_event) { attack_events[2] }
-        let(:move_event) { attack_events[3] }
-
-        it "kills the last defender" do
-          expect(kill_event.action.territory).to be territory_to
-          expect(kill_event.player).to eq players(:player2)
-          expect(kill_event.action.units).to be 1
-        end
-
-        it "moves the attackers to the territory" do
-          expect(move_event.action.territory_from).to eq territory_from
-          expect(move_event.action.territory_to).to eq territory_to
-          expect(move_event.player).to eq players(:player1)
-          expect(move_event.action.units).to eq 4
-        end
+      it "kills the last defender in the third event" do
+        expect(third_event.action.territory).to be territory_to
+        expect(third_event.player).to eq players(:player2)
+        expect(third_event.action.units).to be 1
       end
     end
   end

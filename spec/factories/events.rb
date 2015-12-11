@@ -46,12 +46,14 @@ FactoryGirl.define do
 
       transient do
         territory nil
+        territory_from nil
         units_killed 2
       end
 
       after(:build) do |e, attrs|
         e.action = build(:action_kill,
           territory: attrs.territory,
+          territory_from: attrs.territory_from || create(:territory),
           units: attrs.units_killed
         )
       end

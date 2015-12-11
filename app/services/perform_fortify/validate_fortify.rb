@@ -17,9 +17,9 @@ class PerformFortify
         errors << :no_link
       elsif !current_players_territory?
         errors << :wrong_player
-      elsif !@turn.can_fortify?
+      elsif !@turn.can_fortify?(@territory_from, @territory_to)
         errors << :wrong_phase
-      elsif !fortifying_own_territory?
+      elsif fortifying_enemy_territory?
         errors << :fortifying_enemy_territory
       elsif !enough_fortifying_units?
         errors << :not_enough_fortifying_units
@@ -44,8 +44,8 @@ class PerformFortify
       find_owner(@territory_from) == @turn.player
     end
 
-    def fortifying_own_territory?
-      find_owner(@territory_from) == find_owner(@territory_to)
+    def fortifying_enemy_territory?
+      find_owner(@territory_from) != find_owner(@territory_to) && @turn.game_state.units_on_territory(@territory_to) > 0
     end
 
     def enough_fortifying_units?

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151210030155) do
+ActiveRecord::Schema.define(version: 20151210220214) do
 
   create_table "action_adds", force: :cascade do |t|
     t.integer  "territory_id", null: false
@@ -21,10 +21,11 @@ ActiveRecord::Schema.define(version: 20151210030155) do
   end
 
   create_table "action_kills", force: :cascade do |t|
-    t.integer  "territory_id", null: false
-    t.integer  "units",        null: false
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.integer  "territory_id",      null: false
+    t.integer  "units",             null: false
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+    t.integer  "territory_from_id", null: false
   end
 
   create_table "action_moves", force: :cascade do |t|

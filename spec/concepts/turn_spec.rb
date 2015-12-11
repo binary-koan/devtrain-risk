@@ -1,6 +1,26 @@
 require "rails_helper"
 
 RSpec.describe Turn do
+  def create_complete_reinforcement
+    create(:reinforce_event, player: player, territory: territories(:territory_top_left))
+  end
+
+  def create_incomplete_reinforcement
+    create(:reinforce_event, player: player, territory: territories(:territory_top_left), units: 1)
+  end
+
+  def create_attack
+    create(:attack_event, player: player, territory: territories(:territory_top_left))
+  end
+
+  def create_fortification
+    create(:fortify_event,
+      player: player,
+      territory_from: territories(:territory_top_right),
+      territory_to: territories(:territory_top_left)
+    )
+  end
+
   fixtures :games, :players, :territories, :events, :"action/adds"
 
   let(:game) { games(:game) }
@@ -29,38 +49,19 @@ RSpec.describe Turn do
     end
 
     context "when a complete reinforcement has already been made" do
-      before do
-        create(
-          :reinforce_event,
-          player: player,
-          territory: territories(:territory_top_left)
-        )
-      end
+      before { create_complete_reinforcement }
 
       it { is_expected.to eq false }
     end
 
     context "when an incomplete reinforcement has been made" do
-      before do
-        create(
-          :reinforce_event,
-          player: player,
-          territory: territories(:territory_top_left),
-          units: 1
-        )
-      end
+      before { create_incomplete_reinforcement }
 
       it { is_expected.to eq true }
     end
 
     context "when an attack has been made" do
-      before do
-        create(
-          :attack_event,
-          player: player,
-          territory: territories(:territory_top_left)
-        )
-      end
+      before { create_attack }
 
       it { is_expected.to eq false }
     end
@@ -74,98 +75,79 @@ RSpec.describe Turn do
     end
 
     context "when a complete reinforcement has been made" do
-      before do
-        create(
-          :reinforce_event,
-          player: player,
-          territory: territories(:territory_top_left)
-        )
-      end
+      before { create_complete_reinforcement }
 
       it { is_expected.to eq true }
     end
 
     context "when an incomplete reinforcement has been made" do
-      before do
-        create(
-          :reinforce_event,
-          player: player,
-          territory: territories(:territory_top_left),
-          units: 1
-        )
-      end
+      before { create_incomplete_reinforcement }
 
       it { is_expected.to eq false }
     end
 
     context "when an attack has been made" do
-      before do
-        create(
-          :attack_event,
-          player: player,
-          territory: territories(:territory_top_left)
-        )
-      end
+      before { create_attack }
 
       it { is_expected.to eq true }
     end
 
     context "when a fortify move has been made" do
-      before do
-        create(
-          :fortify_event,
-          player: player,
-          territory_from: territories(:territory_top_right),
-          territory_to: territories(:territory_top_left)
-        )
-      end
+      before { create_fortification }
 
       it { is_expected.to eq false }
     end
   end
 
   describe "#can_fortify?" do
-    subject { turn.can_fortify? }
+    subject { turn.can_fortify?(territories(:territory_top_left), territories(:territory_top_right)) }
 
     context "when a turn has just been started" do
       it { is_expected.to eq false }
     end
 
     context "when a complete reinforcement has been made" do
-      before do
-        create(
-          :reinforce_event,
-          player: player,
-          territory: territories(:territory_top_left)
-        )
-      end
+      before { create_complete_reinforcement }
 
       it { is_expected.to eq true }
     end
 
     context "when an attack has been made" do
-      before do
-        create(
-          :attack_event,
-          player: player,
-          territory: territories(:territory_top_left)
-        )
-      end
+      before { create_attack }
 
       it { is_expected.to eq true }
     end
 
     context "when a fortify move has already been made" do
-      before do
-        create(
-          :fortify_event,
-          player: player,
-          territory_from: territories(:territory_top_right),
-          territory_to: territories(:territory_top_left)
-        )
-      end
+      before { create_fortification }
 
       it { is_expected.to eq false }
+    end
+  end
+
+  describe "#can_end_turn?" do
+    subject { turn.can_end_turn? }
+
+    context "when a turn has just been started" do
+      it { is_expected.to eq false }
+    end
+
+    context "when a complete reinforcement has been made" do
+      before { create_complete_reinforcement }
+
+      it { is_expected.to eq true }
+    end
+
+    context "when an attack has been made" do
+      before { create_attack }
+
+      it { is_expected.to eq true }
+    end
+
+    context "when a fortify move has been made" do
+      before { create_fortification }
+
+      it { is_expected.to eq true }
     end
   end
 

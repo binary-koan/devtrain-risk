@@ -3,6 +3,13 @@ require 'rails_helper'
 RSpec.describe Action::Kill, type: :model do
   let(:action) { create(:action_kill) }
 
+  describe "#territory_from" do
+    it "is required" do
+      action.territory_from = nil
+      expect(action).not_to be_valid
+    end
+  end
+
   describe "#territory" do
     it "is required" do
       action.territory = nil
