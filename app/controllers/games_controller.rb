@@ -8,7 +8,7 @@ class GamesController < ApplicationController
     service = CreateGame.new(map_name: map_name)
     game = service.call
 
-    if game.present? && game.errors.empty?
+    if game.present? && service.errors.empty?
       redirect_to game
     else
       flash.alert = service.errors

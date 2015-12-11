@@ -26,15 +26,13 @@ RSpec.describe GamesController, type: :controller do
     end
 
     context "with an invalid map name" do
-      before { post :create, map_name: "bad_map" }
-
       before do
-        expect(CreateGame).to receive(:new).and_return create_game_service
-        expect(create_game_service).to receive(:call).and_return nil
+        @request.env['HTTP_REFERER'] = 'https://test.host/games/new'
+        post :create, map_name: "bad_map"
       end
 
       it "adds adds the errors to the flash" do
-        expect(flash.alert).to be :not_valid_map_name
+        expect(flash.alert).to eq [:not_valid_map_name]
       end
 
       it "redirects back to the new page" do
