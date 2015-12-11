@@ -2,6 +2,7 @@ require "rails_helper"
 
 RSpec.describe GamesController, type: :controller do
   fixtures :games, :events
+  let(:create_game_service) { instance_double(CreateGame) }
 
   describe "#new" do
     before { get :new }
@@ -16,10 +17,29 @@ RSpec.describe GamesController, type: :controller do
   end
 
   describe "#create" do
-    before { post :create }
+    context "with a valid map name" do
+      before { post :create, map_name: "default" }
 
-    it "redirects to the game" do
-      expect(response).to redirect_to game_path(Game.last)
+      it "redirects to the game" do
+        expect(response).to redirect_to game_path(Game.last)
+      end
+    end
+
+    context "with an invalid map name" do
+      before { post :create, map_name: "bad_map" }
+
+      before do
+        expect(CreateGame).to receive(:new).and_return create_game_service
+        expect(create_game_service).to receive(:call).and_return nil
+      end
+
+      it "adds adds the errors to the flash" do
+        expect(flash.alert).to be :not_valid_map_name
+      end
+
+      it "redirects back to the new page" do
+        expect(response).to redirect_to :back
+      end
     end
   end
 

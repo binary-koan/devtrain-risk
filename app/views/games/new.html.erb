@@ -1,5 +1,6 @@
 <h1>Game</h1>
 
 <%= form_for(Game.new) do |f| %>
+  <%= select_tag :map_name, options_for_select(available_maps) %>
   <%= f.submit "Create game" %>
 <% end %>

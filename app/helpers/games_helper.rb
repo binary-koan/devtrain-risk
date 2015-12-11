@@ -1,5 +1,9 @@
+require 'yaml'
+
 module GamesHelper
   PLAYER_COLORS = %w{#4F2EC9 #63242E}
+
+  MAP_YAML_LOCATION = "config/maps.yml"
 
   MAP_WIDTH = 400
   MAP_HEIGHT = 250
@@ -17,6 +21,10 @@ module GamesHelper
       class: "map-display",
       viewbox: map_viewbox(turn.game.territories)
     )
+  end
+
+  def available_maps
+    YAML.load_file(MAP_YAML_LOCATION).keys
   end
 
   private
