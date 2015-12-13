@@ -13,5 +13,8 @@
 //= require jquery
 //= require jquery_ujs
 //= require underscore
-//= require d3
+//= require Rx
+//= require cycle/core
+//= require cycle/dom
+//= require cycle/http
 //= require_tree .

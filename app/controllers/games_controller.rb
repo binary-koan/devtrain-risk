@@ -18,6 +18,15 @@ class GamesController < ApplicationController
 
   def show
     @turn = BuildTurn.new(@game.events).call
+
+    respond_to do |format|
+      format.html
+
+      format.json do
+        serializer = GameStateJson.new(@turn)
+        render json: { state: serializer.json }
+      end
+    end
   end
 
   private
