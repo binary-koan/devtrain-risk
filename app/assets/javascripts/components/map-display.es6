@@ -56,10 +56,3 @@ function MapDisplay({ HTTP }) {
 
   return { DOM: view$, HTTP: request$ };
 }
-
-if (document.getElementById("game-display")) {
-  Cycle.run(MapDisplay, {
-    DOM: CycleDOM.makeDOMDriver("#game-display"),
-    HTTP: CycleHTTPDriver.makeHTTPDriver()
-  });
-}
