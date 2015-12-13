@@ -93,6 +93,7 @@ GEM
       bundler (>= 1.3.0, < 2.0)
       railties (= 4.2.5)
       sprockets-rails
+    rails-assets-Rx (4.0.7)
     rails-assets-d3 (3.5.9)
     rails-assets-underscore (1.8.3)
     rails-deprecated_sanitizer (1.0.3)
@@ -177,6 +178,7 @@ DEPENDENCIES
   jbuilder (~> 2.0)
   jquery-rails
   rails (= 4.2.5)
+  rails-assets-Rx (~> 4.0)!
   rails-assets-d3 (~> 3.5)!
   rails-assets-underscore!
   rspec-rails

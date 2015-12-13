@@ -16,6 +16,7 @@ gem 'sprockets-es6', require: 'sprockets/es6'
 source 'https://rails-assets.org' do
   gem 'rails-assets-d3', '~> 3.5'
   gem 'rails-assets-underscore'
+  gem 'rails-assets-Rx', '~> 4.0'
 end
 
 # Use jquery as the JavaScript library
