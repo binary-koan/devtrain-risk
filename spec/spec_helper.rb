@@ -19,6 +19,8 @@
 require 'factory_girl_rails'
 require 'pp'
 require 'simplecov'
+require 'codeclimate-test-reporter'
+CodeClimate::TestReporter.start
 SimpleCov.start
 
 RSpec.configure do |config|

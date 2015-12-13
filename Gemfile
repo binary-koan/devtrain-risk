@@ -36,9 +36,9 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 group :test do
   gem 'rspec-rails'
+  gem 'simplecov', require: false
+  gem 'codeclimate-test-reporter', require: false
 end
-
-gem 'simplecov', :require => false, :group => :test
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
