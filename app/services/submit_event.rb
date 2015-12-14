@@ -25,6 +25,7 @@ class SubmitEvent
   private
 
   def service_for_event_type
+    #TODO crashes if !@params[:event]
     case @params[:event][:event_type]
     when "attack" then perform_attack
     when "fortify" then perform_fortify

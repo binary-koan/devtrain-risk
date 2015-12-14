@@ -9,10 +9,94 @@
   }
 }
 
-.icon.attack path {
-  fill: #de2c37;
+.icon.attack, .icon.explosion-small, .icon.explosion-large {
+  path {
+    fill: #de2c37;
+  }
 }
 
-.icon.fortify path, .icon.reinforce path {
-  fill: #2e7be8;
+.icon.fortify, .icon.fortify-away, .icon.reinforce {
+  path {
+    fill: #2e7be8;
+  }
+}
+
+.icon.fortify-away {
+  transform: rotate(-90deg);
+}
+
+.icon.animated {
+  transform-origin: 50% 50%;
+  animation-duration: 0.75s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+  animation-name: small-boom;
+
+  &.fortify-away {
+    animation-name: fortify-fly-away;
+  }
+
+  &.fortify {
+    animation-name: fortify-fly-towards;
+  }
+
+  &.explosion-large {
+    animation-name: large-boom;
+  }
+}
+
+@keyframes fortify-fly-away {
+  0% {
+    opacity: 0.5;
+    transform: translate(0, 0) rotate(-90deg);
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(20px, -20px) rotate(-90deg);
+  }
+}
+
+@keyframes fortify-fly-towards {
+  0% {
+    opacity: 0.5;
+    transform: translate(-20px, -20px);
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes small-boom {
+  from {
+    transform: scale(0.5);
+    opacity: 1;
+  }
+
+  to {
+    transform: scale(1.25);
+    opacity: 0;
+  }
+}
+
+@keyframes large-boom {
+  from {
+    transform: scale(0.5);
+    opacity: 1;
+  }
+
+  to {
+    transform: scale(1.5);
+    opacity: 0;
+  }
 }

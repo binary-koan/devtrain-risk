@@ -18,7 +18,7 @@ GameDisplay.animateDiff = (previousDOM, currentDOM) => {
       let [prevUnits, currUnits] = pairedUnits(prevUnitDisplays.eq(i), $(unitsDisplay));
 
       if (prevUnits !== currUnits) {
-        return { difference: currUnits - prevUnits, element: unitsDisplay };
+        return { difference: currUnits - prevUnits, remaining: currUnits, element: unitsDisplay };
       }
     });
 
@@ -30,7 +30,7 @@ GameDisplay.animateDiff = (previousDOM, currentDOM) => {
     bbox = pick(bbox, "x", "y", "width", "height");
 
     let icon = $(document.createElementNS("http://www.w3.org/2000/svg", "use"));
-    icon.attr(bbox).attr("class", "icon-animated");
+    icon.attr(bbox).attr("class", `icon animated ${name}`);
     icon[0].setAttributeNS("http://www.w3.org/1999/xlink", "href", `#icon-${name}`);
 
     icon.on("animationend", () => icon.remove());
@@ -38,12 +38,34 @@ GameDisplay.animateDiff = (previousDOM, currentDOM) => {
     element.append(icon);
   }
 
+  function isFortify(differences) {
+    return differences.length === 2 &&
+      differences[0].difference < 0 && differences[1].difference > 0;
+  }
+
+  function getIconNames(differences) {
+    if (isFortify(differences)) {
+      return ["fortify-away", "fortify"];
+    } else {
+      return differences.map(item => {
+        if (item.remaining === 0) {
+          return "explosion-large";
+        } else if (item.difference < 0) {
+          return "explosion-small";
+        } else {
+          return "fortify";
+        }
+      });
+    }
+  }
+
   let sortedDifferences = findDifferences()
     .sort((a, b) => a.difference - b.difference);
 
-  sortedDifferences.forEach(item => {
-    let icon = item.difference < 0 ? "explosion-small" : "fortify";
-    showAnimatedIcon(icon, $(item.element).closest("g"));
+  let iconNames = getIconNames(sortedDifferences);
+
+  sortedDifferences.forEach((item, index) => {
+    showAnimatedIcon(iconNames[index], $(item.element).closest("g"));
   });
 
   console.log(sortedDifferences);
