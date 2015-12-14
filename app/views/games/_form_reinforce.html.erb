@@ -7,6 +7,6 @@
   Place <%= number_field_tag :units, "" %> units
   on <%= select_tag :to, options_for_select(owned_territories) %>
   <%= button_tag type: "submit", class: "icon-button" do %>
-    <span class="icon reinforce"></span> Reinforce
+    <%= icon("reinforce") %> Reinforce
   <% end %>
 <% end %>

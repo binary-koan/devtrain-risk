@@ -6,6 +6,6 @@
   from <%= select_tag :from, options_for_select(owned_territories) %>
   to <%= select_tag :to, options_for_select(@game.territories.pluck(:name) - owned_territories) %>
   <%= button_tag type: "submit", class: "icon-button" do %>
-    <span class="icon attack"></span> Attack
+    <%= icon("attack") %> Attack
   <% end %>
 <% end %>
