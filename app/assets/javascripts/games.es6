@@ -1,5 +1,6 @@
 //= require ./components/map-display
 //= require ./components/player-display
+//= require ./components/forms/attack-form
 
 function GameDisplay(responses) {
   const { h } = CycleDOM;
@@ -7,13 +8,15 @@ function GameDisplay(responses) {
   const map = MapDisplay(responses);
   const players = PlayerDisplay(responses);
 
-  const view$ = Rx.Observable.combineLatest([map.DOM, players.DOM], (...components) =>
+  const attackForm = AttackForm(responses);
+
+  const view$ = Rx.Observable.combineLatest([map.DOM, players.DOM, attackForm.DOM], (...components) =>
     h("div", components)
   );
 
   return {
     DOM: view$,
-    HTTP: map.HTTP
+    HTTP: Rx.Observable.merge(map.HTTP, attackForm.HTTP)
   };
 }
 

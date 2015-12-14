@@ -23,8 +23,9 @@ class GamesController < ApplicationController
       format.html
 
       format.json do
-        serializer = GameStateJson.new(@turn)
-        render json: { state: serializer.json }
+        game_state_json = GameStateJson.new(@turn)
+        actions_json = AllowedActionsJson.new(@turn)
+        render json: { state: game_state_json.json, allowedActions: actions_json }
       end
     end
   end

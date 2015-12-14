@@ -3,7 +3,7 @@ function PlayerDisplay({ DOM, HTTP }) {
 
   function playerViewClass(state, index) {
     let baseClassName = `player-${index}`;
-    return baseClassName + (state.currentPlayer == index ? " current" : "");
+    return baseClassName + (state.currentPlayer === index ? " current" : "");
   }
 
   function playerView(state, player, index) {
