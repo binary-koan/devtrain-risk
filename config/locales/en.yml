@@ -21,6 +21,7 @@
 
 en:
   # General Messages
+  unknown_event_type: "That's not a valid event type"
   no_link: "There is no link between the two territories."
   wrong_player: "It is not currently this players turn."
   wrong_phase: "You cannot perform this action right now."
