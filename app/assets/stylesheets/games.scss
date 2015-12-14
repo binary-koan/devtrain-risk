@@ -8,6 +8,17 @@ svg.map-display {
   }
 
   .node {
+    // Needs to be on sub-elements because nodes have a transform
+    // attribute set in HTML (based on the territory position)
+    * {
+      transform-origin: 50% 50%;
+      transition: transform 0.2s ease-in-out;
+    }
+
+    &:hover * {
+      transform: scale(1.3);
+    }
+
     circle {
       opacity: 0.75;
       stroke-width: 1.5px;
