@@ -2,21 +2,17 @@
   display: inline-block;
   width: $font-size-base * 1.5;
   height: $font-size-base * 1.5;
-  background-size: contain;
+
+  svg {
+    width: $font-size-base * 1.5;
+    height: $font-size-base * 1.5;
+  }
 }
 
-.icon.reinforce {
-  background-image: image-url("icons/vortex.png");
+.icon.attack path {
+  fill: #de2c37;
 }
 
-.icon.fortify {
-  background-image: image-url("icons/rocket.png");
-}
-
-.icon.attack {
-  background-image: image-url("icons/missile-swarm.png");
-}
-
-.icon.end-turn {
-  background-image: image-url("icons/back-forth.png");
+.icon.fortify path, .icon.reinforce path {
+  fill: #2e7be8;
 }

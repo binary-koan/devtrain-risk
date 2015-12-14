@@ -6,6 +6,8 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
+  <div class="hidden"><%= inline_svg("icons.svg") %></div>
+
   <div class="container">
     <div class="messages">
       <% if flash.alert %>
