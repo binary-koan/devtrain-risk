@@ -3,6 +3,8 @@ require 'yaml'
 module GamesHelper
   PLAYER_COLORS    = %w{#4F2EC9 #63242E}
 
+  DEFAULT_TERRITORY_LINK_COLOR = "#666"
+
   MAP_YAML_LOCATION = "config/maps.yml"
 
   MAP_PADDING = 40
@@ -60,7 +62,7 @@ module GamesHelper
     if link[0].continent == link[1].continent
       link[0].continent.color
     else
-      "#666"
+      DEFAULT_TERRITORY_LINK_COLOR
     end
   end
 
