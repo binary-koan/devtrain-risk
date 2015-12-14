@@ -4,9 +4,12 @@ class EventsController < ApplicationController
   def create
     service = SubmitEvent.new(@game, params)
 
-    flash.alert = service.errors unless service.call
-
-    redirect_to @game
+    if service.call
+      redirect_to state_game_path(@game)
+    else
+      errors = service.errors.map { |error| I18n.t(error) }
+      render json: { errors: errors }
+    end
   end
 
   private

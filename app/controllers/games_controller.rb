@@ -20,6 +20,11 @@ class GamesController < ApplicationController
     @turn = BuildTurn.new(@game.events).call
   end
 
+  def state
+    @turn = BuildTurn.new(@game.events).call
+    render json: { content: render_to_string(partial: "games/game_display", formats: [:html]) }
+  end
+
   private
 
   def map_name

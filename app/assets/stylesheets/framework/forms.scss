@@ -14,15 +14,21 @@ button, input[type="submit"] {
   background-color: $button-background-color;
   background-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.15));
 
-  transition: all 0.2s ease-in-out;
+  transition: background-color .2s, border-color .2s;
 
-  &:hover {
-    background-color: lighten($button-background-color, 10%);
+  &[disabled] {
+    opacity: 0.5;
   }
 
-  &:active {
-    background-color: darken($button-background-color, 15%);
-    border-color: darken(nth($button-border, 3), 20%);
+  &:not([disabled]) {
+    &:hover {
+      background-color: lighten($button-background-color, 10%);
+    }
+
+    &:active {
+      background-color: darken($button-background-color, 15%);
+      border-color: darken(nth($button-border, 3), 20%);
+    }
   }
 
   &.icon-button {

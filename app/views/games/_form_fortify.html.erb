@@ -1,6 +1,6 @@
 <% owned_territories = @turn.game_state.owned_territories(@turn.player).map(&:name) %>
 
-<%= form_for [@game, event] do |f| %>
+<%= form_for [@game, event], html: { autocomplete: "off" } do |f| %>
   <%= f.hidden_field :event_type %>
   Move <%= number_field_tag :units, "" %> units
 
