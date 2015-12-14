@@ -5,9 +5,7 @@ module GamesHelper
 
   MAP_YAML_LOCATION = "config/maps.yml"
 
-  MAP_WIDTH = 400
-  MAP_HEIGHT = 250
-  MAP_OFFSET = 50
+  MAP_PADDING = 40
   TERRITORY_NODE_SIZE = 30
 
   def player_color(players, player)
@@ -36,7 +34,7 @@ module GamesHelper
   def map_viewbox(territories)
     x_min, x_max = territories.map(&:x).minmax
     y_min, y_max = territories.map(&:y).minmax
-    offset = TERRITORY_NODE_SIZE
+    offset = TERRITORY_NODE_SIZE + MAP_PADDING
 
     "#{x_min - offset} #{y_min - offset} #{x_max + offset * 2} #{y_max + offset * 2}"
   end
