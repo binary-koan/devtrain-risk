@@ -13,6 +13,8 @@ class PerformReinforce
       errors << :reinforcing_enemy_territory
     elsif !@turn.can_reinforce?(@units_to_reinforce)
       errors << :cannot_reinforce
+    elsif !enough_reinforcing_units?
+      errors << :too_few_reinforcing_units
     else
       reinforce_territory!
     end
@@ -24,6 +26,10 @@ class PerformReinforce
 
   def territory_owned_by_player?
     @turn.player == @turn.game_state.territory_owner(@territory)
+  end
+
+  def enough_reinforcing_units?
+    @units_to_reinforce > 0
   end
 
   def reinforce_territory!

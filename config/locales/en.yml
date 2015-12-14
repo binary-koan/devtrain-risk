@@ -41,6 +41,7 @@ en:
   # Reinforce Messages
   reinforcing_enemy_territory: "You cannot reinforce an enemies territory."
   cannot_reinforce: "Cannot perform the reinforcement."
+  too_few_reinforcing_units: "You must reinforce with more than 0 units"
 
   # Create Map Messages
   not_valid_map_name: "You did not select a valid map name."
