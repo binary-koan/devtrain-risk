@@ -24,6 +24,26 @@ svg.map-display {
       stroke: yellow;
     }
   }
+
+  .icon-animated {
+    transform-origin: 50% 50%;
+
+    // Slight "bounce" effect on the animation
+    animation: boom 0.75s ease-out;
+    animation-fill-mode: forwards;
+  }
+}
+
+@keyframes boom {
+  from {
+    transform: scale(0.5);
+    opacity: 1;
+  }
+
+  to {
+    transform: scale(1.5);
+    opacity: 0;
+  }
 }
 
 .player-display {

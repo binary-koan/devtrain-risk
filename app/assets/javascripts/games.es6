@@ -1,4 +1,6 @@
-(function() {
+//= require game-display/animate-diff
+
+jQuery(function($) {
   function displayErrors(errors) {
     let messageSection = $(".messages").html("");
 
@@ -20,7 +22,8 @@
     if (data.errors) {
       displayErrors(data.errors);
     } else {
-      $("#game-display").html(data.content);
+      let oldGameDisplay = $("#game-display").replaceWith(data.content);
+      GameDisplay.animateDiff(oldGameDisplay, $("#game-display"));
     }
   }
 
@@ -35,4 +38,4 @@
     event.preventDefault();
     submitForm($(event.target));
   });
-})();
+});
