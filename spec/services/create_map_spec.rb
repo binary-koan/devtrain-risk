@@ -20,6 +20,7 @@ RSpec.describe CreateMap do
       it "creates the default map" do
         expect(result.size).to be 6
         expect(game.territories.size).to be 6
+        expect(game.continents.size).to be 2
         expect(service.errors).to be_empty
       end
     end
@@ -30,6 +31,7 @@ RSpec.describe CreateMap do
       it "creates the specified map" do
         expect(result.size).to be 19
         expect(game.territories.size).to be 19
+        expect(game.continents.size).to be 3
         expect(service.errors).to be_empty
       end
     end

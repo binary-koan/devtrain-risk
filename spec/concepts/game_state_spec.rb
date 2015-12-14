@@ -3,10 +3,12 @@ require "rails_helper"
 RSpec.describe GameState do
   let(:game)   { create(:game) }
 
+  let(:continent) { create(:continent, game: game) }
+
   let!(:player1) { create(:player, game: game) }
   let!(:player2) { create(:player, game: game) }
-  let!(:jupiter) { create(:territory, game: game) }
-  let!(:mars)    { create(:territory, game: game) }
+  let!(:jupiter) { create(:territory, continent: continent) }
+  let!(:mars)    { create(:territory, continent: continent) }
 
   let(:events) { game.events }
 
@@ -174,7 +176,7 @@ RSpec.describe GameState do
     end
 
     context "with multiple links between territories" do
-      let(:saturn) { create(:territory, game: game) }
+      let(:saturn) { create(:territory, continent: continent) }
 
       before do
         create(:territory_link, from_territory: jupiter, to_territory: mars)

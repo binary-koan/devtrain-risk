@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe SubmitEvent do
   describe "#call" do
-    fixtures :games, :territories
+    fixtures :games, :territories, :continents
 
     let(:from_territory) { territories(:territory_top_left) }
     let(:to_territory) { territories(:territory_top_right) }

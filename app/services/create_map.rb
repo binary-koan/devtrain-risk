@@ -1,17 +1,20 @@
 require 'yaml'
 
 class CreateMap
-  MAP_YAML_LOCATION   = "config/maps.yml"
-  TERRITORY_COUNT     = "territory_count"
-  TERRITORY_POSITIONS = "territory_positions"
-  TERRITORY_EDGES     = "territory_edges"
+  MAP_YAML_LOCATION    = "config/maps.yml"
+  TERRITORY_COUNT      = "territory_count"
+  TERRITORY_POSITIONS  = "territory_positions"
+  TERRITORY_EDGES      = "territory_edges"
+  TERRITORY_CONTINENTS = "territory_continents"
 
-  attr_reader :map, :errors
+  attr_reader :errors
 
   def initialize(game:, map_name:)
-    @game   = game
-    @name   = map_name
-    @errors = []
+    @game             = game
+    @name             = map_name
+    @available_colors = %w{#c0392b #8e44ad #2ecc71 #f1c40f #ecf0f1 #3498db}
+    @territories      = []
+    @errors           = []
   end
 
   def call
@@ -24,6 +27,7 @@ class CreateMap
 
       ActiveRecord::Base.transaction do
         create_territories!
+        create_continents
         create_territory_links!
       end
     end
@@ -47,16 +51,7 @@ class CreateMap
     @territory_count = map_info[TERRITORY_COUNT]
     @territory_positions = map_info[TERRITORY_POSITIONS]
     @territory_edges = map_info[TERRITORY_EDGES]
-  end
-
-  def create_territories!
-    @territory_count.times do |i|
-      @game.territories.create!(
-        x: @territory_positions[i][0],
-        y: @territory_positions[i][1],
-        name: GenerateName.new.call
-      )
-    end
+    @territory_continents = map_info[TERRITORY_CONTINENTS]
   end
 
   def create_territory_links!
@@ -66,5 +61,41 @@ class CreateMap
         to_territory: @game.territories[edge[1]]
       )
     end
+  end
+
+  def create_territories!
+    @territory_count.times do |i|
+      @territories << Territory.new(
+        x: @territory_positions[i][0],
+        y: @territory_positions[i][1],
+        name: GenerateName.new.call
+      )
+    end
+  end
+
+  def create_continents
+    @territory_continents.each do |territory_positions|
+      continent = @game.continents.create!(
+        color: pick_continent_color
+      )
+
+      link_territories(continent, territory_positions)
+    end
+
+    @territories.each do |t|
+      t.save!
+    end
+  end
+
+  def link_territories(continent, territory_positions)
+    territory_positions.each do |t|
+      territory = @territories[t]
+      territory.continent = continent
+      @territories[t] = territory
+    end
+  end
+
+  def pick_continent_color
+    @available_colors.pop
   end
 end

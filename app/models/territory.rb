@@ -1,5 +1,7 @@
 class Territory < ActiveRecord::Base
-  belongs_to :game
+  belongs_to :continent
+
+  delegate :game, to: :continent
 
   has_many :to_territory_links, class_name: "TerritoryLink", foreign_key: "to_territory_id"
   has_many :from_territories, through: :to_territory_links, source: :from_territory
@@ -11,5 +13,5 @@ class Territory < ActiveRecord::Base
     from_territories + to_territories
   end
 
-  validates :game, :name, presence: true
+  validates :continent, :name, presence: true
 end

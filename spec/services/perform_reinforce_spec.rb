@@ -6,11 +6,12 @@ RSpec.describe PerformReinforce do
   end
 
   let(:game) { create(:game) }
+  let(:continent) { create(:continent) }
 
   let!(:player1) { create(:player, name: "Player 1", game: game) }
   let!(:player2) { create(:player, name: "Player 2", game: game) }
-  let!(:jupiter) { create(:territory, game: game) }
-  let!(:mars)    { create(:territory, game: game) }
+  let!(:jupiter) { create(:territory, continent: continent) }
+  let!(:mars)    { create(:territory, continent: continent) }
 
   let(:turn) { BuildTurn.new(game.events).call }
   let(:game_state) { turn.game_state }

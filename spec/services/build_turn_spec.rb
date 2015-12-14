@@ -2,9 +2,10 @@ require "rails_helper"
 
 RSpec.describe BuildTurn do
   let(:game) { create(:game) }
+  let(:continent) { create(:continent) }
 
-  let(:jupiter) { create(:territory, game: game, name: "Jupiter") }
-  let(:mars) { create(:territory, game: game, name: "Mars") }
+  let(:jupiter) { create(:territory, name: "Jupiter", continent: continent) }
+  let(:mars) { create(:territory, name: "Mars", continent: continent) }
 
   let(:player1) { create(:player, game: game, name: "Player 1") }
   let(:player2) { create(:player, game: game, name: "Player 2") }

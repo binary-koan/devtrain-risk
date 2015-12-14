@@ -1,23 +1,23 @@
 territory_top_left:
-  game: game
+  continent: continent_1
   name: "Jupiter"
   x: 0
   y: 0
 
 territory_top_right:
-  game: game
+  continent: continent_1
   name: "Mars"
   x: 100
   y: 0
 
 territory_bottom_right:
-  game: game
+  continent: continent_2
   name: "Saturn"
   x: 100
   y: 100
 
 territory_bottom_left:
-  game: game
+  continent: continent_2
   name: "Mercury"
   x: 0
   y: 100

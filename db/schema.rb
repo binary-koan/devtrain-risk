@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151210220214) do
+ActiveRecord::Schema.define(version: 20151214015533) do
 
   create_table "action_adds", force: :cascade do |t|
     t.integer  "territory_id", null: false
@@ -48,6 +48,13 @@ ActiveRecord::Schema.define(version: 20151210220214) do
 
   add_index "actions", ["event_id"], name: "index_actions_on_event_id"
 
+  create_table "continents", force: :cascade do |t|
+    t.integer  "game_id",    null: false
+    t.string   "color",      null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "events", force: :cascade do |t|
     t.integer  "action_id"
     t.string   "action_type"
@@ -72,13 +79,15 @@ ActiveRecord::Schema.define(version: 20151210220214) do
   end
 
   create_table "territories", force: :cascade do |t|
-    t.integer  "game_id",    null: false
-    t.integer  "x",          null: false
-    t.integer  "y",          null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string   "name",       null: false
+    t.integer  "x",            null: false
+    t.integer  "y",            null: false
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+    t.string   "name",         null: false
+    t.integer  "continent_id"
   end
+
+  add_index "territories", ["continent_id"], name: "index_territories_on_continent_id"
 
   create_table "territory_links", force: :cascade do |t|
     t.integer  "from_territory_id", null: false

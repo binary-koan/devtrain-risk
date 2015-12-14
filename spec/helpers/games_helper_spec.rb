@@ -11,6 +11,12 @@ RSpec.describe GamesHelper, type: :helper do
     end
   end
 
+  describe "#available_maps" do
+    it "returns the list of available maps" do
+      expect(available_maps).to eq ["default", "botte_neck", "star", "ring", "MOBA"]
+    end
+  end
+
   describe "#map_display" do
     let(:turn) { BuildTurn.new(games(:game).events).call }
 

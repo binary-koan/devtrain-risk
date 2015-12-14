@@ -1,18 +1,19 @@
 require 'rails_helper'
 
 RSpec.describe Territory, type: :model do
-  let(:territory) { create(:territory, name: "Jupiter") }
+  let(:continent) { create(:continent) }
+  let(:territory) { create(:territory, name: "Jupiter", continent: continent) }
 
-  describe "#game" do
+  describe "#continent" do
     it "is required" do
-      territory.game = nil
+      territory.continent = nil
       expect(territory).to_not be_valid
     end
   end
 
   describe "#connected_territories" do
-    let(:second_territory) { create(:territory, name: "Mars") }
-    let(:third_territory) { create(:territory, name: "Saturn") }
+    let(:second_territory) { create(:territory, name: "Mars", continent: continent) }
+    let(:third_territory) { create(:territory, name: "Saturn", continent: continent) }
 
     context "with a link from this territory" do
       before do

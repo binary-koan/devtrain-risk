@@ -15,6 +15,9 @@ default:
       - [2, 3]
       - [4, 5]
       - [3, 5]
+  territory_continents:
+      - [0, 1, 2]
+      - [3, 4, 5]
 
 botte_neck:
   territory_count: 10
@@ -41,6 +44,11 @@ botte_neck:
       - [6, 8]
       - [7, 9]
       - [8, 9]
+  territory_continents:
+      - [0, 1, 2, 3]
+      - [4]
+      - [5]
+      - [6, 7, 8, 9]
 
 star:
   territory_count: 19
@@ -89,6 +97,11 @@ star:
       - [13, 15]
       - [13, 16]
       - [13, 17]
+  territory_continents:
+      - [0, 1, 2, 3, 4, 5]
+      - [6, 7, 8, 9, 10, 11, 12]
+      - [13, 14, 15, 16, 17, 18]
+
 ring:
   territory_count: 12
   territory_positions:
@@ -121,6 +134,10 @@ ring:
       - [8, 11]
       - [9, 11]
       - [10, 11]
+  territory_continents:
+      - [0, 1, 2, 4]
+      - [3, 5, 6, 8]
+      - [7, 9, 10, 11]
 
 MOBA:
   territory_count: 17
@@ -175,4 +192,9 @@ MOBA:
       - [13, 14]
       - [14, 15]
       - [15, 16]
-
+  territory_continents:
+      - [0, 1, 5]
+      - [2, 3, 4, 6]
+      - [7, 8, 10]
+      - [9, 12, 13, 14]
+      - [11, 15, 16]

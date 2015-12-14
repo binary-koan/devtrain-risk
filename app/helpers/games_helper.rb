@@ -1,7 +1,7 @@
 require 'yaml'
 
 module GamesHelper
-  PLAYER_COLORS = %w{#4F2EC9 #63242E}
+  PLAYER_COLORS    = %w{#4F2EC9 #63242E}
 
   MAP_YAML_LOCATION = "config/maps.yml"
 
@@ -12,6 +12,10 @@ module GamesHelper
 
   def player_color(players, player)
     PLAYER_COLORS[players.find_index(player)]
+  end
+
+  def continent_color(territories, territory)
+    territories.detect { |t| territory == t }.continent.color
   end
 
   def map_display(turn)
@@ -45,11 +49,20 @@ module GamesHelper
     turn.game_state.territory_links.map do |link|
       content_tag("line", "",
         class: "link",
+        stroke: link_color(link),
         x1: link[0].x,
         y1: link[0].y,
         x2: link[1].x,
         y2: link[1].y
       )
+    end
+  end
+
+  def link_color(link)
+    if link[0].continent == link[1].continent
+      link[0].continent.color
+    else
+      "#666"
     end
   end
 
@@ -63,6 +76,7 @@ module GamesHelper
 
   def territory_node_content(territory, turn)
     color = player_color(turn.game.players, turn.game_state.territory_owner(territory))
+    stroke_color = continent_color(turn.game.territories, territory)
     units = turn.game_state.units_on_territory(territory)
 
     image = content_tag("image", "",
@@ -75,7 +89,7 @@ module GamesHelper
 
     [
       image,
-      content_tag("circle", "", r: TERRITORY_NODE_SIZE, fill: color),
+      content_tag("circle", "", r: TERRITORY_NODE_SIZE, fill: color, stroke: stroke_color),
       content_tag("text", territory.name, "text-anchor" => "middle", "dy" => -3),
       content_tag("text", "#{units} units", "class" => "units-display", "text-anchor" => "middle", "dy" => 12)
     ].join.html_safe
