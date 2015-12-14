@@ -1,6 +1,16 @@
 //= require game-display/animate-diff
 
 jQuery(function($) {
+  let oldGameDisplay;
+
+  function cacheGameDisplay() {
+    oldGameDisplay = $("#game-display").get(0).outerHTML;
+  }
+
+  function restoreGameDisplay() {
+    $("#game-display").replaceWith(oldGameDisplay);
+  }
+
   function displayErrors(errors) {
     let messageSection = $(".messages").html("");
 
@@ -8,9 +18,8 @@ jQuery(function($) {
   }
 
   function showLoadingSpinner(form) {
-    form.find("[type=submit]")
-      .attr("disabled", true)
-      .html("<div class='progress'><div>Loading…</div></div>");
+    form.find("input, select, button").attr("disabled", true);
+    form.find("[type=submit]").html("<div class='progress'><div>Loading…</div></div>");
   }
 
   function hideOthers(selector, exception) {
@@ -21,21 +30,25 @@ jQuery(function($) {
   function updateGameDisplay(data) {
     if (data.errors) {
       displayErrors(data.errors);
+      restoreGameDisplay();
     } else {
-      let oldGameDisplay = $("#game-display").replaceWith(data.content);
-      GameDisplay.animateDiff(oldGameDisplay, $("#game-display"));
+      let previousDisplay = $("#game-display").replaceWith(data.content);
+      GameDisplay.animateDiff(previousDisplay, $("#game-display"));
     }
   }
 
   function submitForm(form) {
+    let data = form.serializeArray();
+
     showLoadingSpinner(form);
     hideOthers("form.new_event", form);
 
-    $.post(form.attr("action"), form.serializeArray(), updateGameDisplay);
+    $.post(form.attr("action"), data, updateGameDisplay);
   }
 
   $(document.body).on("submit", "form.new_event", event => {
     event.preventDefault();
+    cacheGameDisplay();
     submitForm($(event.target));
   });
 });
