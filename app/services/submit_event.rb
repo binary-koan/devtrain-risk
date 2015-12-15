@@ -25,8 +25,7 @@ class SubmitEvent
   private
 
   def service_for_event_type
-    #TODO crashes if !@params[:event]
-    case @params[:event][:event_type]
+    case event_params[:event_type]
     when "attack" then perform_attack
     when "fortify" then perform_fortify
     when "reinforce" then perform_reinforce
@@ -62,5 +61,9 @@ class SubmitEvent
 
   def end_turn
     EndTurn.new(@turn)
+  end
+
+  def event_params
+    @params.require(:event).permit(:event_type)
   end
 end

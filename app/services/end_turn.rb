@@ -8,7 +8,6 @@ class EndTurn
   end
 
   def call
-    #TODO fail if the game is won
     if @turn.can_end_turn?
       start_next_turn!
     else
