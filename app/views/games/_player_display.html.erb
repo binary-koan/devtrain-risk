@@ -1,6 +1,6 @@
-<%#TODO don't display players not in the game %>
 <div class="player-display">
   <% @game.players.each do |player| %>
+    <% next if !@turn.game_state.in_game?(player) %>
     <div class="<%= "current" if @turn.player == player %>">
       <span class="player-icon"
         style="background-color: <%= player_color(@game.players, player) %>"></span>
