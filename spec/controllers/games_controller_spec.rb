@@ -52,4 +52,16 @@ RSpec.describe GamesController, type: :controller do
       expect(response).to render_template :show
     end
   end
+
+  describe "#state" do
+    before { get :state, id: games(:game).id }
+
+    it "is successful" do
+      expect(response).to have_http_status :success
+    end
+
+    it "renders the 'show' template" do
+      expect(JSON.parse(response.body)).to be_a Hash
+    end
+  end
 end
