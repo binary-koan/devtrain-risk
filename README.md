@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/binary-koan/devtrain-risk.png?label=ready&title=Ready)](https://waffle.io/binary-koan/devtrain-risk)
 # Intergalactic Risk
 
 <a href="https://travis-ci.org/binary-koan/devtrain-risk">
