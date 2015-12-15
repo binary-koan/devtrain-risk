@@ -17,7 +17,7 @@ RSpec.describe CreateGame do
     end
 
     it "creates players for the game" do
-      expect(game.players.size).to eq 2
+      expect(game.players.size).to eq 3
     end
 
     it "assigns names to the players" do
@@ -27,7 +27,7 @@ RSpec.describe CreateGame do
 
     it "has errors with an invalid map name" do
       expect(CreateMap).to receive(:new).and_return create_map
-      expect(create_map).to receive(:call).and_return []
+      expect(create_map).to receive(:call).and_return false
       expect(create_map).to receive(:errors).and_return [:not_valid_map_name]
       service.call
     end

@@ -1,26 +1,23 @@
 class CreateGame
-  class Error < StandardError; end
+  MIN_PLAYERS = 3
+  MAX_PLAYERS = 6
 
   DEFAULT_MAP_NAME = "default"
   INITIAL_UNITS = 5
 
   attr_reader :errors
 
-  def initialize(map_name: DEFAULT_MAP_NAME, player_count: 2)
+  def initialize(map_name: DEFAULT_MAP_NAME, player_count: MIN_PLAYERS)
     @map_name     = map_name
     @player_count = player_count
     @errors       = []
   end
 
   def call
-    #TODO validate player count
-
-    ActiveRecord::Base.transaction do
+    if !(MIN_PLAYERS..MAX_PLAYERS).include?(@player_count)
+      errors << :incorrect_player_count
+    else
       create_game!
-      create_map!
-      create_players!
-      assign_players_to_territories!
-      start_game!
     end
 
     @game
@@ -28,18 +25,27 @@ class CreateGame
 
   private
 
+  def invalid_map?(name)
+
+  end
+
   def create_game!
-    @game = Game.create!
+    ActiveRecord::Base.transaction do
+      @game = Game.create!
+
+      create_map!
+      create_players!
+      assign_players_to_territories!
+      start_game!
+    end
   end
 
   def create_map!
     service = CreateMap.new(game: @game, map_name: @map_name)
-    result = service.call
 
-    if result.empty?
-      @errors += service.errors
-    else
-      result
+    unless service.call
+      errors.concat(service.errors)
+      raise ActiveRecord::Rollback
     end
   end
 

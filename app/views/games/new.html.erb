@@ -1,7 +1,7 @@
 <h1>Game</h1>
 
 <%= form_for(Game.new) do |f| %>
-  <%= number_field_tag :player_count %>
+  <%= number_field_tag :player_count, "", min: CreateGame::MIN_PLAYERS, max: CreateGame::MAX_PLAYERS %>
   <%= select_tag :map_name, options_for_select(available_maps) %>
   <%= f.submit "Create game" %>
 <% end %>
