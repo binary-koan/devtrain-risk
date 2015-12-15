@@ -1,7 +1,14 @@
 player1:
+  id: 1
   game: game
   name: "Player 1"
 
 player2:
+  id: 2
   game: game
   name: "Player 2"
+
+player3:
+  id: 3
+  game: game
+  name: "Player 3"
