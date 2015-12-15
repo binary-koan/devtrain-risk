@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe GamesHelper, type: :helper do
-  fixtures :games, :players, :territories, :territory_links
+  fixtures :games, :players, :territories, :territory_links, :continents
 
   describe "#player_color" do
     it "should return a different colour for player 1 and 2" do
