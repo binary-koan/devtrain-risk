@@ -17,7 +17,8 @@ RSpec.describe PerformFortify do
     create(
       :reinforce_event,
       player: player,
-      territory: territories(:territory_top_left)
+      territory: territories(:territory_top_left),
+      units: 4
     )
   end
 
@@ -95,7 +96,7 @@ RSpec.describe PerformFortify do
       let(:territory_to) { territories(:territory_top_right) }
 
       it "returns a fortifying_too_many_units error" do
-        kill_on_territory(territory_from, player, 7)
+        kill_on_territory(territory_from, player, 8)
         expect(service.call).to be false
         expect(service.errors).to contain_exactly :fortifying_too_many_units
       end
@@ -115,7 +116,7 @@ RSpec.describe PerformFortify do
     context "fortifying all the units on a territory" do
       let(:territory_from) { territories(:territory_top_left) }
       let(:territory_to) { territories(:territory_top_right) }
-      let(:fortifying_units) { 8 }
+      let(:fortifying_units) { 9 }
 
       it "returns a fortifying_too_many_units error" do
         expect(service.call).to be false

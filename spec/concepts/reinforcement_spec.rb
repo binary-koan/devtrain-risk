@@ -1,8 +1,9 @@
 require "rails_helper"
 
 RSpec.describe Reinforcement do
-  fixtures :territories
+  fixtures :territories, :games
 
+  let(:game) { instance_double(Game) }
   let(:game_state) { instance_double(GameState) }
   let(:player) { instance_double(Player) }
 
@@ -14,6 +15,9 @@ RSpec.describe Reinforcement do
 
   before do
     expect(game_state).to receive(:owned_territories).with(player).and_return(owned_territories)
+    allow(game_state).to receive(:game).and_return game
+    expect(game).to receive(:continents).and_return []
+    expect(game).to receive(:territories).and_return []
   end
 
   describe "#remaining_units" do

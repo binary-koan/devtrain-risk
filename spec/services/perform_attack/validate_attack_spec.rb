@@ -31,7 +31,8 @@ RSpec.describe PerformAttack::ValidateAttack do
     create(
       :reinforce_event,
       player: players(:player1),
-      territory: territories(:territory_top_left)
+      territory: territories(:territory_top_left),
+      units: 4
     )
   end
 
@@ -93,7 +94,7 @@ RSpec.describe PerformAttack::ValidateAttack do
         let(:territory_to) { territories(:territory_bottom_left) }
 
         before do
-          kill_on_territory(territory_from, players(:player1), 7)
+          kill_on_territory(territory_from, players(:player1), 8)
         end
 
         it "returns a cannot attack with one unit error" do

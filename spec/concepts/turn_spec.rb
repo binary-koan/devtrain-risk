@@ -1,8 +1,8 @@
 require "rails_helper"
 
 RSpec.describe Turn do
-  def create_complete_reinforcement
-    create(:reinforce_event, player: player, territory: territories(:territory_top_left))
+  def create_specific_reinforcement(units)
+    create(:reinforce_event, player: player, territory: territories(:territory_top_left), units: units)
   end
 
   def create_incomplete_reinforcement
@@ -51,7 +51,9 @@ RSpec.describe Turn do
     end
 
     context "when a complete reinforcement has already been made" do
-      before { create_complete_reinforcement }
+      let(:reinforcement_units) { 4 }
+
+      before { create_specific_reinforcement(reinforcement_units) }
 
       it { is_expected.to eq false }
     end
@@ -77,7 +79,9 @@ RSpec.describe Turn do
     end
 
     context "when a complete reinforcement has been made" do
-      before { create_complete_reinforcement }
+      let(:reinforcement_units) { 4 }
+
+      before { create_specific_reinforcement(reinforcement_units) }
 
       it { is_expected.to eq true }
     end
@@ -109,7 +113,9 @@ RSpec.describe Turn do
     end
 
     context "when a complete reinforcement has been made" do
-      before { create_complete_reinforcement }
+      let(:reinforcement_units) { 4 }
+
+      before { create_specific_reinforcement(reinforcement_units) }
 
       it { is_expected.to eq true }
 
@@ -135,7 +141,9 @@ RSpec.describe Turn do
     end
 
     context "when a complete reinforcement has been made" do
-      before { create_complete_reinforcement }
+      let(:reinforcement_units) { 4 }
+
+      before { create_specific_reinforcement(reinforcement_units) }
 
       it { is_expected.to eq true }
     end
@@ -164,7 +172,8 @@ RSpec.describe Turn do
     end
 
     context "when a complete reinforcement has been made" do
-      before { create_complete_reinforcement }
+      let(:reinforcement_units) { 4 }
+      before { create_specific_reinforcement(reinforcement_units) }
 
       it "allows attack, fortify and end turn events" do
         expect(allowed_events).to be_one { |e| e.event_type == "attack" }
@@ -243,7 +252,7 @@ RSpec.describe Turn do
     end
 
     context "when the game is won" do
-      let(:game_state) { instance_double(GameState, owned_territories: [], won?: true) }
+      let(:game_state) { instance_double(GameState, owned_territories: [], won?: true, game: game, territory_owner: player) }
 
       before do
         expect(GameState).to receive(:new).and_return(game_state)
@@ -256,7 +265,7 @@ RSpec.describe Turn do
   end
 
   describe "#game_state" do
-    let(:game_state) { instance_double(GameState, owned_territories: [], won?: false) }
+    let(:game_state) { GameState.new(game, events) }
 
     context "with a single turn" do
       let(:events) do
