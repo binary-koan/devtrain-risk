@@ -111,5 +111,14 @@ RSpec.describe PerformReinforce do
         expect(service.errors).to contain_exactly :cannot_reinforce
       end
     end
+
+    context "when trying to reinforce with too few units" do
+      let(:units_to_reinforce) { 0 }
+
+      it "fails with an error" do
+        expect(service.call).to eq false
+        expect(service.errors).to contain_exactly :too_few_reinforcing_units
+      end
+    end
   end
 end

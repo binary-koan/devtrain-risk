@@ -10,10 +10,10 @@ RSpec.describe Turn do
   end
 
   def create_attack(
-      territory_from = territories(:territory_top_right),
-      territory = territories(:territory_top_left),
-      units = 2)
-    create(:attack_event, player: player, territory_from: territory_from, territory: territory, units: units)
+      territory_from: territories(:territory_top_right),
+      territory_to: territories(:territory_top_left),
+      units: 2)
+    create(:attack_event, player: player, territory_from: territory_from, territory: territory_to, units: units)
   end
 
   def create_fortification
@@ -126,14 +126,27 @@ RSpec.describe Turn do
         it { is_expected.to eq false }
       end
 
+      #TODO what do these mean/test?
       context "with an invalid attempt to reinforce after a takeover" do
-        before { create_attack(territories(:territory_top_right), territories(:territory_bottom_left), 5) }
+        before do
+          create_attack(
+            territory_from: territories(:territory_top_right),
+            territory_to: territories(:territory_bottom_left),
+            units: 5
+          )
+        end
 
         it { is_expected.to eq false }
       end
 
       context "with a valid attempt to reinforce after a takeover" do
-        before { create_attack(territories(:territory_top_left), territories(:territory_top_right), 8) }
+        before do
+          create_attack(
+            territory_from: territories(:territory_top_left),
+            territory_to: territories(:territory_top_right),
+            units: 8
+          )
+        end
 
         it { is_expected.to eq true }
       end
@@ -166,8 +179,78 @@ RSpec.describe Turn do
     end
   end
 
-  describe "#allowed_actions" do
-    pending "TODO"
+  describe "#allowed_events" do
+    subject(:allowed_events) { turn.allowed_events }
+
+    context "when a turn has just been started" do
+      it "only allows a reinforce event" do
+        expect(allowed_events.size).to eq 1
+        expect(allowed_events.first.event_type).to eq "reinforce"
+      end
+    end
+
+    context "when a complete reinforcement has been made" do
+      before { create_complete_reinforcement }
+
+      it "allows attack, fortify and end turn events" do
+        expect(allowed_events).to be_one { |e| e.event_type == "attack" }
+        expect(allowed_events).to be_one { |e| e.event_type == "fortify" }
+        expect(allowed_events).to be_one { |e| e.event_type == "start_turn" }
+      end
+    end
+
+    context "when an attack has been made" do
+      before { create_attack }
+
+      it "allows attack, fortify and end turn events" do
+        expect(allowed_events).to be_one { |e| e.event_type == "attack" }
+        expect(allowed_events).to be_one { |e| e.event_type == "fortify" }
+        expect(allowed_events).to be_one { |e| e.event_type == "start_turn" }
+      end
+    end
+
+    context "when a fortify move has been made" do
+      before { create_fortification }
+
+      it "only allows an end turn event" do
+        expect(allowed_events.size).to eq 1
+        expect(allowed_events.first.event_type).to eq "start_turn"
+      end
+    end
+
+    context "when a fortify move has been made after an attack" do
+      before do
+        create_attack
+        create_fortification
+      end
+
+      it "allows attack, fortify and end turn events" do
+        expect(allowed_events).to be_one { |e| e.event_type == "attack" }
+        expect(allowed_events).to be_one { |e| e.event_type == "fortify" }
+        expect(allowed_events).to be_one { |e| e.event_type == "start_turn" }
+      end
+    end
+
+    context "when a territory has been taken over" do
+      before do
+        create_attack(
+          territory_from: territories(:territory_top_left),
+          territory_to: territories(:territory_top_right),
+          units: 5
+        )
+      end
+
+      it "only allows a fortify event" do
+        expect(allowed_events.size).to eq 1
+        expect(allowed_events.first.event_type).to eq "fortify"
+      end
+
+      it "requires the event to be from and to the right territory" do
+        action = allowed_events.first.action
+        expect(action.territory_from).to eq territories(:territory_top_left)
+        expect(action.territory_to).to eq territories(:territory_top_right)
+      end
+    end
   end
 
   describe "#game_state" do
