@@ -8,6 +8,7 @@ class EndTurn
   end
 
   def call
+    #TODO fail if the game is won
     if @turn.can_end_turn?
       start_next_turn!
     else
@@ -21,11 +22,19 @@ class EndTurn
 
   def start_next_turn!
     next_player = @game.players[next_player_index]
+
+    until @turn.game_state.in_game?(next_player)
+      next_player = @game.players[next_player_index]
+    end
+
     next_player.events.start_turn.create!
   end
 
   def next_player_index
-    (current_player_index + 1) % @game.players.size
+    @next_player_index ||= current_player_index
+    @next_player_index += 1
+
+    @next_player_index % @game.players.size
   end
 
   def current_player_index

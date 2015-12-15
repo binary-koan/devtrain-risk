@@ -1,3 +1,4 @@
+<%#TODO don't display players not in the game %>
 <div class="player-display">
   <% @game.players.each do |player| %>
     <div class="<%= "current" if @turn.player == player %>">
