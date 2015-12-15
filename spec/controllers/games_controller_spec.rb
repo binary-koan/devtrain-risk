@@ -17,8 +17,6 @@ RSpec.describe GamesController, type: :controller do
   end
 
   describe "#create" do
-    #TODO test with different player counts (incl. too low and too high)
-
     context "with a valid map name" do
       before { post :create, map_name: "default", player_count: 3 }
 
@@ -29,16 +27,38 @@ RSpec.describe GamesController, type: :controller do
 
     context "with an invalid map name" do
       before do
-        @request.env['HTTP_REFERER'] = 'https://test.host/games/new'
+        request.env['HTTP_REFERER'] = 'https://test.host/games/new'
         post :create, map_name: "bad_map", player_count: 3
       end
 
-      it "adds adds the errors to the flash" do
+      it "adds an error to the flash" do
         expect(flash.alert).to eq [:not_valid_map_name]
       end
 
       it "redirects back to the new page" do
         expect(response).to redirect_to :back
+      end
+    end
+
+    context "with too few players" do
+      before do
+        request.env['HTTP_REFERER'] = 'https://test.host/games/new'
+        post :create, map_name: "default", player_count: 2
+      end
+
+      it "adds an error to the flash" do
+        expect(flash.alert).to eq [:incorrect_player_count]
+      end
+    end
+
+    context "with too many players" do
+      before do
+        request.env['HTTP_REFERER'] = 'https://test.host/games/new'
+        post :create, map_name: "default", player_count: 7
+      end
+
+      it "adds an error to the flash" do
+        expect(flash.alert).to eq [:incorrect_player_count]
       end
     end
   end
