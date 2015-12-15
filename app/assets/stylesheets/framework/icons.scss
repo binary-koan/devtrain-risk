@@ -2,6 +2,7 @@
   display: inline-block;
   width: $font-size-base * 1.5;
   height: $font-size-base * 1.5;
+  fill: $icon-color-base;
 
   svg {
     width: $font-size-base * 1.5;
@@ -10,11 +11,11 @@
 }
 
 .icon.attack, .icon.explosion-small, .icon.explosion-large {
-  fill: #de2c37;
+  fill: $icon-color-red;
 }
 
 .icon.fortify, .icon.fortify-away, .icon.reinforce {
-  fill: #2e7be8;
+  fill: $icon-color-blue;
 }
 
 .icon.fortify-away {
