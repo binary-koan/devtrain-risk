@@ -76,9 +76,9 @@ module GamesHelper
 
   def territory_nodes(turn)
     turn.game.territories.map do |territory|
-      children = territory_node_content(territory, turn)
+      content = content_tag("g", territory_node_content(territory, turn), class: "node")
 
-      content_tag("g", children, class: "node", transform: translate(territory.x, territory.y))
+      content_tag("g", content, transform: translate(territory.x, territory.y))
     end
   end
 
