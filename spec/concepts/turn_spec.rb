@@ -251,10 +251,22 @@ RSpec.describe Turn do
         expect(action.territory_to).to eq territories(:territory_top_right)
       end
     end
+
+    context "when the game is won" do
+      let(:game_state) { instance_double(GameState, owned_territories: [], won?: true) }
+
+      before do
+        expect(GameState).to receive(:new).and_return(game_state)
+      end
+
+      it "does not allow any events" do
+        expect(allowed_events).to be_empty
+      end
+    end
   end
 
   describe "#game_state" do
-    let(:game_state) { instance_double(GameState, owned_territories: []) }
+    let(:game_state) { instance_double(GameState, owned_territories: [], won?: false) }
 
     context "with a single turn" do
       let(:events) do

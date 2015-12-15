@@ -4,6 +4,7 @@ class Turn
   PHASE_REINFORCING = :reinforcing
   PHASE_ATTACKING   = :attacking
   PHASE_ENDING      = :ending
+  PHASE_FINISHED    = :finished
 
   def initialize(events_in_turn, previous_turn = nil)
     @events_in_turn = events_in_turn
@@ -16,6 +17,10 @@ class Turn
     @events_in_turn.inject(nil) do |previous_event, event|
       apply_event(event, previous_event)
       event
+    end
+
+    if game_state.won?
+      @phase = PHASE_FINISHED
     end
   end
 
@@ -58,6 +63,7 @@ class Turn
     allowed_attack_event.present?
   end
 
+  #TODO eww
   def can_fortify?(territory_from, territory_to)
     fortify_event = allowed_fortify_event
 
@@ -86,7 +92,7 @@ class Turn
   end
 
   def allowed_end_turn_event
-    return if @phase == PHASE_REINFORCING || territory_taken?
+    return unless (@phase == PHASE_ATTACKING || @phase == PHASE_ENDING) && !territory_taken?
 
     player.events.start_turn.new
   end
