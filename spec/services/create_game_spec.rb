@@ -1,7 +1,6 @@
 require "rails_helper"
 
 RSpec.describe CreateGame do
-  #TODO test with different numbers of players
   describe "#call" do
     let(:map_name) { "default" }
     let(:create_map) { instance_double(CreateMap) }

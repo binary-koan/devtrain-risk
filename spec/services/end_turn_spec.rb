@@ -3,8 +3,6 @@ require "rails_helper"
 RSpec.describe EndTurn do
   fixtures :games, :players
 
-  #TODO test skipping "out" players
-
   context "#call" do
     let(:game) { games(:game) }
     let(:game_state) { instance_double(GameState, in_game?: true) }
