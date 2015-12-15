@@ -32,17 +32,17 @@ class CreateMap
       end
     end
 
-    @game.territories
+    errors.empty?
+  end
+
+  def valid_map?
+    @yaml.key?(@name)
   end
 
   private
 
   def load_yaml
     @yaml   = YAML.load_file(MAP_YAML_LOCATION)
-  end
-
-  def valid_map?
-    @yaml.key?(@name)
   end
 
   def load_map

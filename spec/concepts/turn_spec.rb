@@ -16,12 +16,11 @@ RSpec.describe Turn do
     create(:attack_event, player: player, territory_from: territory_from, territory: territory_to, units: units)
   end
 
-  def create_fortification
-    create(:fortify_event,
-      player: player,
+  def create_fortification(
       territory_from: territories(:territory_top_right),
-      territory_to: territories(:territory_top_left)
-    )
+      territory_to: territories(:territory_top_left),
+      units: 2)
+    create(:fortify_event, player: player, territory_from: territory_from, territory_to: territory_to, units: units)
   end
 
   fixtures :games, :players, :territories, :events, :"action/adds"
@@ -125,31 +124,6 @@ RSpec.describe Turn do
 
         it { is_expected.to eq false }
       end
-
-      #TODO what do these mean/test?
-      context "with an invalid attempt to reinforce after a takeover" do
-        before do
-          create_attack(
-            territory_from: territories(:territory_top_right),
-            territory_to: territories(:territory_bottom_left),
-            units: 5
-          )
-        end
-
-        it { is_expected.to eq false }
-      end
-
-      context "with a valid attempt to reinforce after a takeover" do
-        before do
-          create_attack(
-            territory_from: territories(:territory_top_left),
-            territory_to: territories(:territory_top_right),
-            units: 8
-          )
-        end
-
-        it { is_expected.to eq true }
-      end
     end
   end
 
@@ -250,11 +224,39 @@ RSpec.describe Turn do
         expect(action.territory_from).to eq territories(:territory_top_left)
         expect(action.territory_to).to eq territories(:territory_top_right)
       end
+
+      context "and a correct fortify move has been made" do
+        before do
+          create_fortification(
+            territory_from: territories(:territory_top_left),
+            territory_to: territories(:territory_top_right),
+            units: 2
+          )
+        end
+
+        it "allows attack, fortify and end turn events" do
+          expect(allowed_events).to be_one { |e| e.event_type == "attack" }
+          expect(allowed_events).to be_one { |e| e.event_type == "fortify" }
+          expect(allowed_events).to be_one { |e| e.event_type == "start_turn" }
+        end
+      end
+    end
+
+    context "when the game is won" do
+      let(:game_state) { instance_double(GameState, owned_territories: [], won?: true) }
+
+      before do
+        expect(GameState).to receive(:new).and_return(game_state)
+      end
+
+      it "does not allow any events" do
+        expect(allowed_events).to be_empty
+      end
     end
   end
 
   describe "#game_state" do
-    let(:game_state) { instance_double(GameState, owned_territories: []) }
+    let(:game_state) { instance_double(GameState, owned_territories: [], won?: false) }
 
     context "with a single turn" do
       let(:events) do

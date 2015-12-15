@@ -9,14 +9,14 @@ RSpec.describe SubmitEvent do
     let(:units) { nil }
 
     let(:params) do
-      {
+      ActionController::Parameters.new(
         from: from_territory.name,
         to: to_territory.name,
         units: units,
         event: {
           event_type: event_type
         }
-      }
+      )
     end
 
     let(:game) { games(:game) }
@@ -24,6 +24,19 @@ RSpec.describe SubmitEvent do
     let(:game_state) { turn.game_state }
 
     subject(:service) { SubmitEvent.new(game, params) }
+
+    context "with incorrect parameters" do
+      let(:params) do
+        ActionController::Parameters.new(
+          from: "unknown",
+          to_territory: "unknown"
+        )
+      end
+
+      it "raises an ActionController exception" do
+        expect { service.call }.to raise_error ActionController::ParameterMissing
+      end
+    end
 
     context "when the game is already won" do
       let(:event_type) { "fortify" }

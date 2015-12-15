@@ -18,6 +18,10 @@ class GameState
     game.players.detect { |player| owned_territories(player).size == territory_info.size }
   end
 
+  def in_game?(player)
+    owned_territories(player).size > 0
+  end
+
   def owned_territories(player)
     territory_info.select { |territory, info| info.owner == player }.map(&:first)
   end
