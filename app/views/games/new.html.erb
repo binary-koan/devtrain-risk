@@ -1,7 +1,15 @@
-<h1>Game</h1>
+<h1>Intergalactic Risk</h1>
 
 <%= form_for(Game.new) do |f| %>
-  <%= number_field_tag :player_count, "", min: CreateGame::MIN_PLAYERS, max: CreateGame::MAX_PLAYERS %>
-  <%= select_tag :map_name, options_for_select(available_maps) %>
-  <%= f.submit "Create game" %>
+  <p>
+    Players:
+    <%= number_field_tag :player_count, "", min: CreateGame::MIN_PLAYERS, max: CreateGame::MAX_PLAYERS %>
+  </p>
+  <p>
+    Map:
+    <%= select_tag :map_name, options_for_select(available_maps) %>
+  </p>
+  <p>
+    <%= f.submit "Create game" %>
+  </p>
 <% end %>
