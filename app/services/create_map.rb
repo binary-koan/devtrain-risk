@@ -42,7 +42,7 @@ class CreateMap
   private
 
   def load_yaml
-    @yaml   = YAML.load_file(MAP_YAML_LOCATION)
+    @yaml = YAML.load_file(MAP_YAML_LOCATION)
   end
 
   def load_map
@@ -64,11 +64,13 @@ class CreateMap
   end
 
   def create_territories!
+    names = generate_names
+
     @territory_count.times do |i|
       @territories << Territory.new(
         x: @territory_positions[i][0],
         y: @territory_positions[i][1],
-        name: GenerateName.new.call
+        name: names[i]
       )
     end
   end
@@ -92,6 +94,15 @@ class CreateMap
       territory = @territories[t]
       territory.continent = continent
       @territories[t] = territory
+    end
+  end
+
+  def generate_names
+    @territory_count.times.inject([]) do |names|
+      name = GenerateName.new.call
+      name = GenerateName.new.call while names.include?(name)
+
+      names << name
     end
   end
 
