@@ -1,6 +1,7 @@
 require "rails_helper"
 
 RSpec.describe CreateGame do
+  #TODO test with different numbers of players
   describe "#call" do
     let(:map_name) { "default" }
     let(:create_map) { instance_double(CreateMap) }
@@ -9,9 +10,6 @@ RSpec.describe CreateGame do
 
     subject(:game) { service.call }
     let(:game_state) { GameState.new(game, game.events) }
-
-    before do
-    end
 
     it "returns a saved game instance" do
       expect(game).to be_a Game

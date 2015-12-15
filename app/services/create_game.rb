@@ -6,12 +6,15 @@ class CreateGame
 
   attr_reader :errors
 
-  def initialize(map_name: nil)
-    @map_name = map_name || DEFAULT_MAP_NAME
-    @errors   = []
+  def initialize(map_name: DEFAULT_MAP_NAME, player_count: 2)
+    @map_name     = map_name
+    @player_count = player_count
+    @errors       = []
   end
 
   def call
+    #TODO validate player count
+
     ActiveRecord::Base.transaction do
       create_game!
       create_map!
@@ -41,7 +44,9 @@ class CreateGame
   end
 
   def create_players!
-    @players = [@game.players.create!(name: "Player 1"), @game.players.create!(name: "Player 2")]
+    @players = @player_count.times.map do |i|
+      @game.players.create!(name: "Player #{i + 1}")
+    end
   end
 
   def assign_players_to_territories!

@@ -5,7 +5,7 @@ class GamesController < ApplicationController
   end
 
   def create
-    service = CreateGame.new(map_name: map_name)
+    service = CreateGame.new(map_name: map_name, player_count: player_count)
     game = service.call
 
     if game.present? && service.errors.empty?
@@ -29,6 +29,10 @@ class GamesController < ApplicationController
 
   def map_name
     params.require(:map_name)
+  end
+
+  def player_count
+    params.require(:player_count).to_i
   end
 
   def assign_game

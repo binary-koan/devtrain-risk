@@ -17,8 +17,10 @@ RSpec.describe GamesController, type: :controller do
   end
 
   describe "#create" do
+    #TODO test with different player counts
+    
     context "with a valid map name" do
-      before { post :create, map_name: "default" }
+      before { post :create, map_name: "default", player_count: 2 }
 
       it "redirects to the game" do
         expect(response).to redirect_to game_path(Game.last)
@@ -28,7 +30,7 @@ RSpec.describe GamesController, type: :controller do
     context "with an invalid map name" do
       before do
         @request.env['HTTP_REFERER'] = 'https://test.host/games/new'
-        post :create, map_name: "bad_map"
+        post :create, map_name: "bad_map", player_count: 2
       end
 
       it "adds adds the errors to the flash" do

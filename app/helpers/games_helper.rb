@@ -1,7 +1,7 @@
 require 'yaml'
 
 module GamesHelper
-  PLAYER_COLORS    = %w{#4F2EC9 #63242E}
+  PLAYER_COLORS    = %w{#4F2EC9 #63242E #246330 #966328 #0D5241 #482917}
 
   DEFAULT_TERRITORY_LINK_COLOR = "#666"
 
