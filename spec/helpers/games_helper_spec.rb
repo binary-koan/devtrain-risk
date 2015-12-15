@@ -1,10 +1,31 @@
 require "rails_helper"
 
 RSpec.describe GamesHelper, type: :helper do
-  fixtures :games, :players, :territories, :territory_links, :continents
+  fixtures :all
+
+  describe "#owned_territory_names" do
+    let(:turn) { BuildTurn.new(games(:game).events).call }
+
+    it "returns the names of the territories the player owns" do
+      expect(owned_territory_names(turn)).to eq ["Jupiter", "Mars"]
+    end
+  end
+
+  describe "#enemy_territory_names" do
+    let(:turn) { BuildTurn.new(games(:game).events).call }
+
+    it "returns the names of the territories the player does not own" do
+      expect(enemy_territory_names(turn)).to eq ["Mercury", "Saturn"]
+    end
+
+    it "is the complement of owned_territory_names" do
+      territories = owned_territory_names(turn) + enemy_territory_names(turn)
+      expect(games(:game).territories.pluck(:name)).to contain_exactly(*territories)
+    end
+  end
 
   describe "#player_color" do
-    it "should return a different colour for player 1 and 2" do
+    it "returns a different colour for player 1 and 2" do
       player1_color = player_color(games(:game).players, players(:player1))
       player2_color = player_color(games(:game).players, players(:player2))
       expect(player1_color).not_to eq player2_color

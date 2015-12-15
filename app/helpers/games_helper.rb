@@ -14,6 +14,14 @@ module GamesHelper
     PLAYER_COLORS[players.find_index(player)]
   end
 
+  def owned_territory_names(turn)
+    turn.game_state.owned_territories(turn.player).map(&:name).sort
+  end
+
+  def enemy_territory_names(turn)
+    (turn.game.territories.pluck(:name) - owned_territory_names(turn)).sort
+  end
+
   def continent_color(territories, territory)
     territories.detect { |t| territory == t }.continent.color
   end

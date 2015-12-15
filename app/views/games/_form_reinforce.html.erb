@@ -1,11 +1,9 @@
-<% owned_territories = @turn.game_state.owned_territories(@turn.player).map(&:name) %>
-
 <p><%= event.action.units %> reinforcements available.</p>
 
 <%= form_for [@game, event], html: { autocomplete: "off" } do |f| %>
   <%= f.hidden_field :event_type %>
   Place <%= number_field_tag :units, "" %> units
-  on <%= select_tag :to, options_for_select(owned_territories) %>
+  on <%= select_tag :to, options_for_select(owned_territory_names(@turn)) %>
   <%= button_tag type: "submit", class: "icon-button" do %>
     <%= icon("reinforce") %> Reinforce
   <% end %>

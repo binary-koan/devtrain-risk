@@ -1,10 +1,8 @@
-<% owned_territories = @turn.game_state.owned_territories(@turn.player).map(&:name) %>
-
 <%= form_for [@game, event], html: { autocomplete: "off" } do |f| %>
   <%= f.hidden_field :event_type %>
   Attack with <%= number_field_tag :units, "" %> units
-  from <%= select_tag :from, options_for_select(owned_territories) %>
-  to <%= select_tag :to, options_for_select(@game.territories.pluck(:name) - owned_territories) %>
+  from <%= select_tag :from, options_for_select(owned_territory_names(@turn)) %>
+  to <%= select_tag :to, options_for_select(enemy_territory_names(@turn)) %>
   <%= button_tag type: "submit", class: "icon-button" do %>
     <%= icon("attack") %> Attack
   <% end %>
