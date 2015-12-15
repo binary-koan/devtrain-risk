@@ -48,7 +48,7 @@ RSpec.describe CreateGame do
 
     it "adds units to territories" do
       game.territories.each do |territory|
-        expect(game_state.units_on_territory(territory)).to eq 10
+        expect(game_state.units_on_territory(territory)).to eq 5
       end
     end
 

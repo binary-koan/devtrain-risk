@@ -2,7 +2,7 @@ class CreateGame
   class Error < StandardError; end
 
   DEFAULT_MAP_NAME = "default"
-  INITIAL_UNITS = 10
+  INITIAL_UNITS = 5
 
   attr_reader :errors
 
