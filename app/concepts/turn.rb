@@ -64,7 +64,6 @@ class Turn
     if !fortify_event.present?
       false
     elsif fortify_event.action
-      #TODO eww
       fortify_event.action.territory_from == territory_from &&
         fortify_event.action.territory_to == territory_to
     else

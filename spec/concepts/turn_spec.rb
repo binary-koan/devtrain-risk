@@ -166,6 +166,10 @@ RSpec.describe Turn do
     end
   end
 
+  describe "#allowed_actions" do
+    pending "TODO"
+  end
+
   describe "#game_state" do
     let(:game_state) { instance_double(GameState, owned_territories: []) }
 
