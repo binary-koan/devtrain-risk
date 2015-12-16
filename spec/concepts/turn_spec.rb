@@ -23,7 +23,7 @@ RSpec.describe Turn do
     create(:fortify_event, player: player, territory_from: territory_from, territory_to: territory_to, units: units)
   end
 
-  fixtures :games, :players, :territories, :events, :"action/adds"
+  fixtures :games, :players, :territories, :continents, :events, :"action/adds"
 
   let(:game) { games(:game) }
   let(:player) { players(:player1) }
