@@ -18,11 +18,15 @@ class GamesController < ApplicationController
 
   def show
     @turn = BuildTurn.new(@game.events).call
-  end
+    @active_players = @game.players.select { |player| @turn.game_state.in_game?(player) }
 
-  def state
-    @turn = BuildTurn.new(@game.events).call
-    render json: { content: render_to_string(partial: "games/game_display", formats: [:html]) }
+    respond_to do |format|
+      format.html
+
+      format.json do
+        render json: { content: render_to_string(partial: "games/game_display", formats: [:html]) }
+      end
+    end
   end
 
   private
