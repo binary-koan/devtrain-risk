@@ -6,7 +6,7 @@ jQuery(function($) {
   function displayErrors(errors) {
     let messageSection = $(".messages").html("");
 
-    errors.forEach(error => $("<div>").text(error).appendTo(messageSection));
+    errors.forEach(error => $("<div class='error message'>").text(error).appendTo(messageSection));
   }
 
   function updateGameDisplay(data) {

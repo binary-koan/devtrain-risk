@@ -12,7 +12,7 @@
     <div class="messages">
       <% if flash.alert %>
         <% flash.alert.each do |error| %>
-          <div class="error"><%= t(error) %></div>
+          <div class="error message"><%= t(error) %></div>
         <% end %>
       <% end %>
     </div>

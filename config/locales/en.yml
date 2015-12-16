@@ -22,26 +22,26 @@
 en:
   # General Messages
   unknown_event_type: "That's not a valid event type"
-  no_link: "There is no link between the two territories."
-  wrong_player: "It is not currently this players turn."
-  wrong_phase: "You cannot perform this action right now."
+  no_link: "There's no link between those territories."
+  wrong_player: "It's not your turn."
+  wrong_phase: "You can't do this right now."
 
   # Attack Messages
-  own_territory: "You cannot attack your own territory."
-  too_few_available_attackers: "You cannot attack with only one unit."
+  own_territory: "You can't attack your own territory."
+  too_few_available_attackers: "You can't attack with only one unit."
   too_many_units: "You must leave one unit on the attacking territory."
   too_few_units: "You must attack with at least one unit."
 
   # Fortify Messages
-  same_territory: "You cannot fortify to the same territory."
-  fortifying_enemy_territory: "You cannot fortify an enemy territory."
+  same_territory: "You can't fortify to the same territory."
+  fortifying_enemy_territory: "You can't fortify an enemy territory."
   not_enough_fortifying_units: "You must fortify at least one unit"
-  fortifying_too_many_units: "You have insufficient units to perform the fortify."
+  fortifying_too_many_units: "You don't have enough units."
 
   # Reinforce Messages
-  reinforcing_enemy_territory: "You cannot reinforce an enemies territory."
-  cannot_reinforce: "Cannot perform the reinforcement."
-  too_few_reinforcing_units: "You must reinforce with more than 0 units"
+  reinforcing_enemy_territory: "You cannot reinforce an enemy territory."
+  cannot_reinforce: "You can't do that reinforcement."
+  too_few_reinforcing_units: "You can't reinforce zero units."
 
   # Create Map Messages
   not_valid_map_name: "You did not select a valid map name."

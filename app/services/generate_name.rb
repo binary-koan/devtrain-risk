@@ -10,7 +10,7 @@ class GenerateName
   VOWELS = %w{a i u e o a i u ei ou ai oi}
   STARTING_CONSONANTS = %w{k s sh t ch n h f m y r w}
   CONTINUING_CONSONANTS = %w{ssh cch nn rr}
-  ENDING_CONSONANTS = %w{n m t k}
+  ENDING_CONSONANTS = %w{n m t k l r}
 
   THREE_CONSECUTIVE_VOWELS = /[aeiou]{3,}/i
   TWO_PAIRED_LETTERS = /.*(.)\1.*(.)\2/

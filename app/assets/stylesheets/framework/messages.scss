@@ -1,0 +1,11 @@
+.message {
+  display: table;
+  margin: 0 auto;
+  padding: $spacing-base;
+
+  border-radius: $border-radius-base;
+
+  &.error {
+    background-color: $icon-color-red;
+  }
+}

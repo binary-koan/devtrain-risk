@@ -2,7 +2,9 @@
   <%= map_display(@turn) %>
 
   <% if @turn.game_state.won? %>
-    <div><%= @turn.game_state.winning_player.name %> won the game!</div>
+    <div class="message" style="background-color: <%= player_color(@game.players, @turn.game_state.winning_player) %>">
+      <%= @turn.game_state.winning_player.name %> won the game!
+    </div>
   <% else %>
     <%= render "player_display" %>
 
