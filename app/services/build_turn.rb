@@ -12,7 +12,6 @@ class BuildTurn
   private
 
   def turn_groups
-    #TODO look for Enumerable thing
     @events.inject([[]]) do |groups, event|
       if event.start_turn?
         groups << [event]

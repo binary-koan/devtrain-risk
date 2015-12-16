@@ -32,11 +32,17 @@ class CreateGame
   def create_game!
     ActiveRecord::Base.transaction do
       @game = Game.create!
+      @players = create_players!
 
       create_map!
-      create_players!
       assign_players_to_territories!
       start_game!
+    end
+  end
+
+  def create_players!
+    @player_count.times.map do |i|
+      @game.players.create!(name: "Player #{i + 1}")
     end
   end
 
@@ -46,13 +52,6 @@ class CreateGame
     unless service.call
       errors.concat(service.errors)
       raise ActiveRecord::Rollback
-    end
-  end
-
-  def create_players!
-    #TODO return players, save to ivar on return (in caller)
-    @players = @player_count.times.map do |i|
-      @game.players.create!(name: "Player #{i + 1}")
     end
   end
 

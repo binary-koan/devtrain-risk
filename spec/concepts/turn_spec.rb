@@ -133,8 +133,8 @@ RSpec.describe Turn do
     end
   end
 
-  describe "#can_end_turn?" do
-    subject { turn.can_end_turn? }
+  describe "#can_start_next_turn?" do
+    subject { turn.can_start_next_turn? }
 
     context "when a turn has just been started" do
       it { is_expected.to eq false }

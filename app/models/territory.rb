@@ -1,8 +1,6 @@
 class Territory < ActiveRecord::Base
   belongs_to :continent
 
-  delegate :game, to: :continent #TODO method (where is this actually used?)
-
   has_many :to_territory_links, class_name: "TerritoryLink", foreign_key: "to_territory_id"
   has_many :from_territories, through: :to_territory_links, source: :from_territory
 

@@ -37,7 +37,7 @@ class SubmitEvent
     when "attack" then perform_attack
     when "fortify" then perform_fortify
     when "reinforce" then perform_reinforce
-    when "start_turn" then end_turn
+    when "start_turn" then start_next_turn
     end
   end
 
@@ -67,9 +67,8 @@ class SubmitEvent
     )
   end
 
-  def end_turn
-    #TODO StartNextTurn
-    EndTurn.new(@turn)
+  def start_next_turn
+    StartNextTurn.new(@turn)
   end
 
   def event_params

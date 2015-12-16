@@ -116,19 +116,19 @@ RSpec.describe SubmitEvent do
       end
     end
 
-    context "with a start (end) turn event" do
+    context "with a start turn event" do
       let(:event_type) { "start_turn" }
       let(:units) { 5 }
-      let(:end_turn_service) { instance_double(EndTurn, call: true) }
+      let(:start_turn_service) { instance_double(StartNextTurn, call: true) }
 
-      it "calls the EndTurn service with correct parameters" do
-        expect(EndTurn).to receive(:new).with(turn).and_return(end_turn_service)
+      it "calls the StartNextTurn service with correct parameters" do
+        expect(StartNextTurn).to receive(:new).with(turn).and_return(start_turn_service)
 
         service.call
       end
 
-      it "succeeds if the EndTurn service succeeds" do
-        expect(EndTurn).to receive(:new).and_return(end_turn_service)
+      it "succeeds if the StartNextTurn service succeeds" do
+        expect(StartNextTurn).to receive(:new).and_return(start_turn_service)
 
         expect(service.call).to eq true
       end

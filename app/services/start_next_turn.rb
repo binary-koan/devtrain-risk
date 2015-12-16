@@ -1,4 +1,4 @@
-class EndTurn
+class StartNextTurn
   attr_reader :errors
 
   def initialize(turn)
@@ -8,7 +8,7 @@ class EndTurn
   end
 
   def call
-    if @turn.can_end_turn?
+    if @turn.can_start_next_turn?
       start_next_turn!
     else
       @errors << :wrong_phase

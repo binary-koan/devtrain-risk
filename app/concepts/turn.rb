@@ -50,7 +50,7 @@ class Turn
       allowed_reinforce_event,
       allowed_attack_event,
       allowed_fortify_event,
-      allowed_end_turn_event
+      allowed_next_turn_event
     ].compact
   end
 
@@ -77,8 +77,8 @@ class Turn
     end
   end
 
-  def can_end_turn?
-    allowed_end_turn_event.present?
+  def can_start_next_turn?
+    allowed_next_turn_event.present?
   end
 
   private
@@ -91,7 +91,7 @@ class Turn
     ))
   end
 
-  def allowed_end_turn_event
+  def allowed_next_turn_event
     return unless (@phase == PHASE_ATTACKING || @phase == PHASE_ENDING) && !territory_taken?
 
     player.events.start_turn.new

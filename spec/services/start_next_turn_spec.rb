@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe EndTurn do
+RSpec.describe StartNextTurn do
   fixtures :games, :players
 
   context "#call" do
@@ -12,11 +12,11 @@ RSpec.describe EndTurn do
         game: games(:game),
         player: players(:player1),
         game_state: game_state,
-        can_end_turn?: true
+        can_start_next_turn?: true
       )
     end
 
-    subject(:service) { EndTurn.new(turn) }
+    subject(:service) { StartNextTurn.new(turn) }
 
     context "when the turn can be ended" do
       it "succeeds and adds a start turn event to the game" do
@@ -27,7 +27,7 @@ RSpec.describe EndTurn do
     end
 
     context "when the turn cannot be ended" do
-      before { expect(turn).to receive(:can_end_turn?).and_return(false) }
+      before { expect(turn).to receive(:can_start_next_turn?).and_return(false) }
 
       it "fails with an error" do
         expect(service.call).to eq false
