@@ -40,7 +40,7 @@ class PerformAttack
       @territory_from.connected_territories.include?(@territory_to)
     end
 
-    def current_players_territory?
+    def current_players_territory? #TODO rename
       find_owner(@territory_from) == @turn.player
     end
 
@@ -65,6 +65,7 @@ class PerformAttack
     end
 
     def available_attackers
+      #TODO no variable assignment
       units = @turn.game_state.units_on_territory(@territory_from) - MIN_UNITS_ON_TERRITORY
     end
   end

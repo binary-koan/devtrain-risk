@@ -1,12 +1,11 @@
 module ApplicationHelper
   def icon_sprite
-    File.open("app/assets/images/icons.svg", "rb") do |file|
-      raw file.read
-    end
+    raw Rails.root.join("app/assets/images/icons.svg").read
   end
 
   def icon(name)
-    content_tag("svg", content_tag("use", "", "xlink:href" => "#icon-#{name}"),
-      class: "icon #{name}")
+    content_tag("svg", class: "icon #{name}") do
+      content_tag("use", "", "xlink:href" => "#icon-#{name}")
+    end
   end
 end

@@ -25,7 +25,6 @@ class Turn
   end
 
   def events
-    previous_events = @previous_turn.present? ? @previous_turn.events : []
     previous_events + @events_in_turn
   end
 
@@ -45,6 +44,7 @@ class Turn
     @game_state ||= GameState.new(game, events)
   end
 
+  #TODO service (policy pattern?)
   def allowed_events
     [
       allowed_reinforce_event,
@@ -120,6 +120,11 @@ class Turn
     events.last.attack? && game_state.units_on_territory(events.last.action.territory) == 0
   end
 
+  def previous_events
+    @previous_turn.try!(:events) || []
+  end
+
+  #TODO also service
   def apply_event(event, previous_event)
     if event.reinforce?
       @reinforcements.remove(event.action.units)

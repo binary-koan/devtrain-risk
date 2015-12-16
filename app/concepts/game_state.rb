@@ -42,6 +42,7 @@ class GameState
 
   private
 
+  #TODO service
   def apply_events(events)
     events.each do |event|
       case event.action

@@ -11,7 +11,7 @@ function wrapGameDisplay(selector) {
 
   function showLoadingSpinner(form) {
     form.find("input, select, button").attr("disabled", true);
-    form.find("[type=submit]").html("<div class='progress'><div>Loading…</div></div>");
+    form.find("[type=submit]").html("<div class='progress'><div>Loading…</div></div>"); //TODO think about it
   }
 
   function hideOthers(selector, exception) {

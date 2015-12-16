@@ -29,12 +29,10 @@ module GamesHelper
   end
 
   def map_display(turn)
-    content_tag(
-      "svg",
-      map_display_content(turn),
-      class: "map-display",
-      viewbox: map_viewbox(turn.game.territories)
-    )
+    content_tag("svg", class: "map-display", viewbox: map_viewbox(turn.game.territories)) do
+      territory_link_lines(turn).map { |link| concat link }
+      territory_nodes(turn).map { |node| concat node }
+    end
   end
 
   def available_maps
@@ -53,10 +51,6 @@ module GamesHelper
     offset = TERRITORY_NODE_SIZE + MAP_PADDING
 
     "#{x_min - offset} #{y_min - offset} #{x_max + offset * 2} #{y_max + offset * 2}"
-  end
-
-  def map_display_content(turn)
-    (territory_link_lines(turn) + territory_nodes(turn)).join.html_safe
   end
 
   def territory_link_lines(turn)
@@ -82,9 +76,9 @@ module GamesHelper
 
   def territory_nodes(turn)
     turn.game.territories.map do |territory|
-      content = content_tag("g", territory_node_content(territory, turn), class: "node")
-
-      content_tag("g", content, transform: translate(territory.x, territory.y))
+      content_tag("g", transform: translate(territory.x, territory.y)) do
+        territory_node_content(territory, turn)
+      end
     end
   end
 
@@ -93,20 +87,34 @@ module GamesHelper
     stroke_color = continent_color(turn.game.territories, territory)
     units = turn.game_state.units_on_territory(territory)
 
-    image = content_tag("image", "",
+    content_tag("g", class: "node") do
+      concat territory_image
+      concat territory_circle(color, stroke_color)
+      concat territory_name_text(territory.name)
+      concat territory_units_text(units)
+    end
+  end
+
+  def territory_image
+    content_tag("image", "",
       "xlink:href" => image_path("planet.png"),
       "x"          => -TERRITORY_NODE_SIZE,
       "y"          => -TERRITORY_NODE_SIZE,
       "width"      => TERRITORY_NODE_SIZE * 2,
       "height"     => TERRITORY_NODE_SIZE * 2
     )
+  end
 
-    [
-      image,
-      content_tag("circle", "", r: TERRITORY_NODE_SIZE, fill: color, stroke: stroke_color),
-      content_tag("text", territory.name, "text-anchor" => "middle", "dy" => -3),
-      content_tag("text", "#{units} units", "class" => "units-display", "text-anchor" => "middle", "dy" => 12)
-    ].join.html_safe
+  def territory_circle(color, stroke_color)
+    content_tag("circle", "", r: TERRITORY_NODE_SIZE, fill: color, stroke: stroke_color)
+  end
+
+  def territory_name_text(name)
+    content_tag("text", name, "text-anchor" => "middle", "dy" => -3)
+  end
+
+  def territory_units_text(units)
+    content_tag("text", "#{units} units", "class" => "units-display", "text-anchor" => "middle", "dy" => 12)
   end
 
   def translate(x, y = x)

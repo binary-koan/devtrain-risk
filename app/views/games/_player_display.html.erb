@@ -1,5 +1,6 @@
 <div class="player-display">
   <% @game.players.each do |player| %>
+  <%#TODO move logic somewhere @active_players ;) %>
     <% next if !@turn.game_state.in_game?(player) %>
     <div class="<%= "current" if @turn.player == player %>">
       <span class="player-icon"

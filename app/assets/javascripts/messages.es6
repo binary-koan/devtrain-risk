@@ -11,7 +11,7 @@ function wrapMessageSection(selector) {
     clear();
 
     element().append(messages.map(message =>
-      $(`<div class='${type} message'>`).text(message)
+      $("<div>").addClass(`${type} message`).text(message)
     ));
   }
 

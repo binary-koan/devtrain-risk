@@ -14,7 +14,7 @@ class CreateGame
   end
 
   def call
-    if !(MIN_PLAYERS..MAX_PLAYERS).include?(@player_count)
+    if (MIN_PLAYERS..MAX_PLAYERS).exclude?(@player_count)
       errors << :incorrect_player_count
     else
       create_game!
@@ -50,6 +50,7 @@ class CreateGame
   end
 
   def create_players!
+    #TODO return players, save to ivar on return (in caller)
     @players = @player_count.times.map do |i|
       @game.players.create!(name: "Player #{i + 1}")
     end

@@ -12,6 +12,7 @@ class CreateMap
   def initialize(game:, map_name:)
     @game             = game
     @name             = map_name
+    #TODO in helper, not database
     @available_colors = %w{#c0392b #8e44ad #2ecc71 #f1c40f #ecf0f1 #3498db}
     @territories      = []
     @errors           = []
@@ -40,6 +41,8 @@ class CreateMap
   end
 
   private
+
+  #TODO concept for maps YAML
 
   def load_yaml
     @yaml = YAML.load_file(MAP_YAML_LOCATION)
@@ -84,6 +87,7 @@ class CreateMap
       link_territories(continent, territory_positions)
     end
 
+    #TODO shortcut form
     @territories.each do |t|
       t.save!
     end
@@ -99,6 +103,7 @@ class CreateMap
 
   def generate_names
     @territory_count.times.inject([]) do |names|
+      #TODO call same object multiple times
       name = GenerateName.new.call
       name = GenerateName.new.call while names.include?(name)
 

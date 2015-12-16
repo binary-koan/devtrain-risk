@@ -48,5 +48,13 @@ class Reinforcement
     end
 
     bonus
+
+    # continents.sum do |continent, territories|
+    #   if territories.all? { |territory| @game_state.territory_owner(territory) == @player }
+    #     territories.size
+    #   else
+    #     0
+    #   end
+    # end
   end
 end

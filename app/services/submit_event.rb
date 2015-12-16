@@ -22,6 +22,8 @@ class SubmitEvent
     errors.none?
   end
 
+  #TODO roller object with state (or something)
+
   def dice_rolled
     if @service.respond_to?(:dice_rolled)
       @service.dice_rolled
@@ -66,6 +68,7 @@ class SubmitEvent
   end
 
   def end_turn
+    #TODO StartNextTurn
     EndTurn.new(@turn)
   end
 
