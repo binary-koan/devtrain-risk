@@ -5,6 +5,10 @@ class EventsController < ApplicationController
     service = SubmitEvent.new(@game, params)
 
     if service.call
+      if service.respond_to?(:dice_rolled)
+        flash.notice = service.dice_rolled
+      end
+
       redirect_to state_game_path(@game)
     else
       errors = service.errors.map { |error| I18n.t(error) }

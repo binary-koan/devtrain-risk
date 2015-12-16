@@ -1,7 +1,8 @@
 class PerformAttack
-  attr_reader :validator, :attack_events
+  attr_reader :validator, :creator, :attack_events
 
   delegate :errors, to: :validator
+  delegate :dice_rolled, to: :creator
 
   def initialize(**kwargs)
     @validator = ValidateAttack.new(**kwargs)

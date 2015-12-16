@@ -1,5 +1,5 @@
 class SubmitEvent
-  attr_reader :errors
+  attr_reader :errors, :service
 
   def initialize(game, params)
     @game = game
@@ -9,7 +9,7 @@ class SubmitEvent
   end
 
   def call
-    service = service_for_event_type
+    @service = service_for_event_type
 
     if service.nil?
       errors << :unknown_event_type
@@ -20,6 +20,12 @@ class SubmitEvent
     end
 
     errors.none?
+  end
+
+  def dice_rolled
+    if @service.respond_to?(:dice_rolled)
+      @service.dice_rolled
+    end
   end
 
   private
