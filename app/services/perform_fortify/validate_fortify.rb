@@ -17,7 +17,7 @@ class PerformFortify
         errors << :no_link
       elsif !current_players_territory?
         errors << :wrong_player
-      elsif !@turn.can_fortify?(@territory_from, @territory_to)
+      elsif !can_fortify?
         errors << :wrong_phase
       elsif fortifying_enemy_territory?
         errors << :fortifying_enemy_territory
@@ -42,6 +42,23 @@ class PerformFortify
 
     def current_players_territory?
       find_owner(@territory_from) == @turn.player
+    end
+
+    def can_fortify?
+      allowed_events = GetAllowedEvents.new(@turn).call
+
+      fortify_event = allowed_events.detect(&:fortify?)
+
+      if !fortify_event.present?
+        false
+      elsif fortify_event.action
+        previous_event = @turn.events.last
+
+        fortify_event.action.territory_from == previous_event.action.territory_from &&
+          fortify_event.action.territory_to == previous_event.action.territory
+      else
+        true
+      end
     end
 
     def fortifying_enemy_territory?

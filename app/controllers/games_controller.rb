@@ -18,6 +18,7 @@ class GamesController < ApplicationController
 
   def show
     @turn = BuildTurn.new(@game.events).call
+    @allowed_events = GetAllowedEvents.new(@turn).call
     @active_players = @game.players.select { |player| @turn.game_state.in_game?(player) }
 
     respond_to do |format|

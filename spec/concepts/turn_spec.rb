@@ -36,18 +36,10 @@ RSpec.describe Turn do
   describe "#can_reinforce?" do
     let(:reinforcement_units) { 1 }
 
-    subject { turn.can_reinforce?(reinforcement_units) }
+    subject { turn.can_reinforce? }
 
     context "when a turn has just been started" do
-      context "when trying to reinforce with a sensible number of units" do
-        it { is_expected.to eq true }
-      end
-
-      context "when trying to reinforce with too many units" do
-        let(:reinforcement_units) { 100 }
-
-        it { is_expected.to eq false }
-      end
+      it { is_expected.to eq true }
     end
 
     context "when a complete reinforcement has already been made" do
@@ -106,7 +98,7 @@ RSpec.describe Turn do
   end
 
   describe "#can_fortify?" do
-    subject { turn.can_fortify?(territories(:territory_top_left), territories(:territory_top_right)) }
+    subject { turn.can_fortify? }
 
     context "when a turn has just been started" do
       it { is_expected.to eq false }
@@ -158,109 +150,6 @@ RSpec.describe Turn do
       before { create_fortification }
 
       it { is_expected.to eq true }
-    end
-  end
-
-  describe "#allowed_events" do
-    subject(:allowed_events) { turn.allowed_events }
-
-    context "when a turn has just been started" do
-      it "only allows a reinforce event" do
-        expect(allowed_events.size).to eq 1
-        expect(allowed_events.first.event_type).to eq "reinforce"
-      end
-    end
-
-    context "when a complete reinforcement has been made" do
-      let(:reinforcement_units) { 4 }
-      before { create_specific_reinforcement(reinforcement_units) }
-
-      it "allows attack, fortify and end turn events" do
-        expect(allowed_events).to be_one { |e| e.event_type == "attack" }
-        expect(allowed_events).to be_one { |e| e.event_type == "fortify" }
-        expect(allowed_events).to be_one { |e| e.event_type == "start_turn" }
-      end
-    end
-
-    context "when an attack has been made" do
-      before { create_attack }
-
-      it "allows attack, fortify and end turn events" do
-        expect(allowed_events).to be_one { |e| e.event_type == "attack" }
-        expect(allowed_events).to be_one { |e| e.event_type == "fortify" }
-        expect(allowed_events).to be_one { |e| e.event_type == "start_turn" }
-      end
-    end
-
-    context "when a fortify move has been made" do
-      before { create_fortification }
-
-      it "only allows an end turn event" do
-        expect(allowed_events.size).to eq 1
-        expect(allowed_events.first.event_type).to eq "start_turn"
-      end
-    end
-
-    context "when a fortify move has been made after an attack" do
-      before do
-        create_attack
-        create_fortification
-      end
-
-      it "allows attack, fortify and end turn events" do
-        expect(allowed_events).to be_one { |e| e.event_type == "attack" }
-        expect(allowed_events).to be_one { |e| e.event_type == "fortify" }
-        expect(allowed_events).to be_one { |e| e.event_type == "start_turn" }
-      end
-    end
-
-    context "when a territory has been taken over" do
-      before do
-        create_attack(
-          territory_from: territories(:territory_top_left),
-          territory_to: territories(:territory_top_right),
-          units: 5
-        )
-      end
-
-      it "only allows a fortify event" do
-        expect(allowed_events.size).to eq 1
-        expect(allowed_events.first.event_type).to eq "fortify"
-      end
-
-      it "requires the event to be from and to the right territory" do
-        action = allowed_events.first.action
-        expect(action.territory_from).to eq territories(:territory_top_left)
-        expect(action.territory_to).to eq territories(:territory_top_right)
-      end
-
-      context "and a correct fortify move has been made" do
-        before do
-          create_fortification(
-            territory_from: territories(:territory_top_left),
-            territory_to: territories(:territory_top_right),
-            units: 2
-          )
-        end
-
-        it "allows attack, fortify and end turn events" do
-          expect(allowed_events).to be_one { |e| e.event_type == "attack" }
-          expect(allowed_events).to be_one { |e| e.event_type == "fortify" }
-          expect(allowed_events).to be_one { |e| e.event_type == "start_turn" }
-        end
-      end
-    end
-
-    context "when the game is won" do
-      let(:game_state) { instance_double(GameState, owned_territories: [], won?: true, game: game, territory_owner: player) }
-
-      before do
-        expect(GameState).to receive(:new).and_return(game_state)
-      end
-
-      it "does not allow any events" do
-        expect(allowed_events).to be_empty
-      end
     end
   end
 
