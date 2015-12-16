@@ -1,6 +1,6 @@
 let GameDisplay = GameDisplay || {};
 
-GameDisplay.animateDiff = (previousDOM, currentDOM) => {
+function animateDiff(previousDOM, currentDOM) {
   const { extend, pick } = _;
 
   const UNITS_MATCHER = /^\d+/;
@@ -33,7 +33,7 @@ GameDisplay.animateDiff = (previousDOM, currentDOM) => {
     icon.attr(bbox).attr("class", `icon animated ${name}`);
     icon[0].setAttributeNS("http://www.w3.org/1999/xlink", "href", `#icon-${name}`);
 
-    icon.on("animationend", () => icon.remove());
+    // icon.on("animationend", () => icon.remove());
 
     element.append(icon);
   }
@@ -67,6 +67,4 @@ GameDisplay.animateDiff = (previousDOM, currentDOM) => {
   sortedDifferences.forEach((item, index) => {
     showAnimatedIcon(iconNames[index], $(item.element).closest("g"));
   });
-
-  console.log(sortedDifferences);
 };
