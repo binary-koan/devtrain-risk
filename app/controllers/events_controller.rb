@@ -9,8 +9,7 @@ class EventsController < ApplicationController
         flash.notice = service.dice_rolled
       end
 
-      #TODO try partials
-      redirect_to state_game_path(@game)
+      redirect_to game_path(@game)
     else
       errors = service.errors.map { |error| I18n.t(error) }
       render json: { errors: errors }

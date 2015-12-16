@@ -7,10 +7,10 @@ RSpec.describe EventsController, type: :controller do
     let(:call_result) { true }
     let(:submit_event) { instance_double(SubmitEvent, call: call_result) }
 
-    it "redirects to the game state" do
+    it "redirects to the game" do
       expect(SubmitEvent).to receive(:new).and_return submit_event
       post :create, game_id: games(:game).id
-      expect(response).to redirect_to state_game_path(games(:game))
+      expect(response).to redirect_to game_path(games(:game))
     end
 
     context "the submit returns an error" do
