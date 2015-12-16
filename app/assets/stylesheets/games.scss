@@ -39,6 +39,11 @@ svg.map-display {
   }
 }
 
+.dice-rolls {
+  font-size: $font-size-base * 6;
+  text-align: center;
+}
+
 .player-display {
   margin-top: $spacing-base * 2;
   text-align: center;

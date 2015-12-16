@@ -1,0 +1,10 @@
+<% if flash.notice.present? %>
+  <div class="dice-rolls">
+  <% flash.notice.each do |event| %>
+    <% event.each do |paired_roll| %>
+      <span><%= paired_dice_rolls(paired_roll) %></span>
+    <% end %>
+    </br>
+  <% end %>
+  </div>
+<% end %>

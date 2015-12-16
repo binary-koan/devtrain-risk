@@ -3,6 +3,8 @@ class PerformAttack
     MAX_DEFENDING_UNITS = 2
     MAX_ATTACKING_UNITS = 3
 
+    attr_reader :dice_rolled
+
     def initialize(territory_from:, territory_to:, turn:, attacking_units:)
       @territory_from  = territory_from
       @territory_to    = territory_to
@@ -13,6 +15,7 @@ class PerformAttack
       @attackers_lost  = 0
       @defenders_lost  = 0
       @attack_events   = []
+      @dice_rolled     = []
       @errors          = []
     end
 
@@ -21,6 +24,8 @@ class PerformAttack
         while @attacking_units > 0
           dice_rolls = roll_dice(number_of_defenders, number_of_attackers)
           handle_attack!(dice_rolls)
+
+          @dice_rolled << dice_rolls
 
           @attacking_units -= @attackers_lost
           break if territory_taken?
