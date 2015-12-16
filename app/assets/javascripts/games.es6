@@ -1,18 +1,15 @@
 //= require ./game-display/game-display
+//= require ./messages
 
-jQuery(function($) {
-  let gameDisplay = createGameDisplay("#game-display");
-
-  function displayErrors(errors) {
-    let messageSection = $(".messages").html("");
-
-    errors.forEach(error => $("<div class='error message'>").text(error).appendTo(messageSection));
-  }
+{
+  let gameDisplay = wrapGameDisplay("#game-display");
+  let messageSection = wrapMessageSection(".messages");
 
   function updateGameDisplay(data) {
     if (data.errors) {
-      displayErrors(data.errors);
+      messageSection.display(data.errors, "error");
     } else {
+      messageSection.clear();
       gameDisplay.update(data.content);
     }
   }
@@ -27,4 +24,4 @@ jQuery(function($) {
     event.preventDefault();
     submitForm($(event.target));
   });
-});
+}

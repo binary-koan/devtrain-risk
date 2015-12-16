@@ -1,6 +1,6 @@
 //= require ./animate-diff
 
-function createGameDisplay(selector) {
+function wrapGameDisplay(selector) {
   function element() {
     return $(selector);
   }
