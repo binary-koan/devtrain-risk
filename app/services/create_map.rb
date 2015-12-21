@@ -87,10 +87,7 @@ class CreateMap
       link_territories(continent, territory_positions)
     end
 
-    #TODO shortcut form
-    @territories.each do |t|
-      t.save!
-    end
+    @territories.each(&:save!)
   end
 
   def link_territories(continent, territory_positions)
@@ -103,9 +100,9 @@ class CreateMap
 
   def generate_names
     @territory_count.times.inject([]) do |names|
-      #TODO call same object multiple times
-      name = GenerateName.new.call
-      name = GenerateName.new.call while names.include?(name)
+      service = GenerateName.new
+      name = service.call
+      name = service.call while names.include?(name)
 
       names << name
     end
