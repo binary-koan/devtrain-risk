@@ -17,7 +17,7 @@ class PerformAttack
     def call
       if !valid_link?
         errors << :no_link
-      elsif !current_players_territory?
+      elsif !player_owns_territory
         errors << :wrong_player
       elsif !@turn.can_attack?
         errors << :wrong_phase
@@ -40,7 +40,7 @@ class PerformAttack
       @territory_from.connected_territories.include?(@territory_to)
     end
 
-    def current_players_territory? #TODO rename
+    def player_owns_territory
       find_owner(@territory_from) == @turn.player
     end
 
@@ -65,8 +65,7 @@ class PerformAttack
     end
 
     def available_attackers
-      #TODO no variable assignment
-      units = @turn.game_state.units_on_territory(@territory_from) - MIN_UNITS_ON_TERRITORY
+      @turn.game_state.units_on_territory(@territory_from) - MIN_UNITS_ON_TERRITORY
     end
   end
 end
