@@ -1,12 +1,6 @@
 require 'yaml'
 
 class CreateMap
-  MAP_YAML_LOCATION    = "config/maps.yml"
-  TERRITORY_COUNT      = "territory_count"
-  TERRITORY_POSITIONS  = "territory_positions"
-  TERRITORY_EDGES      = "territory_edges"
-  TERRITORY_CONTINENTS = "territory_continents"
-
   attr_reader :errors
 
   def initialize(game:, map_name:)
@@ -19,13 +13,11 @@ class CreateMap
   end
 
   def call
-    load_yaml
+    load_map
 
-    if !valid_map?
-      errors << :not_valid_map_name
+    if @map.errors.any?
+      @errors = @map.errors
     else
-      load_map
-
       ActiveRecord::Base.transaction do
         create_territories!
         create_continents
@@ -33,32 +25,18 @@ class CreateMap
       end
     end
 
-    errors.empty?
-  end
-
-  def valid_map?
-    @yaml.key?(@name)
+    @errors.empty?
   end
 
   private
 
-  #TODO concept for maps YAML
-
-  def load_yaml
-    @yaml = YAML.load_file(MAP_YAML_LOCATION)
-  end
-
   def load_map
-    map_info = @yaml[@name]
-
-    @territory_count = map_info[TERRITORY_COUNT]
-    @territory_positions = map_info[TERRITORY_POSITIONS]
-    @territory_edges = map_info[TERRITORY_EDGES]
-    @territory_continents = map_info[TERRITORY_CONTINENTS]
+    @map = Map.new(map_name: @name)
+    @map.load
   end
 
   def create_territory_links!
-    @territory_edges.each do |edge|
+    @map.territory_edges.each do |edge|
       TerritoryLink.create!(
         from_territory: @game.territories[edge[0]],
         to_territory: @game.territories[edge[1]]
@@ -69,17 +47,17 @@ class CreateMap
   def create_territories!
     names = generate_names
 
-    @territory_count.times do |i|
+    @map.territory_count.times do |i|
       @territories << Territory.new(
-        x: @territory_positions[i][0],
-        y: @territory_positions[i][1],
+        x: @map.territory_positions[i][0],
+        y: @map.territory_positions[i][1],
         name: names[i]
       )
     end
   end
 
   def create_continents
-    @territory_continents.each do |territory_positions|
+    @map.territory_continents.each do |territory_positions|
       continent = @game.continents.create!(
         color: pick_continent_color
       )
@@ -99,7 +77,7 @@ class CreateMap
   end
 
   def generate_names
-    @territory_count.times.inject([]) do |names|
+    @map.territory_count.times.inject([]) do |names|
       service = GenerateName.new
       name = service.call
       name = service.call while names.include?(name)
