@@ -34,27 +34,20 @@ class Reinforcement
     [calculated_count, MINIMUM_UNIT_COUNT].max
   end
 
-  def continent_bonus #TODO why you no make this code look nice??
+  def continent_bonus
     continents = Hash.new
-    bonus = 0
     @game_state.game.continents.each { |c| continents[c] = [] }
 
     @game_state.game.territories.each do |territory|
       continents[territory.continent] << territory
     end
 
-    continents.each do |continent, territories|
-      bonus += territories.size if territories.all? { |territory| @game_state.territory_owner(territory) == @player }
+    continents.inject(0) do |bonus, (continent, territories)|
+       if territories.all? { |territory| @game_state.territory_owner(territory) == @player }
+         bonus + territories.size
+       else
+         bonus
+       end
     end
-
-    bonus
-
-    # continents.sum do |continent, territories|
-    #   if territories.all? { |territory| @game_state.territory_owner(territory) == @player }
-    #     territories.size
-    #   else
-    #     0
-    #   end
-    # end
   end
 end
