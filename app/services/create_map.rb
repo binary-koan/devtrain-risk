@@ -4,12 +4,11 @@ class CreateMap
   attr_reader :errors
 
   def initialize(game:, map_name:)
-    @game             = game
-    @name             = map_name
-    #TODO in helper, not database
-    @available_colors = %w{#c0392b #8e44ad #2ecc71 #f1c40f #ecf0f1 #3498db}
-    @territories      = []
-    @errors           = []
+    @game         = game
+    @name         = map_name
+    @continent_id = 0
+    @territories  = []
+    @errors       = []
   end
 
   def call
@@ -59,8 +58,10 @@ class CreateMap
   def create_continents
     @map.territory_continents.each do |territory_positions|
       continent = @game.continents.create!(
-        color: pick_continent_color
+        color: @continent_id
       )
+
+      @continent_id += 1
 
       link_territories(continent, territory_positions)
     end
@@ -84,9 +85,5 @@ class CreateMap
 
       names << name
     end
-  end
-
-  def pick_continent_color
-    @available_colors.pop
   end
 end

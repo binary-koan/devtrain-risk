@@ -1,7 +1,8 @@
 require 'yaml'
 
 module GamesHelper
-  PLAYER_COLORS    = %w{#4F2EC9 #63242E #40542E #966328 #2E554E #482917}
+  PLAYER_COLORS = %w{#4F2EC9 #63242E #40542E #966328 #2E554E #482917}
+  MAP_COLORS    = %W{#C0392B #8E44AD #2ECC71 #F1C40F #ECF0F1 #3498DB}
 
   DICE_CHARACTERS  = %w{⚀ ⚁ ⚂ ⚃ ⚄ ⚅}
 
@@ -25,7 +26,8 @@ module GamesHelper
   end
 
   def continent_color(territories, territory)
-    territories.detect { |t| territory == t }.continent.color
+    id = territories.detect { |t| territory == t }.continent.color
+    MAP_COLORS[id.to_i]
   end
 
   def map_display(turn)
@@ -68,7 +70,7 @@ module GamesHelper
 
   def link_color(link)
     if link[0].continent == link[1].continent
-      link[0].continent.color
+      MAP_COLORS[link[0].continent.color.to_i]
     else
       DEFAULT_TERRITORY_LINK_COLOR
     end

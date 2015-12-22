@@ -1,7 +1,7 @@
 continent_1:
   game: game
-  color: "#888"
+  color: 0
 
 continent_2:
   game: game
-  color: "TEST12"
+  color: 1
