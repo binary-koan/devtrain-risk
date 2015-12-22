@@ -7,7 +7,7 @@ module GamesHelper
 
   DEFAULT_TERRITORY_LINK_COLOR = "#666"
 
-  MAP_YAML_LOCATION = "config/maps.yml"
+  MAP_YAML_LOCATION = "config/maps.yml" #TODO this is duplicate
 
   MAP_PADDING = 40
   TERRITORY_NODE_SIZE = 30
