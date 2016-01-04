@@ -2,14 +2,40 @@
 	box-sizing: border-box;
 }
 
-@keyframes animatedBackground {
-	from { background-position: 0 0; }
-	to { background-position: 1024px 1024px; }
+body {
+	position: relative;
+	overflow: hidden;
 }
 
-body {
-  background: $page-background;
-  // animation: animatedBackground 40s linear infinite;
+@keyframes rotateClockwise {
+	0% { transform: rotate(-180deg); }
+	100% { transform: rotate(180deg); }
+}
+
+@keyframes rotateCounterClockwise {
+	0% { transform: rotate(90deg); }
+	100% { transform: rotate(-270deg); }
+}
+
+body:before, body:after {
+	content: "";
+	position: absolute;
+	width: 300%;
+	height: 300%;
+	top: -100%;
+	left: -100%;
+	z-index: -1;
+	background: $page-background;
+	transform: rotate(30deg);
+}
+
+body:before {
+	animation: rotateClockwise 300s linear infinite;
+}
+
+body:after {
+	opacity: 0.5;
+	animation: rotateCounterClockwise 300s linear infinite;
 }
 
 body, input, select, button {

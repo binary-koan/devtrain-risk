@@ -8,7 +8,7 @@ $text-color: white;
 $spacing-base: 10px;
 $border-radius-base: $spacing-base / 2;
 
-$page-background: image-url("background.jpg");
+$page-background: image-url("background.jpg") 0 0 repeat;
 $active-background: #333;
 
 $form-control-border: 1px solid #555;
