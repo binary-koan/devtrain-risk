@@ -7,6 +7,7 @@
   Place <%= number_field_tag :units, "" %> units
   on <%= select_tag :to, options_for_select(owned_territory_names(@turn)) %>
   <%= button_tag type: "submit", class: "icon-button" do %>
-    <%= icon("reinforce") %> Reinforce
+    <span class="not-in-progress"><%= icon("reinforce") %> Reinforce</span>
+    <%= hidden_progress_spinner %>
   <% end %>
 <% end %>

@@ -14,10 +14,14 @@
 	animation: spin 1s infinite steps(8);
 }
 
+.progress > .progress-inner {
+	display: block;
+}
+
 .progress:before,
 .progress:after,
-.progress > div:before,
-.progress > div:after {
+.progress > .progress-inner:before,
+.progress > .progress-inner:after {
 	content: '';
 	position: absolute;
 	top: 0;
@@ -39,12 +43,12 @@
 	background: #777;
 }
 
-.progress > div:before {
+.progress > .progress-inner:before {
 	transform: rotate(-90deg);
 	background: #999;
 }
 
-.progress > div:after {
+.progress > .progress-inner:after {
 	transform: rotate(-135deg);
 	background: #bbb;
 }

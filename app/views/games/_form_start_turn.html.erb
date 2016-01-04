@@ -1,6 +1,7 @@
 <%= form_for [@game, event], html: { autocomplete: "off" } do |f| %>
   <%= f.hidden_field :event_type %>
   <%= button_tag type: "submit", class: "icon-button" do %>
-    <%= icon("end-turn") %> End turn
+    <span class="not-in-progress"><%= icon("end-turn") %> End turn</span>
+    <%= hidden_progress_spinner %>
   <% end %>
 <% end %>

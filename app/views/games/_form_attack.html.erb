@@ -4,6 +4,7 @@
   from <%= select_tag :from, options_for_select(owned_territory_names(@turn)) %>
   to <%= select_tag :to, options_for_select(enemy_territory_names(@turn)) %>
   <%= button_tag type: "submit", class: "icon-button" do %>
-    <%= icon("attack") %> Attack
+    <span class="not-in-progress"><%= icon("attack") %> Attack</span>
+    <%= hidden_progress_spinner %>
   <% end %>
 <% end %>

@@ -35,6 +35,13 @@ module GamesHelper
     end
   end
 
+  def hidden_progress_spinner
+    content_tag("span", class: "in-progress progress hidden") do
+      concat content_tag("span", "", class: "progress-inner")
+      concat content_tag("span", "Loading…", class: "sr-only")
+    end
+  end
+
   def available_maps
     YAML.load_file(MAP_YAML_LOCATION).keys
   end

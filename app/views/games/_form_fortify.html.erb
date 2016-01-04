@@ -12,6 +12,7 @@
   <% end %>
 
   <%= button_tag type: "submit", class: "icon-button" do %>
-    <%= icon("fortify") %> Fortify
+    <span class="not-in-progress"><%= icon("fortify") %> Fortify</span>
+    <%= hidden_progress_spinner %>
   <% end %>
 <% end %>
