@@ -15,7 +15,7 @@
   }
 
   function submitForm(form) {
-    let xhr = $.post(form.attr("action"), form.serializeArray());
+    let xhr = $.post(form.attr("action") + ".json", form.serializeArray());
 
     gameDisplay.withLoadingState(form, xhr).then(updateGameDisplay);
   }

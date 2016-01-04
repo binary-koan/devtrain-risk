@@ -9,7 +9,7 @@
     <%= render "player_display" %>
 
     <div class="controls">
-      <% @turn.allowed_events.each do |event| %>
+      <% @allowed_events.each do |event| %>
         <%= render "form_#{event.event_type}", event: event %>
       <% end %>
     </div>

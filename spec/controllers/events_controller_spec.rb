@@ -10,7 +10,7 @@ RSpec.describe EventsController, type: :controller do
     it "redirects to the game" do
       expect(SubmitEvent).to receive(:new).and_return submit_event
       post :create, game_id: games(:game).id
-      expect(response).to redirect_to game_path(games(:game))
+      expect(response).to redirect_to game_path(games(:game), format: :json)
     end
 
     context "the submit returns an error" do

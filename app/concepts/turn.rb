@@ -6,6 +6,8 @@ class Turn
   PHASE_ENDING      = :ending
   PHASE_FINISHED    = :finished
 
+  attr_reader :reinforcements, :phase
+
   def initialize(events_in_turn, previous_turn = nil)
     @events_in_turn = events_in_turn
     @previous_turn = previous_turn
@@ -22,6 +24,22 @@ class Turn
     if game_state.won?
       @phase = PHASE_FINISHED
     end
+  end
+
+  def can_reinforce?
+    phase == PHASE_REINFORCING && !@reinforcements.none?
+  end
+
+  def can_attack?
+    phase == PHASE_ATTACKING
+  end
+
+  def can_fortify?
+    phase == PHASE_ATTACKING
+  end
+
+  def can_start_next_turn?
+    phase == PHASE_ATTACKING || phase == PHASE_ENDING
   end
 
   def events
@@ -44,81 +62,7 @@ class Turn
     @game_state ||= GameState.new(game, events)
   end
 
-  #TODO service (policy pattern?)
-  def allowed_events
-    [
-      allowed_reinforce_event,
-      allowed_attack_event,
-      allowed_fortify_event,
-      allowed_next_turn_event
-    ].compact
-  end
-
-  def can_reinforce?(unit_count = MINIMUM_REINFORCEMENTS)
-    reinforce_event = allowed_reinforce_event
-    reinforce_event.present? && unit_count <= reinforce_event.action.units
-  end
-
-  def can_attack?
-    allowed_attack_event.present?
-  end
-
-  #TODO eww
-  def can_fortify?(territory_from, territory_to)
-    fortify_event = allowed_fortify_event
-
-    if !fortify_event.present?
-      false
-    elsif fortify_event.action
-      fortify_event.action.territory_from == territory_from &&
-        fortify_event.action.territory_to == territory_to
-    else
-      true
-    end
-  end
-
-  def can_start_next_turn?
-    allowed_next_turn_event.present?
-  end
-
   private
-
-  def allowed_reinforce_event
-    return unless @phase == PHASE_REINFORCING && !@reinforcements.none?
-
-    player.events.reinforce.new(action: Action::Add.new(
-      units: @reinforcements.remaining_units
-    ))
-  end
-
-  def allowed_next_turn_event
-    return unless (@phase == PHASE_ATTACKING || @phase == PHASE_ENDING) && !territory_taken?
-
-    player.events.start_turn.new
-  end
-
-  def allowed_attack_event
-    return unless @phase == PHASE_ATTACKING && !territory_taken?
-
-    player.events.attack.new
-  end
-
-  def allowed_fortify_event
-    return unless @phase == PHASE_ATTACKING
-
-    if territory_taken?
-      player.events.fortify.new(action: Action::Move.new(
-        territory_from: events.last.action.territory_from,
-        territory_to: events.last.action.territory
-      ))
-    else
-      player.events.fortify.new
-    end
-  end
-
-  def territory_taken?
-    events.last.attack? && game_state.units_on_territory(events.last.action.territory) == 0
-  end
 
   def previous_events
     @previous_turn.try!(:events) || []

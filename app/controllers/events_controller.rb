@@ -9,7 +9,7 @@ class EventsController < ApplicationController
         flash.notice = service.dice_rolled
       end
 
-      redirect_to game_path(@game)
+      redirect_to game_path(@game, format: :json)
     else
       errors = service.errors.map { |error| I18n.t(error) }
       render json: { errors: errors }
