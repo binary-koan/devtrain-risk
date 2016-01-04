@@ -3,12 +3,9 @@ require 'yaml'
 module GamesHelper
   PLAYER_COLORS = %w{#4F2EC9 #63242E #40542E #966328 #2E554E #482917}
   MAP_COLORS    = %W{#C0392B #8E44AD #2ECC71 #F1C40F #ECF0F1 #3498DB}
-
-  DICE_CHARACTERS  = %w{⚀ ⚁ ⚂ ⚃ ⚄ ⚅}
-
   DEFAULT_TERRITORY_LINK_COLOR = "#666"
 
-  MAP_YAML_LOCATION = "config/maps.yml" #TODO this is duplicate
+  DICE_CHARACTERS  = %w{⚀ ⚁ ⚂ ⚃ ⚄ ⚅}
 
   MAP_PADDING = 40
   TERRITORY_NODE_SIZE = 30
@@ -38,7 +35,7 @@ module GamesHelper
   end
 
   def available_maps
-    YAML.load_file(MAP_YAML_LOCATION).keys
+    YAML.load_file(Map::MAP_YAML_LOCATION).keys
   end
 
   def paired_dice_rolls(paired_roll)
