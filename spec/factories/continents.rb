@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :continent do
     game
-    color "#TEST12"
+    color 0
   end
 end
