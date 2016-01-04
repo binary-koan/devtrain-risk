@@ -6,7 +6,7 @@ class EventsController < ApplicationController
     service = SubmitEvent.new(@game, dice_roller, params)
 
     if service.call
-      if dice_roller.rolls.size > 0
+      if dice_roller.rolls.any?
         flash.notice = dice_roller.rolls
       end
 
