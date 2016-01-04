@@ -7,6 +7,7 @@ RSpec.describe SubmitEvent do
     let(:from_territory) { territories(:territory_top_left) }
     let(:to_territory) { territories(:territory_top_right) }
     let(:units) { nil }
+    let(:dice_roller) { DiceRoller.new }
 
     let(:params) do
       ActionController::Parameters.new(
@@ -23,7 +24,7 @@ RSpec.describe SubmitEvent do
     let(:turn) { BuildTurn.new(game.events).call }
     let(:game_state) { turn.game_state }
 
-    subject(:service) { SubmitEvent.new(game, params) }
+    subject(:service) { SubmitEvent.new(game, dice_roller, params) }
 
     context "with incorrect parameters" do
       let(:params) do
@@ -62,7 +63,8 @@ RSpec.describe SubmitEvent do
           territory_from:  from_territory,
           territory_to:    to_territory,
           turn:            BuildTurn.new(game.events).call,
-          attacking_units: units
+          attacking_units: units,
+          dice_roller:     dice_roller
         ).and_return(attack_service)
 
         service.call

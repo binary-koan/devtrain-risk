@@ -18,12 +18,15 @@ RSpec.describe PerformAttack::CreateAttack do
 
   let(:attacking_units) { 3 }
 
+  let(:dice_roller) { DiceRoller.new }
+
   let(:service) do
     PerformAttack::CreateAttack.new(
       territory_from:  territory_from,
       territory_to:    territory_to,
       turn:            turn,
-      attacking_units: attacking_units
+      attacking_units: attacking_units,
+      dice_roller:     dice_roller
     )
   end
 
