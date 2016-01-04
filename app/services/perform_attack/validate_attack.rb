@@ -6,7 +6,7 @@ class PerformAttack
 
     attr_reader :errors
 
-    def initialize(territory_from:, territory_to:, turn:, attacking_units:)
+    def initialize(territory_from:, territory_to:, turn:, dice_roller:, attacking_units:)
       @territory_from  = territory_from
       @territory_to    = territory_to
       @turn            = turn

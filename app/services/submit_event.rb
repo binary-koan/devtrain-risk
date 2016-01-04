@@ -1,8 +1,9 @@
 class SubmitEvent
   attr_reader :errors, :service
 
-  def initialize(game, params)
+  def initialize(game, dice_roller, params)
     @game = game
+    @dice_roller = dice_roller
     @turn = BuildTurn.new(@game.events).call
     @params = params
     @errors = []
@@ -22,14 +23,6 @@ class SubmitEvent
     errors.none?
   end
 
-  #TODO roller object with state (or something)
-
-  def dice_rolled
-    if @service.respond_to?(:dice_rolled)
-      @service.dice_rolled
-    end
-  end
-
   private
 
   def service_for_event_type
@@ -46,7 +39,8 @@ class SubmitEvent
       territory_from: @game.territories.find_by(name: @params[:from]),
       territory_to: @game.territories.find_by(name: @params[:to]),
       turn: @turn,
-      attacking_units: @params[:units].to_i
+      attacking_units: @params[:units].to_i,
+      dice_roller: @dice_roller
     )
   end
 

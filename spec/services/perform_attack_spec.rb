@@ -5,13 +5,15 @@ RSpec.describe PerformAttack do
   let(:territory_to) { instance_double(Territory) }
   let(:turn) { instance_double(Turn) }
   let(:attacking_units) { 3 }
+  let(:dice_roller) { DiceRoller.new }
 
   let(:service_args) do
     {
       territory_from:  territory_from,
       territory_to:    territory_to,
       turn:            turn,
-      attacking_units: attacking_units
+      attacking_units: attacking_units,
+      dice_roller:     dice_roller
     }
   end
 

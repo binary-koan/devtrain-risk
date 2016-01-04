@@ -5,17 +5,17 @@ class PerformAttack
 
     attr_reader :dice_rolled
 
-    def initialize(territory_from:, territory_to:, turn:, attacking_units:)
+    def initialize(territory_from:, territory_to:, turn:, dice_roller:, attacking_units:)
       @territory_from  = territory_from
       @territory_to    = territory_to
       @turn            = turn
+      @dice_roller     = dice_roller
 
       @attacking_units = attacking_units
       @initial_defenders = @turn.game_state.units_on_territory(@territory_to)
       @attackers_lost  = 0
       @defenders_lost  = 0
       @attack_events   = []
-      @dice_rolled     = []
       @errors          = []
     end
 
@@ -25,7 +25,7 @@ class PerformAttack
           dice_rolls = roll_dice(number_of_defenders, number_of_attackers)
           handle_attack!(dice_rolls)
 
-          @dice_rolled << dice_rolls
+          @dice_roller.add_rolls(dice_rolls)
 
           @attacking_units -= @attackers_lost
           break if territory_taken?

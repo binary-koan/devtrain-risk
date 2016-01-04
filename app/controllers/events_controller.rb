@@ -2,11 +2,12 @@ class EventsController < ApplicationController
   before_action :assign_game
 
   def create
-    service = SubmitEvent.new(@game, params)
+    dice_roller = DiceRoller.new
+    service = SubmitEvent.new(@game, dice_roller, params)
 
     if service.call
-      if service.respond_to?(:dice_rolled)
-        flash.notice = service.dice_rolled
+      if dice_roller.rolls.any?
+        flash.notice = dice_roller.rolls
       end
 
       redirect_to game_path(@game, format: :json)

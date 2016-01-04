@@ -17,13 +17,15 @@ RSpec.describe PerformAttack::ValidateAttack do
   let(:turn) { BuildTurn.new(game.events).call }
 
   let(:attacking_units) { 3 }
+  let(:dice_roller) { DiceRoller.new }
 
   let(:service) do
     PerformAttack::ValidateAttack.new(
       territory_from:  territory_from,
       territory_to:    territory_to,
       turn:            turn,
-      attacking_units: attacking_units
+      attacking_units: attacking_units,
+      dice_roller:     dice_roller
     )
   end
 
