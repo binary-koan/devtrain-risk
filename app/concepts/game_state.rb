@@ -2,12 +2,16 @@ class GameState
   TerritoryInfo = Struct.new(:owner, :units)
 
   attr_reader :game, :territory_info
+  attr_accessor :current_player
 
-  def initialize(game, events)
+  def initialize(game)
     @game = game
     @territory_info = Hash.new { |hash, key| hash[key] = TerritoryInfo.new(nil, 0) }
+  end
 
-    apply_events(events)
+  def update_territory(territory, owner, units_difference)
+    @territory_info[territory].owner = owner
+    @territory_info[territory].units += units_difference
   end
 
   def won?
@@ -38,27 +42,5 @@ class GameState
     TerritoryLink.where(from_territory: game.territories).map do |link|
       [link.from_territory, link.to_territory]
     end
-  end
-
-  private
-
-  #TODO service
-  def apply_events(events)
-    events.each do |event|
-      case event.action
-      when Action::Kill
-        update_territory(event.action.territory, event.player, -event.action.units)
-      when Action::Add
-        update_territory(event.action.territory, event.player, event.action.units)
-      when Action::Move
-        update_territory(event.action.territory_from, event.player, -event.action.units)
-        update_territory(event.action.territory_to, event.player, event.action.units)
-      end
-    end
-  end
-
-  def update_territory(territory, owner, units)
-    @territory_info[territory].owner = owner
-    @territory_info[territory].units += units
   end
 end

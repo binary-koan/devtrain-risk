@@ -14,18 +14,18 @@ RSpec.describe PerformAttack::ValidateAttack do
 
   let(:game) { games(:game) }
 
-  let(:turn) { BuildTurn.new(game.events).call }
+  let(:game_state) { BuildGameState.new(game.events).call }
 
   let(:attacking_units) { 3 }
   let(:dice_roller) { DiceRoller.new }
 
   let(:service) do
     PerformAttack::ValidateAttack.new(
-      territory_from:  territory_from,
-      territory_to:    territory_to,
-      turn:            turn,
+      game_state:      game_state,
+      dice_roller:     dice_roller,
       attacking_units: attacking_units,
-      dice_roller:     dice_roller
+      territory_from:  territory_from,
+      territory_to:    territory_to
     )
   end
 
@@ -82,14 +82,6 @@ RSpec.describe PerformAttack::ValidateAttack do
     context "when the territory is a neighbour" do
       let(:territory_from) { territories(:territory_top_left) }
       let(:territory_to) { territories(:territory_bottom_left) }
-
-      context "when the turn state disallows attacking" do
-        it "returns a wrong phase error" do
-          expect(turn).to receive(:can_attack?).and_return false
-          expect(service.call).to eq false
-          expect(service.errors).to contain_exactly :wrong_phase
-        end
-      end
 
       context "when the attacker only has one unit left" do
         let(:territory_from) { territories(:territory_top_left) }

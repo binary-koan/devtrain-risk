@@ -1,5 +1,7 @@
+require "rails_helper"
+
 RSpec.describe GetAllowedEvents do
-  #TODO just mock turn instead of all this
+  #TODO just mock game state instead of all this
   fixtures :games, :players, :territories, :continents, :events, :"action/adds"
 
   def create_specific_reinforcement(units)
@@ -25,12 +27,11 @@ RSpec.describe GetAllowedEvents do
   end
 
   let(:game) { games(:game) }
-  let(:events) { game.events }
   let(:player) { players(:player1) }
 
-  let(:turn) { Turn.new(events) }
+  let(:game_state) { BuildGameState.new(games(:game).events).call }
 
-  subject(:service) { GetAllowedEvents.new(turn) }
+  subject(:service) { GetAllowedEvents.new(game_state, games(:game).events) }
 
   describe "#call" do
     subject(:allowed_events) { service.call }
@@ -123,10 +124,8 @@ RSpec.describe GetAllowedEvents do
     end
 
     context "when the game is won" do
-      let(:game_state) { instance_double(GameState, owned_territories: [], won?: true, game: game, territory_owner: player) }
-
-      before do
-        expect(GameState).to receive(:new).and_return(game_state)
+      let(:game_state) do
+        instance_double(GameState, owned_territories: [], won?: true, game: game, territory_owner: player, current_player: player)
       end
 
       it "does not allow any events" do

@@ -14,12 +14,12 @@ module GamesHelper
     PLAYER_COLORS[players.find_index(player)]
   end
 
-  def owned_territory_names(turn)
-    turn.game_state.owned_territories(turn.player).map(&:name).sort
+  def owned_territory_names(game_state)
+    game_state.owned_territories(game_state.current_player).map(&:name).sort
   end
 
-  def enemy_territory_names(turn)
-    (turn.game.territories.pluck(:name) - owned_territory_names(turn)).sort
+  def enemy_territory_names(game_state)
+    (game_state.game.territories.pluck(:name) - owned_territory_names(game_state)).sort
   end
 
   def continent_color(territories, territory)
@@ -27,10 +27,10 @@ module GamesHelper
     MAP_COLORS[id.to_i]
   end
 
-  def map_display(turn)
-    content_tag("svg", class: "map-display", viewbox: map_viewbox(turn.game.territories)) do
-      territory_link_lines(turn).map { |link| concat link }
-      territory_nodes(turn).map { |node| concat node }
+  def map_display(game_state)
+    content_tag("svg", class: "map-display", viewbox: map_viewbox(game_state.game.territories)) do
+      territory_link_lines(game_state).map { |link| concat link }
+      territory_nodes(game_state).map { |node| concat node }
     end
   end
 
@@ -59,8 +59,8 @@ module GamesHelper
     "#{x_min - offset} #{y_min - offset} #{x_max + offset * 2} #{y_max + offset * 2}"
   end
 
-  def territory_link_lines(turn)
-    turn.game_state.territory_links.map do |link|
+  def territory_link_lines(game_state)
+    game_state.territory_links.map do |link|
       content_tag("line", "",
         class: "link",
         stroke: link_color(link),
@@ -80,18 +80,18 @@ module GamesHelper
     end
   end
 
-  def territory_nodes(turn)
-    turn.game.territories.map do |territory|
+  def territory_nodes(game_state)
+    game_state.game.territories.map do |territory|
       content_tag("g", transform: translate(territory.x, territory.y)) do
-        territory_node_content(territory, turn)
+        territory_node_content(territory, game_state)
       end
     end
   end
 
-  def territory_node_content(territory, turn)
-    color = player_color(turn.game.players, turn.game_state.territory_owner(territory))
-    stroke_color = continent_color(turn.game.territories, territory)
-    units = turn.game_state.units_on_territory(territory)
+  def territory_node_content(territory, game_state)
+    color = player_color(game_state.game.players, game_state.territory_owner(territory))
+    stroke_color = continent_color(game_state.game.territories, territory)
+    units = game_state.units_on_territory(territory)
 
     content_tag("g", class: "node") do
       concat territory_image

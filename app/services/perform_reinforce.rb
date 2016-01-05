@@ -1,10 +1,11 @@
 class PerformReinforce
   attr_reader :errors, :reinforce_event
 
-  def initialize(turn:, territory:, units_to_reinforce:)
-    @turn               = turn
+  def initialize(game_state:, territory:, units_to_reinforce:)
     @territory          = territory
     @units_to_reinforce = units_to_reinforce
+    @game_state         = game_state
+    @allowed_events     = GetAllowedEvents.new(game_state, game_state.game.events).call
     @errors             = []
   end
 
@@ -25,12 +26,11 @@ class PerformReinforce
   private
 
   def territory_owned_by_player?
-    @turn.player == @turn.game_state.territory_owner(@territory)
+    @game_state.current_player == @game_state.territory_owner(@territory)
   end
 
   def can_reinforce?
-    allowed_events = GetAllowedEvents.new(@turn).call
-    reinforce_event = allowed_events.detect(&:reinforce?)
+    reinforce_event = @allowed_events.detect(&:reinforce?)
 
     reinforce_event.present? && @units_to_reinforce <= reinforce_event.action.units
   end
@@ -46,7 +46,7 @@ class PerformReinforce
   end
 
   def create_reinforce_event!(action)
-    @turn.player.events.reinforce.create!(action: action)
+    @game_state.current_player.events.reinforce.create!(action: action)
   end
 
   def create_action!

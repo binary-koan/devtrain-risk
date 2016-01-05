@@ -6,20 +6,21 @@ class PerformAttack
 
     attr_reader :errors
 
-    def initialize(territory_from:, territory_to:, turn:, dice_roller:, attacking_units:)
+    def initialize(game_state:, dice_roller:, territory_from:, territory_to:, attacking_units:)
       @territory_from  = territory_from
       @territory_to    = territory_to
-      @turn            = turn
       @attacking_units = attacking_units
+      @game_state      = game_state
+      @allowed_events  = GetAllowedEvents.new(game_state, game_state.game.events).call
       @errors          = []
     end
 
     def call
       if !valid_link?
         errors << :no_link
-      elsif !player_owns_territory
+      elsif !player_owns_territory?
         errors << :wrong_player
-      elsif !@turn.can_attack?
+      elsif !attack_event_allowed?
         errors << :wrong_phase
       elsif !attacking_different_player?
         errors << :own_territory
@@ -40,8 +41,12 @@ class PerformAttack
       @territory_from.connected_territories.include?(@territory_to)
     end
 
-    def player_owns_territory
-      find_owner(@territory_from) == @turn.player
+    def player_owns_territory?
+      find_owner(@territory_from) == @game_state.current_player
+    end
+
+    def attack_event_allowed?
+      @allowed_events.detect { |event| event.attack? }.present?
     end
 
     def attacking_different_player?
@@ -61,11 +66,11 @@ class PerformAttack
     end
 
     def find_owner(territory)
-      @turn.game_state.territory_owner(territory)
+      @game_state.territory_owner(territory)
     end
 
     def available_attackers
-      @turn.game_state.units_on_territory(@territory_from) - MIN_UNITS_ON_TERRITORY
+      @game_state.units_on_territory(@territory_from) - MIN_UNITS_ON_TERRITORY
     end
   end
 end

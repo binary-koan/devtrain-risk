@@ -3,23 +3,21 @@ require "rails_helper"
 RSpec.describe GamesHelper, type: :helper do
   fixtures :all
 
-  describe "#owned_territory_names" do
-    let(:turn) { BuildTurn.new(games(:game).events).call }
+  let(:game_state) { BuildGameState.new(games(:game).events).call }
 
+  describe "#owned_territory_names" do
     it "returns the names of the territories the player owns" do
-      expect(owned_territory_names(turn)).to eq ["Jupiter", "Mars"]
+      expect(owned_territory_names(game_state)).to eq ["Jupiter", "Mars"]
     end
   end
 
   describe "#enemy_territory_names" do
-    let(:turn) { BuildTurn.new(games(:game).events).call }
-
     it "returns the names of the territories the player does not own" do
-      expect(enemy_territory_names(turn)).to eq ["Mercury", "Saturn"]
+      expect(enemy_territory_names(game_state)).to eq ["Mercury", "Saturn"]
     end
 
     it "is the complement of owned_territory_names" do
-      territories = owned_territory_names(turn) + enemy_territory_names(turn)
+      territories = owned_territory_names(game_state) + enemy_territory_names(game_state)
       expect(games(:game).territories.pluck(:name)).to contain_exactly(*territories)
     end
   end
@@ -39,9 +37,7 @@ RSpec.describe GamesHelper, type: :helper do
   end
 
   describe "#map_display" do
-    let(:turn) { BuildTurn.new(games(:game).events).call }
-
-    let(:svg) { Nokogiri::XML(map_display(turn)) }
+    let(:svg) { Nokogiri::XML(map_display(game_state)) }
 
     it "renders lines for links between territories" do
       expect(svg.css("line").size).to eq 4

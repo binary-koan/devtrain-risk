@@ -14,7 +14,7 @@ RSpec.describe PerformAttack::CreateAttack do
 
   let(:game) { games(:game) }
 
-  let(:turn) { BuildTurn.new(game.events).call }
+  let(:game_state) { BuildGameState.new(game.events).call }
 
   let(:attacking_units) { 3 }
 
@@ -22,11 +22,11 @@ RSpec.describe PerformAttack::CreateAttack do
 
   let(:service) do
     PerformAttack::CreateAttack.new(
+      game_state:      game_state,
+      dice_roller:     dice_roller,
       territory_from:  territory_from,
       territory_to:    territory_to,
-      turn:            turn,
-      attacking_units: attacking_units,
-      dice_roller:     dice_roller
+      attacking_units: attacking_units
     )
   end
 

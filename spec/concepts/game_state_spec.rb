@@ -12,8 +12,7 @@ RSpec.describe GameState do
 
   let(:events) { game.events }
 
-  subject(:turn) { BuildTurn.new(events).call }
-  subject(:game_state) { turn.game_state }
+  subject(:game_state) { BuildGameState.new(events).call }
 
   describe "#won?" do
     subject { game_state.won? }

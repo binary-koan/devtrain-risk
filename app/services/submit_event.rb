@@ -4,7 +4,7 @@ class SubmitEvent
   def initialize(game, dice_roller, params)
     @game = game
     @dice_roller = dice_roller
-    @turn = BuildTurn.new(@game.events).call
+    @game_state = BuildGameState.new(@game.events).call
     @params = params
     @errors = []
   end
@@ -14,7 +14,7 @@ class SubmitEvent
 
     if service.nil?
       errors << :unknown_event_type
-    elsif @turn.game_state.won?
+    elsif @game_state.won?
       errors << :game_finished
     elsif !service.call
       errors.concat(service.errors)
@@ -36,33 +36,33 @@ class SubmitEvent
 
   def perform_attack
     PerformAttack.new(
+      game_state: @game_state,
+      dice_roller: @dice_roller,
       territory_from: @game.territories.find_by(name: @params[:from]),
       territory_to: @game.territories.find_by(name: @params[:to]),
-      turn: @turn,
-      attacking_units: @params[:units].to_i,
-      dice_roller: @dice_roller
+      attacking_units: @params[:units].to_i
     )
   end
 
   def perform_fortify
     PerformFortify.new(
+      game_state: @game_state,
       territory_from: @game.territories.find_by(name: @params[:from]),
       territory_to: @game.territories.find_by(name: @params[:to]),
-      turn: @turn,
       fortifying_units: @params[:units].to_i
     )
   end
 
   def perform_reinforce
     PerformReinforce.new(
-      turn: @turn,
+      game_state: @game_state,
       territory: @game.territories.find_by(name: @params[:to]),
       units_to_reinforce: @params[:units].to_i
     )
   end
 
   def start_next_turn
-    StartNextTurn.new(@turn)
+    StartNextTurn.new(@game_state)
   end
 
   def event_params

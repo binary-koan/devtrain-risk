@@ -1,9 +1,9 @@
 class PerformFortify
   class CreateFortify
-    def initialize(territory_to:, territory_from:, turn:, fortifying_units:)
+    def initialize(game_state:, territory_to:, territory_from:, fortifying_units:)
       @territory_to     = territory_to
       @territory_from   = territory_from
-      @turn             = turn
+      @game_state       = game_state
       @fortifying_units = fortifying_units
       @errors           = []
     end
@@ -27,7 +27,7 @@ class PerformFortify
     end
 
     def find_owner(territory)
-      @turn.game_state.territory_owner(territory)
+      @game_state.territory_owner(territory)
     end
   end
 end

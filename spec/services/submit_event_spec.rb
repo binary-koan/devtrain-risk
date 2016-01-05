@@ -21,10 +21,11 @@ RSpec.describe SubmitEvent do
     end
 
     let(:game) { games(:game) }
-    let(:turn) { BuildTurn.new(game.events).call }
-    let(:game_state) { turn.game_state }
+    let(:game_state) { GameState.new(game) }
 
     subject(:service) { SubmitEvent.new(game, dice_roller, params) }
+
+    before { allow(GameState).to receive(:new).and_return(game_state) }
 
     context "with incorrect parameters" do
       let(:params) do
@@ -42,11 +43,8 @@ RSpec.describe SubmitEvent do
     context "when the game is already won" do
       let(:event_type) { "fortify" }
 
-      let(:game_state) { instance_double(GameState, won?: true) }
-      let(:turn) { instance_double(Turn, game_state: game_state) }
-
       it "fails with an error" do
-        expect(BuildTurn).to receive(:new).and_return -> { turn }
+        expect(game_state).to receive(:won?).at_least(:once).and_return(true)
 
         expect(service.call).to eq false
         expect(service.errors).to contain_exactly :game_finished
@@ -60,11 +58,11 @@ RSpec.describe SubmitEvent do
 
       it "calls the PerformAttack service with correct parameters" do
         expect(PerformAttack).to receive(:new).with(
+          game_state:      game_state,
+          dice_roller:     dice_roller,
           territory_from:  from_territory,
           territory_to:    to_territory,
-          turn:            BuildTurn.new(game.events).call,
-          attacking_units: units,
-          dice_roller:     dice_roller
+          attacking_units: units
         ).and_return(attack_service)
 
         service.call
@@ -93,9 +91,9 @@ RSpec.describe SubmitEvent do
 
       it "calls the PerformFortify service with correct parameters" do
         expect(PerformFortify).to receive(:new).with(
+          game_state:       game_state,
           territory_from:   from_territory,
           territory_to:     to_territory,
-          turn:             turn,
           fortifying_units: 5
         ).and_return(fortify_service)
 
@@ -124,7 +122,7 @@ RSpec.describe SubmitEvent do
       let(:start_turn_service) { instance_double(StartNextTurn, call: true) }
 
       it "calls the StartNextTurn service with correct parameters" do
-        expect(StartNextTurn).to receive(:new).with(turn).and_return(start_turn_service)
+        expect(StartNextTurn).to receive(:new).with(game_state).and_return(start_turn_service)
 
         service.call
       end
@@ -144,7 +142,7 @@ RSpec.describe SubmitEvent do
       it "calls the PerformReinforce service with correct parameters" do
         expect(PerformReinforce).to receive(:new).with(
           territory:          to_territory,
-          turn:               turn,
+          game_state:         game_state,
           units_to_reinforce: 5
         ).and_return(reinforce_service)
 

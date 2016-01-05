@@ -3,17 +3,19 @@ require "rails_helper"
 RSpec.describe PerformAttack do
   let(:territory_from) { instance_double(Territory) }
   let(:territory_to) { instance_double(Territory) }
-  let(:turn) { instance_double(Turn) }
+  let(:game) { instance_double(Game) }
+  let(:game_state) { instance_double(GameState) }
+
   let(:attacking_units) { 3 }
   let(:dice_roller) { DiceRoller.new }
 
   let(:service_args) do
     {
+      game_state:      game_state,
+      dice_roller:     dice_roller
       territory_from:  territory_from,
       territory_to:    territory_to,
-      turn:            turn,
       attacking_units: attacking_units,
-      dice_roller:     dice_roller
     }
   end
 

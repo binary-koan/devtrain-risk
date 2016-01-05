@@ -2,11 +2,12 @@ class PerformFortify
   class ValidateFortify
     attr_reader :errors
 
-    def initialize(territory_to:, territory_from:, turn:, fortifying_units:)
+    def initialize(game_state:, territory_to:, territory_from:, fortifying_units:)
       @territory_to     = territory_to
       @territory_from   = territory_from
-      @turn             = turn
       @fortifying_units = fortifying_units
+      @game_state       = game_state
+      @allowed_events   = GetAllowedEvents.new(game_state, game_state.game.events).call
       @errors           = []
     end
 
@@ -41,28 +42,24 @@ class PerformFortify
     end
 
     def current_players_territory?
-      find_owner(@territory_from) == @turn.player
+      find_owner(@territory_from) == @game_state.current_player
     end
 
     def can_fortify?
-      allowed_events = GetAllowedEvents.new(@turn).call
-
-      fortify_event = allowed_events.detect(&:fortify?)
+      fortify_event = @allowed_events.detect(&:fortify?)
 
       if !fortify_event.present?
         false
       elsif fortify_event.action
-        previous_event = @turn.events.last
-
-        fortify_event.action.territory_from == previous_event.action.territory_from &&
-          fortify_event.action.territory_to == previous_event.action.territory
+        fortify_event.action.territory_from == @territory_from &&
+          fortify_event.action.territory_to == @territory_to
       else
         true
       end
     end
 
     def fortifying_enemy_territory?
-      find_owner(@territory_from) != find_owner(@territory_to) && @turn.game_state.units_on_territory(@territory_to) > 0
+      find_owner(@territory_from) != find_owner(@territory_to) && @game_state.units_on_territory(@territory_to) > 0
     end
 
     def enough_fortifying_units?
@@ -74,11 +71,11 @@ class PerformFortify
     end
 
     def find_owner(territory)
-      @turn.game_state.territory_owner(territory)
+      @game_state.territory_owner(territory)
     end
 
     def available_fortifying_units
-      @turn.game_state.units_on_territory(@territory_from) - MIN_UNITS_ON_TERRITORY
+      @game_state.units_on_territory(@territory_from) - MIN_UNITS_ON_TERRITORY
     end
   end
 end

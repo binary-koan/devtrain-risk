@@ -8,7 +8,7 @@ RSpec.describe CreateGame do
     let(:service) { CreateGame.new(map_name: map_name) }
 
     subject(:game) { service.call }
-    let(:game_state) { GameState.new(game, game.events) }
+    let(:game_state) { BuildGameState.new(game.events).call }
 
     context "when the number of players is not specified" do
       it "returns a saved game instance" do

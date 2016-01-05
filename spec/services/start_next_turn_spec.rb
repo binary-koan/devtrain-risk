@@ -5,33 +5,28 @@ RSpec.describe StartNextTurn do
 
   context "#call" do
     let(:game) { games(:game) }
-    let(:game_state) { instance_double(GameState, in_game?: true) }
 
-    let(:turn) do
-      instance_double(Turn,
+    let(:allowed_events) do
+      instance_double(GetAllowedEvents, call: [Event.start_turn.new])
+    end
+
+    let(:game_state) do
+      instance_double(GameState,
         game: games(:game),
-        player: players(:player1),
-        game_state: game_state,
-        can_start_next_turn?: true
+        current_player: players(:player1),
+        in_game?: true
       )
     end
 
-    subject(:service) { StartNextTurn.new(turn) }
+    subject(:service) { StartNextTurn.new(game_state) }
+
+    before { allow(GetAllowedEvents).to receive(:new).and_return(allowed_events) }
 
     context "when the turn can be ended" do
       it "succeeds and adds a start turn event to the game" do
         expect(service.call).to eq true
         expect(game.events.last.event_type).to eq "start_turn"
         expect(game.events.last.player).to eq players(:player2)
-      end
-    end
-
-    context "when the turn cannot be ended" do
-      before { expect(turn).to receive(:can_start_next_turn?).and_return(false) }
-
-      it "fails with an error" do
-        expect(service.call).to eq false
-        expect(service.errors).to contain_exactly :wrong_phase
       end
     end
 

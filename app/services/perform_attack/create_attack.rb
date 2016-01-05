@@ -5,18 +5,19 @@ class PerformAttack
 
     attr_reader :dice_rolled
 
-    def initialize(territory_from:, territory_to:, turn:, dice_roller:, attacking_units:)
+    def initialize(game_state:, dice_roller:, territory_from:, territory_to:, attacking_units:)
       @territory_from  = territory_from
       @territory_to    = territory_to
-      @turn            = turn
+      @game_state      = game_state
       @dice_roller     = dice_roller
 
-      @attacking_units = attacking_units
-      @initial_defenders = @turn.game_state.units_on_territory(@territory_to)
-      @attackers_lost  = 0
-      @defenders_lost  = 0
-      @attack_events   = []
-      @errors          = []
+      @attacking_units   = attacking_units
+      @initial_defenders = @game_state.units_on_territory(@territory_to)
+      @attackers_lost    = 0
+      @defenders_lost    = 0
+      @attack_events     = []
+      @dice_rolled       = []
+      @errors            = []
     end
 
     def call
@@ -84,7 +85,7 @@ class PerformAttack
     end
 
     def find_owner(territory)
-      @turn.game_state.territory_owner(territory)
+      @game_state.territory_owner(territory)
     end
   end
 end

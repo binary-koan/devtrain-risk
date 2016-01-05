@@ -13,14 +13,13 @@ RSpec.describe PerformReinforce do
   let!(:jupiter) { create(:territory, continent: continent) }
   let!(:mars)    { create(:territory, continent: continent) }
 
-  let(:turn) { BuildTurn.new(game.events).call }
-  let(:game_state) { turn.game_state }
+  let(:game_state) { BuildGameState.new(game.events).call }
 
   let(:units_to_reinforce) { 3 }
 
   let(:service) do
     PerformReinforce.new(
-      turn:               turn,
+      game_state:         game_state,
       territory:          territory,
       units_to_reinforce: units_to_reinforce
     )
