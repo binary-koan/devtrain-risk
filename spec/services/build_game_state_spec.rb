@@ -1,78 +1,45 @@
 require "rails_helper"
 
 RSpec.describe BuildGameState do
-  # let(:game) { create(:game) }
-  # let(:continent) { create(:continent) }
-  #
-  # let(:jupiter) { create(:territory, name: "Jupiter", continent: continent) }
-  # let(:mars) { create(:territory, name: "Mars", continent: continent) }
-  #
-  # let(:player1) { create(:player, game: game, name: "Player 1") }
-  # let(:player2) { create(:player, game: game, name: "Player 2") }
-  #
-  # subject(:service) { BuildGameState.new(game.events) }
-  #
-  # before do
-  #   create(:reinforce_event, territory: jupiter, player: player1)
-  #   create(:reinforce_event, territory: mars, player: player2)
-  #   create(:start_turn_event, player: player1)
-  # end
-  #
-  # describe "#call" do
-  #   let(:pre_game_turn) { instance_double(Turn) }
-  #   let(:first_turn) { instance_double(Turn) }
-  #
-  #   before do
-  #     expect(GameState).to receive(:new).with(game.events.first(2), nil).and_return pre_game_turn
-  #   end
-  #
-  #   context "when the game has just been started" do
-  #     before do
-  #       expect(GameState).to receive(:new).with(
-  #         game.events.last(1), pre_game_turn
-  #       ).and_return first_turn
-  #     end
-  #
-  #     it "creates and returns a turn for the first player" do
-  #       expect(service.call).to eq first_turn
-  #     end
-  #   end
-  #
-  #   context "when actions have been performed in the latest turn" do
-  #     before do
-  #       create(:reinforce_event, territory: jupiter, player: player1)
-  #       create(:attack_event, player: player1, territory: mars, units: 2)
-  #
-  #       expect(GameState).to receive(:new).with(
-  #         game.events.last(3), pre_game_turn
-  #       ).and_return first_turn
-  #     end
-  #
-  #     it "returns a turn for the first player with all performed events" do
-  #       expect(service.call).to eq first_turn
-  #     end
-  #   end
-  #
-  #   context "when more than one turn exists" do
-  #     let(:second_turn) { instance_double(Turn) }
-  #
-  #     before do
-  #       create(:reinforce_event, territory: jupiter, player: player1)
-  #       create(:start_turn_event, player: player2)
-  #       create(:reinforce_event, territory: mars, player: player2)
-  #
-  #       expect(GameState).to receive(:new).with(
-  #         game.events[2..3], pre_game_turn
-  #       ).and_return first_turn
-  #
-  #       expect(GameState).to receive(:new).with(
-  #         game.events.last(2), first_turn
-  #       ).and_return second_turn
-  #     end
-  #
-  #     it "returns a turn for the second player" do
-  #       expect(service.call).to eq second_turn
-  #     end
-  #   end
-  # end
+  let(:game) { create(:game) }
+  let(:continent) { create(:continent) }
+
+  let(:jupiter) { create(:territory, name: "Jupiter", continent: continent) }
+  let(:mars) { create(:territory, name: "Mars", continent: continent) }
+
+  let(:player1) { create(:player, game: game, name: "Player 1") }
+  let(:player2) { create(:player, game: game, name: "Player 2") }
+
+  subject(:service) { BuildGameState.new(game.events) }
+
+  before do
+    create(:reinforce_event, territory: jupiter, player: player1)
+    create(:reinforce_event, territory: mars, player: player2)
+    create(:start_turn_event, player: player1)
+  end
+
+  describe "#call" do
+    context "when the game has just been started" do
+      it "returns a game state with the correct territory setup" do
+        state = service.call
+
+        expect(state.territory_owner(jupiter)).to eq player1
+        expect(state.territory_owner(mars)).to eq player2
+      end
+    end
+
+    context "when actions have been performed in the latest turn" do
+      before do
+        create(:reinforce_event, territory: jupiter, player: player1)
+        create(:attack_event, player: player1, territory: mars, units: 2)
+      end
+
+      it "returns a state with the events applied" do
+        state = service.call
+
+        expect(state.units_on_territory(jupiter)).to eq 6
+        expect(state.territory_owner(mars)).to eq player1
+      end
+    end
+  end
 end
