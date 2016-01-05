@@ -37,6 +37,7 @@ class CreateGame
   end
 
   def create_players!
+    #TODO nice => 1.upto(player_count) do
     @player_count.times.map do |i|
       @game.players.create!(name: "Player #{i + 1}")
     end
@@ -58,6 +59,7 @@ class CreateGame
   end
 
   def populate_territories!(territories, player)
+    #TODO can do this one go
     territories.each do |territory|
       event = player.events.reinforce.new
       event.action = Action::Add.create!(territory: territory, units: INITIAL_UNITS)

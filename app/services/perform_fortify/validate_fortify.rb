@@ -49,6 +49,7 @@ class PerformFortify
 
       fortify_event = allowed_events.detect(&:fortify?)
 
+      #TODO .none?
       if !fortify_event.present?
         false
       elsif fortify_event.action
@@ -62,7 +63,9 @@ class PerformFortify
     end
 
     def fortifying_enemy_territory?
-      find_owner(@territory_from) != find_owner(@territory_to) && @turn.game_state.units_on_territory(@territory_to) > 0
+      #TODO too long? break into methods
+      find_owner(@territory_from) != find_owner(@territory_to) &&
+        @turn.game_state.units_on_territory(@territory_to) > 0
     end
 
     def enough_fortifying_units?

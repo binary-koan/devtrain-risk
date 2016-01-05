@@ -1,3 +1,4 @@
+#TODO GET?? directory?
 class GetAllowedEvents
   def initialize(turn)
     @turn = turn
@@ -16,6 +17,7 @@ class GetAllowedEvents
   private
 
   def allowed_reinforce_event
+    #TODO replace with shortcuts
     return unless @turn.can_reinforce?
 
     @player.events.reinforce.new(action: Action::Add.new(
@@ -24,6 +26,7 @@ class GetAllowedEvents
   end
 
   def allowed_next_turn_event
+    #TODO replace with shortcuts
     return if !@turn.can_start_next_turn? || territory_taken?
 
     @player.events.start_turn.new
@@ -51,6 +54,7 @@ class GetAllowedEvents
   def territory_taken?
     takeover_event = @turn.events.last
 
+    #TODO make a method
     takeover_event.attack? && @turn.game_state.units_on_territory(takeover_event.action.territory) == 0
   end
 end

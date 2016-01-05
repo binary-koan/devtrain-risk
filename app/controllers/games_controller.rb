@@ -10,6 +10,7 @@ class GamesController < ApplicationController
     if game.present? && service.errors.empty?
       redirect_to game
     else
+      #TODO render new
       flash.alert = service.errors
       redirect_to :back
     end
@@ -18,12 +19,14 @@ class GamesController < ApplicationController
   def show
     @turn = BuildTurn.new(@game.events).call
     @allowed_events = GetAllowedEvents.new(@turn).call
+    #TODO not here
     @active_players = @game.players.select { |player| @turn.game_state.in_game?(player) }
 
     respond_to do |format|
       format.html
 
       format.json do
+        #TODO rails can do this
         render json: { content: render_to_string(partial: "games/game_display", formats: [:html]) }
       end
     end

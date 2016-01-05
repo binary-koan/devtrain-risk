@@ -15,6 +15,7 @@ module GamesHelper
   end
 
   def owned_territory_names(turn)
+    #TODO maybe talk to object
     turn.game_state.owned_territories(turn.player).map(&:name).sort
   end
 
