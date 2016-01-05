@@ -16,8 +16,7 @@ class GenerateName
   TWO_PAIRED_LETTERS = /.*(.)\1.*(.)\2/
   OU_PLUS_PAIR = /ou(.)\1/i
 
-  def initialize
-  end
+  def initialize; end
 
   def call
     name = generate_name

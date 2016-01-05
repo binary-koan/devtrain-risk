@@ -1,8 +1,7 @@
 class GamesController < ApplicationController
   before_action :assign_game, except: [:new, :create]
 
-  def new
-  end
+  def new; end
 
   def create
     service = CreateGame.new(map_name: map_name, player_count: player_count)

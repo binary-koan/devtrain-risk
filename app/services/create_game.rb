@@ -25,10 +25,6 @@ class CreateGame
 
   private
 
-  def invalid_map?(name)
-
-  end
-
   def create_game!
     ActiveRecord::Base.transaction do
       @game = Game.create!
