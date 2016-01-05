@@ -15,6 +15,7 @@ module GamesHelper
   end
 
   def owned_territory_names(game_state)
+    #TODO maybe talk to object
     game_state.owned_territories(game_state.current_player).map(&:name).sort
   end
 

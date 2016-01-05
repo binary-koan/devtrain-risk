@@ -66,6 +66,7 @@ class SubmitEvent
   end
 
   def event_params
+    #TODO controller level
     @params.require(:event).permit(:event_type)
   end
 end

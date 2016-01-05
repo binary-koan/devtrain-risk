@@ -54,6 +54,7 @@ class PerformAttack
     def handle_attack!(paired_rolls)
       defenders_lost, attackers_lost = attack_result(paired_rolls)
 
+      #TODO different name for attackers lost
       @attackers_lost = attackers_lost
       @defenders_lost += defenders_lost
 
@@ -76,6 +77,7 @@ class PerformAttack
 
     def create_attack_event!(territory, territory_from, units_lost)
       @attack_events << find_owner(territory).events.attack.new
+      #TODO create object then push into array
       @attack_events.last.action = Action::Kill.create!(
         territory_from: territory_from,
         territory: territory,

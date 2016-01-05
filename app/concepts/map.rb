@@ -1,4 +1,5 @@
 class Map
+  #TODO doesn't belong here, db? serialize and active record
   MAP_YAML_LOCATION    = "config/maps.yml"
   TERRITORY_COUNT      = "territory_count"
   TERRITORY_POSITIONS  = "territory_positions"

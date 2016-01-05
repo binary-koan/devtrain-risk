@@ -6,6 +6,7 @@ class EventsController < ApplicationController
     service = SubmitEvent.new(@game, dice_roller, params)
 
     if service.call
+      #TODO WRONG DESIGN
       if dice_roller.rolls.any?
         flash.notice = dice_roller.rolls
       end

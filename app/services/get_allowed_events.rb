@@ -1,3 +1,4 @@
+#TODO GET?? directory?
 class GetAllowedEvents
   PHASE_REINFORCING = :reinforcing
   PHASE_ATTACKING   = :attacking
@@ -36,6 +37,7 @@ class GetAllowedEvents
   end
 
   def allowed_reinforce_event
+    #TODO replace with shortcuts
     return unless @turn.phase == PHASE_REINFORCING && !@turn.reinforcements.none?
 
     @player.events.reinforce.new(action: Action::Add.new(
@@ -44,6 +46,7 @@ class GetAllowedEvents
   end
 
   def allowed_next_turn_event
+    #TODO replace with shortcuts
     return if !(@turn.phase == PHASE_ATTACKING || @turn.phase == PHASE_ENDING) || territory_taken?
 
     @player.events.start_turn.new
@@ -97,6 +100,7 @@ class GetAllowedEvents
   end
 
   def territory_taken?
+    #TODO make a method
     @events.size > 0 &&
       @events.last.attack? && @game_state.units_on_territory(@events.last.action.territory) == 0
   end
