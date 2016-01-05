@@ -12,10 +12,10 @@ RSpec.describe PerformAttack do
   let(:service_args) do
     {
       game_state:      game_state,
-      dice_roller:     dice_roller
+      dice_roller:     dice_roller,
       territory_from:  territory_from,
       territory_to:    territory_to,
-      attacking_units: attacking_units,
+      attacking_units: attacking_units
     }
   end
 
