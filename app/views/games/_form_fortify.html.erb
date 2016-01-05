@@ -7,8 +7,8 @@
     <%= hidden_field_tag :to, event.action.territory_to.name %>
     from <%= event.action.territory_from.name %> to <%= event.action.territory_to.name %>
   <% else %>
-    from <%= select_tag :from, options_for_select(owned_territory_names(@turn)) %>
-    to <%= select_tag :to, options_for_select(owned_territory_names(@turn)) %>
+    from <%= select_tag :from, options_for_select(owned_territory_names(@game_state)) %>
+    to <%= select_tag :to, options_for_select(owned_territory_names(@game_state)) %>
   <% end %>
 
   <%= button_tag type: "submit", class: "icon-button" do %>

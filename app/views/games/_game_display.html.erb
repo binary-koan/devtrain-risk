@@ -1,5 +1,5 @@
 <div id="game-display">
-  <%= map_display(@turn) %>
+  <%= map_display(@game_state) %>
 
   <% if @game_state.won? %>
     <div class="message" style="background-color: <%= player_color(@game.players, @game_state.winning_player) %>">
