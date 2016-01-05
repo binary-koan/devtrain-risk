@@ -37,9 +37,8 @@ class CreateGame
   end
 
   def create_players!
-    #TODO nice => 1.upto(player_count) do
-    @player_count.times.map do |i|
-      @game.players.create!(name: "Player #{i + 1}")
+    1.upto(@player_count).map do |i|
+      @game.players.create!(name: "Player #{i}")
     end
   end
 

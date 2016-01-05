@@ -76,14 +76,14 @@ class PerformAttack
     end
 
     def create_attack_event!(territory, territory_from, units_lost)
-      @attack_events << find_owner(territory).events.attack.new
-      #TODO create object then push into array
-      @attack_events.last.action = Action::Kill.create!(
+      event = find_owner(territory).events.attack.new
+      event.action = Action::Kill.create!(
         territory_from: territory_from,
         territory: territory,
         units: units_lost
       )
-      @attack_events.last.save!
+      event.save!
+      @attack_events << event
     end
 
     def find_owner(territory)
